@@ -39,9 +39,10 @@ import pandas as pd
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-CHAINS_CSV = Path("/Users/annasacchet/Desktop/Baseline/results/rewriting_chains32b.csv")
-MUSIQUE_PATH = Path("/Users/annasacchet/Desktop/musique_ans_v1.0_dev.jsonl")
-OUTPUT_CSV = Path("/Users/annasacchet/Desktop/Baseline/results/rewriting_chains32b_answer_f1.csv")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains32b.csv"
+MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
+OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains32b_answer_f1.csv"
 
 QA_MODEL_ID = "allenai/Olmo-3.1-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
