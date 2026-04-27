@@ -1,7 +1,7 @@
 # Factuality Degradation in Iterative LLM Rewriting — Baseline Report
 
 **Anna Sacchet — Master's Thesis**
-Presentation for supervisors — 2026-04-24
+Presentation for supervisors — 2026-04-25
 
 ---
 
@@ -10,7 +10,7 @@ Presentation for supervisors — 2026-04-24
 Questo documento riassume lo stato del lavoro a seguito del brainstorming del 21 aprile 2026 ([brainstormingING.md](brainstormingING.md)). Il brainstorming fissava tre research question (degradazione, effetto dell'istruzione/hop, Self-Refine) e il disegno sperimentale; qui riporto il **primo test baseline effettivamente eseguito end-to-end**, con pipeline, metriche, limitazioni attuali e prime osservazioni.
 
 Lo scopo è duplice:
-1. validare che la pipeline tecnica (rewriting → estrazione atomic facts → verifica → BERTScore → token counts) giri su dati reali;
+1. validare che la pipeline tecnica (rewriting → estrazione atomic facts → verifica → BERTScore → token counts → **Answer F1**) giri su dati reali;
 2. produrre una prima lettura dei risultati su cui discutere scelte e prossimi passi.
 
 ---
@@ -39,9 +39,10 @@ File principali ([scripts/](scripts/)):
 1. [export_chain_steps.py](scripts/export_chain_steps.py) — estrae gli step dalle chain prodotte dal modello rewriter.
 2. [factscore_eval.py](scripts/factscore_eval.py) — calcola il FactScore variante "source-faithfulness".
 3. [add_bertscore.py](scripts/add_bertscore.py) — aggiunge BERTScore Precision/Recall/F1.
-4. [visualize_factscore_bertscore.py](scripts/visualize_factscore_bertscore.py) — genera `analisi_factscore_bertscore.pdf`.
-5. [visualize_per_step.py](scripts/visualize_per_step.py) — genera `evoluzione_per_step.pdf`.
-6. [visualize_token_counts.py](scripts/visualize_token_counts.py) — genera i PDF `token_counts_*.pdf`.
+4. [answer_f1_eval.py](scripts/answer_f1_eval.py) — calcola Answer F1 con OLMo-3.1-32B-Instruct come QA model (vedi §3.4 e §4.6).
+5. [visualize_factscore_bertscore.py](scripts/visualize_factscore_bertscore.py) — genera `analisi_factscore_bertscore.pdf`.
+6. [visualize_per_step.py](scripts/visualize_per_step.py) — genera `evoluzione_per_step.pdf`.
+7. [visualize_token_counts.py](scripts/visualize_token_counts.py) — genera i PDF `token_counts_*.pdf`.
 
 ### 2.3 Modelli usati
 
@@ -50,6 +51,7 @@ File principali ([scripts/](scripts/)):
 | **Rewriter** (produce E₁, E₂, E₃) | OLMo-3 32B (famiglia del brainstorming) | Modello target della tesi |
 | **Judge** (estrazione atomic facts + verifica SUPPORTED / NOT_SUPPORTED / CONTRADICTED) | **`gpt-4o-mini` via API OpenAI** | Variante rispetto al setup canonico — vedi limitazioni |
 | **Embedder BERTScore** | `roberta-large`, layer 17, lingua `en` | Setting standard della libreria `bert_score` |
+| **QA model** (Answer F1) | **`allenai/Olmo-3.1-32B-Instruct`**, in-process via `transformers` su GPU | Stesso modello del rewriter — scelta deliberata, vedi §3.4 |
 
 ---
 
@@ -96,6 +98,34 @@ Per questo motivo nel brainstorming BERTScore è classificato come **metrica sec
 
 - i valori sono direttamente interpretabili come "carico di generazione" del modello, non come conteggi word-level;
 - confronti cross-model non sarebbero 1:1 — se in futuro si aggiunge LLaMA o Mistral, i valori in token **non sono comparabili direttamente** e conviene normalizzare (es. token/word ratio, o riportare anche char-level length).
+
+### 3.4 Answer F1 — implementata, in esecuzione
+
+**Cos'è**. La metrica primaria del brainstorming (insieme a FactScore) per misurare *indirettamente* la factuality: si chiede a un QA model la domanda originale di MuSiQue passandogli come contesto il testo riscritto Eₜ, e si misura il token-level F1 tra la risposta predetta e la gold answer di MuSiQue. Se l'F1 cala da t₁ a t₃, vuol dire che la riscrittura ha **rimosso il fatto specifico necessario per rispondere** — informazione complementare a FactScore (che misura "quanti fatti ci sono ancora", non "il fatto giusto c'è ancora").
+
+**File**: [scripts/answer_f1_eval.py](scripts/answer_f1_eval.py).
+
+**Scelte di design**:
+
+1. **QA model = OLMo-3.1-32B-Instruct, lo stesso del rewriter.** Caricato in-process via `transformers` su GPU (server Homer del MITEL Lab — 2× 48 GB, sharding automatico via `device_map="auto"`). Non uso `gpt-4o-mini` come per il judge di FactScore: per RQ1 la domanda è "il modello che ha riscritto è ancora capace di rispondere?", quindi serve coerenza tra rewriter e QA. Inoltre tiene la pipeline del QA **riproducibile** (modello open-weights), a differenza del judge FactScore.
+
+2. **Nessun system prompt, nessuna istruzione.** Il prompt è semplicemente:
+   ```
+   {context}
+
+   {question}
+   ```
+   Niente "sii estrattivo", niente "rispondi corto", niente "se non sai dì unanswerable". Aggiungere istruzioni misurerebbe un'altra cosa: "OLMo sa seguire un system prompt extractive-QA?". A me interessa: "l'informazione è ancora in Eₜ tale che OLMo possa estrarla naturalmente?". Decisione discussa esplicitamente.
+
+3. **F1 con la funzione ufficiale MuSiQue.** Le funzioni `normalize_answer`, `get_tokens`, `compute_f1` sono **copiate verbatim** da [`metrics/answer.py` di StonyBrookNLP/musique](https://github.com/StonyBrookNLP/musique/blob/main/metrics/answer.py): lowercase + strip punteggiatura + strip articoli (`a|an|the`) + collapse whitespace, F1 token-level. Il `max` viene preso su `gold_answer` ∪ `answer_aliases`, coerente con `evaluate_v1.0.py`.
+
+4. **Valuto anche E₀.** Lo script include lo step 0 nella valutazione (deduplicato per `(qid, run)` per non chiamare il modello 4 volte sullo stesso testo, poi broadcastato in output). Motivo: il *drop* di Answer F1 ha senso solo rispetto a un baseline misurato sullo stesso QA model. Se OLMo a E₀ fa già F1 = 0.50 perché il testo è lungo e con distrattori, un E₃ a 0.40 è un drop piccolo; se invece a E₀ fa 1.00, lo stesso 0.40 è un drop drastico.
+
+**Come differisce dal setup canonico MuSiQue.** Il loro baseline usa un Longformer estrattivo addestrato (AllenNLP), non un LLM prompt-based. La metrica F1 è la stessa, ma il **reader** è diverso: per noi è un LLM instruct generativo. È una scelta deliberata coerente con la RQ — non possiamo addestrare un Longformer dedicato per ogni Eₜ riscritto.
+
+**Limitazione importante.** Per la question pilota la gold answer è `"11 September 1962"`. Un LLM generativo può rispondere `"September 11, 1962"` o `"11/09/1962"` o `"il 1962"`: la normalizzazione SQuAD-style cattura solo le prime due (e parzialmente). Per question con gold answer particolarmente sintetiche, F1 può sottostimare la performance. È un limite del metric, non della pipeline — vale per qualunque uso di SQuAD-F1 con LLM generativi.
+
+**Stato esecuzione**. Lo script gira su Homer (MITEL/SMDC Lab). Al momento della stesura di questo documento il modello OLMo-3.1-32B (~64 GB) è ancora in fase di download nella cache HuggingFace del server (ETA ~10-15 min al ritmo attuale). I numeri concreti di Answer F1 saranno disponibili a breve e andranno aggiunti nella §4.6 sotto.
 
 ---
 
@@ -172,6 +202,23 @@ Punto chiave per i supervisor: la divergenza `shorten`-bassa-BS, `shorten`-alto-
 *Come leggerlo*:
 > "Già su 3 run vediamo che `shorten` ha varianza elevata in t₁ (range 373–918 token): il modello è **instabile** su come comprime. `elaborate` e le style hanno varianza minore. Questa è una prima indicazione che la **Unreliability** del framework P/A/U sarà informativa, non solo rumore."
 
+### 4.6 Answer F1 — risultati pilot (in attesa)
+
+**File output**: `results/rewriting_chains32b_answer_f1.csv` (in arrivo).
+
+**Esecuzione**: la pipeline gira su Homer (MITEL/SMDC). 13 generazioni totali per il pilot run 0:
+
+- 1 baseline su E₀ (la stessa per tutte le istruzioni — deduplicato)
+- 12 Eₜ riscritti (4 istruzioni × 3 step)
+
+**Cosa aspettarsi e come leggerlo in presentazione, una volta arrivati i numeri**:
+
+- *baseline E₀*: dice quanto OLMo, senza alcuna riscrittura, riesce a rispondere alla question dato il testo originale. Se F1(E₀) ≈ 1.0 vuol dire che il setup è "facile" e tutto il drop a t>0 è imputabile alla riscrittura. Se invece F1(E₀) è già imperfetto (es. 0.6), parte del segnale è rumore del QA model, non degradazione.
+- *traiettorie t₁ → t₃ per istruzione*: l'analogo del Grafico 1 (FactScore per step), ma su Answer F1. L'ipotesi forte è che `shorten` mostri il drop più grande, perché elimina materialmente l'informazione necessaria. `elaborate` dovrebbe drogare meno se il fatto critico resta nel testo.
+- *confronto FS vs Answer F1*: se `shorten` ha FS alto (0.88) ma Answer F1 basso → conferma definitiva che FS source-grounded non cattura la perdita del fatto critico, e Answer F1 è la metrica giusta per RQ1.
+
+I numeri verranno aggiunti qui non appena la run termina; questa sezione è una promissory note al supervisor di "ci stiamo arrivando, è schedulata".
+
 ---
 
 ## 5. Limitazioni attuali — da esplicitare in presentazione
@@ -197,9 +244,13 @@ Queste sono le cose che i supervisor **devono sapere** prima di interpretare i n
 
 - Come scritto in §3.1, sto usando FactScore rispetto a E₀ invece che rispetto a Wikipedia. Il nome "FactScore" quindi va sempre qualificato — in tesi sarà meglio riferirvisi come *source-grounded FactScore* o *faithfulness score* per evitare confusione con il paper originale.
 
-### 5.4 Answer F1 non ancora calcolato
+### 5.4 Answer F1 — pipeline pronta, esecuzione in corso
 
-- Il brainstorming lo classifica come metrica primaria insieme a FactScore. Nel baseline attuale **non è stato ancora calcolato**. È il tassello più importante da aggiungere prima di scalare l'esperimento, perché è l'unico che penalizza direttamente la perdita del fatto critico per rispondere alla question.
+- La metrica è **implementata** ([scripts/answer_f1_eval.py](scripts/answer_f1_eval.py)) usando OLMo-3.1-32B-Instruct come QA model e la funzione F1 ufficiale di MuSiQue. La prima run sul pilot è schedulata su Homer al momento della stesura del documento.
+- Vincoli che restano e vanno comunicati:
+  - **Reader ≠ MuSiQue ufficiale**: noi usiamo un LLM instruct generativo, loro un Longformer estrattivo addestrato. Le metric sono identiche (stesse funzioni `metrics/answer.py`), il *reader* no. Da menzionare in tesi.
+  - **No system prompt**: scelta deliberata (vedi §3.4), ma significa che la performance assoluta dell'F1 può sembrare bassa rispetto a baseline LLM-QA che usano prompt elaborati. Quello che ci interessa è il *drop relativo* tra t₀ → t₃, non il valore assoluto.
+  - **Costo computazionale**: ogni chiamata richiede un forward pass su un 32B → ben più caro del judge `gpt-4o-mini`. Per scalare a 405 question × 4 istruzioni × 3 step × ≥ 5 run × 1 baseline E₀ servono ~30 ore di GPU sul setup attuale (stima conservativa). Pianificazione GPU su Homer da concordare.
 
 ### 5.5 Hardcoded paths e TEST_MODE
 
@@ -228,7 +279,7 @@ Con il caveat forte che siamo su **1 question**:
 
 Prima di scalare a 405 question × ogni condizione, prioritizzerei:
 
-1. **Aggiungere Answer F1** alla pipeline — è la metrica primaria che manca, e le prime conclusioni su `paraphrase`/`shorten` si reggono o cadono su quella.
+1. **Chiudere il loop su Answer F1** — pipeline implementata, run pilot in corso su Homer. Una volta che i numeri sono in §4.6, si capisce se la divergenza FS/BS osservata su `shorten` viene confermata anche da Answer F1.
 2. **Girare ≥ 5 run** sulla stessa 1 question, così da poter calcolare P/A/U già sul pilot e vedere se l'infrastruttura regge.
 3. **Espandere a ~5 question per hop-count** (2/3/4-hop) come smoke test prima dello scale-up completo.
 4. **Decidere sul judge**: restiamo su `gpt-4o-mini` (costo basso, veloce, ma proprietario) o passiamo a un judge open-weights? Questa decisione va presa *prima* dello scale-up, perché cambiarla dopo invalida i risultati precedenti.
