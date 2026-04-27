@@ -21,8 +21,9 @@ from nltk.tokenize import sent_tokenize
 from openai import OpenAI
 from rank_bm25 import BM25Okapi
 
-CSV_PATH = "/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b.csv"
-DEMOS_PATH = "/Users/annasacchet/.cache/factscore/demos/demons.json"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_9q.csv"
+DEMOS_PATH = Path(os.path.expanduser("~/.cache/factscore/demos/demons.json"))
 JUDGE_MODEL = "gpt-4o-mini"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 MAX_RETRIES = 6
@@ -33,7 +34,8 @@ K_BM25 = 1
 
 MAX_WORKERS = 4
 
-TEST_MODE = True
+# Process the whole input CSV (no chain-level filter).
+TEST_MODE = False
 TEST_N_CHAINS = 1
 TEST_FILTER = {"group": "style", "instruction_type": "paraphrase", "run": 0}
 

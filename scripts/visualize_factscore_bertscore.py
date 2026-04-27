@@ -16,8 +16,9 @@ import seaborn as sns
 import numpy as np
 
 # Paths
-CSV_PATH = Path("/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b_factscore_bertscore.csv")
-OUTPUT_PDF = Path("/Users/annasacchet/Desktop/RISULTATI TEST/analisi_factscore_bertscore.pdf")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CSV_PATH = REPO_ROOT / "results" / "rewriting_chains32b_factscore_bertscore.csv"
+OUTPUT_PDF = REPO_ROOT / "results" / "analisi_factscore_bertscore.pdf"
 
 def prepare_data():
     """Carica e prepara i dati"""

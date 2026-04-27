@@ -15,9 +15,10 @@ from tqdm import tqdm
 from bert_score import score as compute_bert_score
 
 # Paths
-CSV_PATH = Path("/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b.csv")
-FACTSCORE_PATH = Path("/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b_factscore.csv")
-OUTPUT_PATH = Path("/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b_factscore_bertscore.csv")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_9q.csv"
+FACTSCORE_PATH = REPO_ROOT / "results" / "rewriting_chains_9q_factscore.csv"
+OUTPUT_PATH = REPO_ROOT / "results" / "rewriting_chains_9q_factscore_bertscore.csv"
 
 def load_source_texts(csv_path):
     """Carica il CSV originale per avere accesso ai testi step 0 (source)"""

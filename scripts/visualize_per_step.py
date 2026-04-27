@@ -1,9 +1,12 @@
 #!/usr/bin/env python3.11
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-df = pd.read_csv('/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b_factscore_bertscore.csv')
+REPO_ROOT = Path(__file__).resolve().parent.parent
+df = pd.read_csv(REPO_ROOT / "results" / "rewriting_chains32b_factscore_bertscore.csv")
 
 # Crea figura con 2 subplot: uno per FactScore, uno per BERTScore
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
@@ -45,8 +48,9 @@ ax2.legend(loc='best')
 ax2.set_ylim([0.75, 1.0])
 
 plt.tight_layout()
-plt.savefig('/Users/annasacchet/Desktop/RISULTATI TEST/evoluzione_per_step.pdf', dpi=300, bbox_inches='tight')
-print("✅ Grafico salvato: /Users/annasacchet/Desktop/RISULTATI TEST/evoluzione_per_step.pdf")
+out_pdf = REPO_ROOT / "results" / "evoluzione_per_step.pdf"
+plt.savefig(out_pdf, dpi=300, bbox_inches='tight')
+print(f"Grafico salvato: {out_pdf}")
 
 # Mostra anche i valori numerici
 print("\n" + "="*70)

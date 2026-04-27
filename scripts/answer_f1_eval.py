@@ -40,9 +40,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains32b.csv"
+CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains_9q.csv"
 MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
-OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains32b_answer_f1.csv"
+OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains_9q_answer_f1.csv"
 
 QA_MODEL_ID = "allenai/Olmo-3.1-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
@@ -52,9 +52,8 @@ MAX_NEW_TOKENS = 64
 TEMPERATURE = 0.0
 BATCH_SIZE = 4
 
-# Pilot mode: keep the baseline scope (1 question, run 0) to match the current
-# FactScore/BERTScore runs. Flip TEST_MODE to False to evaluate every chain.
-TEST_MODE = True
+# Process the whole input CSV (all qids, all runs).
+TEST_MODE = False
 TEST_FILTER = {"qid": "2hop__635544_110949", "run": 0}
 
 

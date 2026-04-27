@@ -1,7 +1,8 @@
 import pandas as pd
 from pathlib import Path
 
-csv_path = Path("/Users/annasacchet/Desktop/RISULTATI TEST/rewriting_chains32b_factscore.csv")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+csv_path = REPO_ROOT / "results" / "rewriting_chains32b_factscore.csv"
 output_path = csv_path.parent / (csv_path.stem + "_steps.csv")
 
 # Leggi il CSV
