@@ -33,3 +33,7 @@ Thumbs.db
 # Datasets (non committare)
 musique_ans_v1.0_dev.jsonl
 *.jsonl
+
+# Secrets
+.env
+.env.*

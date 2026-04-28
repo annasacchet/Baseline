@@ -270,9 +270,14 @@ def generate(tokenizer, model, user_prompt, *, temperature=0.7, max_new_tokens=5
     new_tokens = out[0, inputs["input_ids"].shape[1]:]
     return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
+import os
 from huggingface_hub import login
 
-login(token="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")  # il tuo token
+_hf_token = os.environ.get("HF_TOKEN")
+if _hf_token:
+    login(token=_hf_token)
+else:
+    print("HF_TOKEN not set — skipping HuggingFace login (fine for public models).")
 
 from huggingface_hub import list_models
 for m in list_models(author="allenai", search="OLMo-2"):

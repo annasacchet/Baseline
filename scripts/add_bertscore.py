@@ -1,195 +1,208 @@
 """
-Add BERTScore as complementary metric to FactScore evaluation.
+Add BERTScore (Baseline and Consecutive modes) to FactScore evaluation.
 
-BERTScore misura la similarità semantica token-level tramite BERT embeddings.
-A differenza di FactScore (correttezza fattuale), misura quanto il candidato
-rimane "semanticamente simile" al riferimento.
+§6.2 of the brainstorming defines two BERTScore modes:
+  - Baseline:    sim(E_t, E_0)   — cumulative drift from the original
+  - Consecutive: sim(E_t, E_{t-1}) — change between adjacent steps
 
-Questo script legge i risultati FactScore e aggiunge le metriche BERTScore.
+Both are computed here. Baseline is what this script used to produce; Consecutive
+is added so each step has a "how much did this step change the text" signal,
+independent from the cumulative drift.
+
+Output schema (additive — extends the previous file):
+  bert_precision_baseline, bert_recall_baseline, bert_f1_baseline
+  bert_precision_consecutive, bert_recall_consecutive, bert_f1_consecutive
 """
 
-import pandas as pd
 import time
 from pathlib import Path
-from tqdm import tqdm
+
+import pandas as pd
+import torch
 from bert_score import score as compute_bert_score
 
-# Paths
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_9q.csv"
 FACTSCORE_PATH = REPO_ROOT / "results" / "rewriting_chains_9q_factscore.csv"
 OUTPUT_PATH = REPO_ROOT / "results" / "rewriting_chains_9q_factscore_bertscore.csv"
 
-def load_source_texts(csv_path):
-    """Carica il CSV originale per avere accesso ai testi step 0 (source)"""
-    df = pd.read_csv(csv_path)
-    # Raggruppa per chain, prendi step 0
-    sources = {}
-    for (qid, group, instruction_type, run), group_df in df.groupby(
-        ["qid", "group", "instruction_type", "run"]
-    ):
-        step0 = group_df[group_df["step"] == 0]
-        if not step0.empty:
-            sources[(qid, group, instruction_type, run)] = step0.iloc[0]["text"]
-    return sources
+CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
-def load_candidate_texts(csv_path):
-    """Carica i testi candidati dal CSV originale"""
-    df = pd.read_csv(csv_path)
-    return df
+BERT_MODEL = "roberta-large"
+BERT_NUM_LAYERS = 17
+BERT_LANG = "en"
+BERT_BATCH_SIZE = 32
 
-def compute_bertscore_batch(references, candidates, lang='en', model='roberta-large'):
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+
+def build_step_index(chains_df: pd.DataFrame) -> dict:
+    """Return {(qid, group, instr_type, run, step): text} for every row in the chain CSV.
+
+    Used to look up both step 0 (Baseline reference) and step t-1 (Consecutive reference).
     """
-    Calcola BERTScore per batch di testi.
-    
-    Args:
-        references: lista di stringhe (step 0 source)
-        candidates: lista di stringhe (step > 0)
-        lang: codice lingua
-        model: modello BERT
-    
-    Returns:
-        tuple(P, R, F1) come tensori
-    """
-    try:
-        P, R, F1 = compute_bert_score(
-            candidates,
-            references,
-            lang=lang,
-            model_type=model,
-            num_layers=17,  # RoBERTa default layer
-            batch_size=8,
-            device='cpu'  # CPU mode
+    idx = {}
+    for _, row in chains_df.iterrows():
+        key = (
+            row["qid"], row["group"], row["instruction_type"],
+            int(row["run"]), int(row["step"]),
         )
-        return P, R, F1
-    except Exception as e:
-        print(f"⚠️  Errore BERTScore: {e}")
-        return None, None, None
+        idx[key] = row["text"]
+    return idx
+
+
+def compute_bertscore_pairs(candidates, references):
+    """Run BERTScore on aligned (candidate, reference) lists. Returns (P, R, F1) lists."""
+    if not candidates:
+        return [], [], []
+    P, R, F1 = compute_bert_score(
+        candidates,
+        references,
+        lang=BERT_LANG,
+        model_type=BERT_MODEL,
+        num_layers=BERT_NUM_LAYERS,
+        batch_size=BERT_BATCH_SIZE,
+        device=DEVICE,
+        verbose=False,
+    )
+    return P.tolist(), R.tolist(), F1.tolist()
+
 
 def main():
     print("=" * 70)
-    print("AGGIUNTA BERTScore A FactScore")
+    print(f"BERTScore (Baseline + Consecutive)  —  device={DEVICE}")
     print("=" * 70)
-    print()
-    
-    # Carica dati
-    print("📂 Caricamento dati...")
+
     if not FACTSCORE_PATH.exists():
-        print(f"❌ File non trovato: {FACTSCORE_PATH}")
-        print("   Esegui prima factscore_eval.py")
-        return
-    
-    factscore_df = pd.read_csv(FACTSCORE_PATH)
-    all_texts = load_candidate_texts(CSV_PATH)
-    sources = load_source_texts(CSV_PATH)
-    
-    print(f"   ✓ FactScore: {len(factscore_df)} righe")
-    print(f"   ✓ Source texts: {len(sources)} chain uniche")
-    print(f"   ✓ All texts: {len(all_texts)} righe")
-    print()
-    
-    # Join per recuperare i testi candidati dal CSV originale
-    merged = factscore_df.copy()
-    merged['text'] = merged.apply(
-        lambda row: all_texts[
-            (all_texts['qid'] == row['qid']) &
-            (all_texts['group'] == row['group']) &
-            (all_texts['instruction_type'] == row['instruction_type']) &
-            (all_texts['run'] == row['run']) &
-            (all_texts['step'] == row['step'])
-        ]['text'].iloc[0] if len(all_texts[
-            (all_texts['qid'] == row['qid']) &
-            (all_texts['group'] == row['group']) &
-            (all_texts['instruction_type'] == row['instruction_type']) &
-            (all_texts['run'] == row['run']) &
-            (all_texts['step'] == row['step'])
-        ]) > 0 else None,
-        axis=1
-    )
-    
-    # Calcola BERTScore
-    print("🔄 Calcolo BERTScore...")
-    print(f"   Modello: roberta-large (layer 17)")
-    print(f"   Lingua: italiano")
-    print()
-    
-    bert_p, bert_r, bert_f1 = [], [], []
-    
-    t_start = time.time()
-    for i, (idx, row) in enumerate(merged.iterrows(), start=1):
-        chain_id = (row["qid"], row["group"], row["instruction_type"], row["run"])
-        source = sources.get(chain_id)
-        candidate = row["text"]
-        
-        if pd.isna(source) or pd.isna(candidate):
-            bert_p.append(None)
-            bert_r.append(None)
-            bert_f1.append(None)
-            continue
-        
-        # BERTScore per questa coppia
-        P, R, F1 = compute_bert_score(
-            [candidate],
-            [source],
-            lang='en',
-            model_type='roberta-large',
-            num_layers=17,
-            batch_size=1,
-            device='cpu'
+        raise FileNotFoundError(
+            f"FactScore CSV not found: {FACTSCORE_PATH}\nRun factscore_eval.py first."
         )
-        
-        if P is not None:
-            bert_p.append(P.item())
-            bert_r.append(R.item())
-            bert_f1.append(F1.item())
+    if not CSV_PATH.exists():
+        raise FileNotFoundError(f"Chains CSV not found: {CSV_PATH}")
+
+    print(f"\nLoading chains: {CSV_PATH}")
+    chains_df = pd.read_csv(CSV_PATH)
+    step_index = build_step_index(chains_df)
+    print(f"  {len(step_index)} (chain, step) entries indexed")
+
+    print(f"Loading FactScore: {FACTSCORE_PATH}")
+    factscore_df = pd.read_csv(FACTSCORE_PATH)
+    print(f"  {len(factscore_df)} rows to score")
+
+    candidates: list = []
+    refs_baseline: list = []
+    refs_consecutive: list = []
+    has_consecutive: list = []
+    skipped_baseline = 0
+    skipped_consecutive = 0
+
+    for _, row in factscore_df.iterrows():
+        qid, group, itype, run, step = (
+            row["qid"], row["group"], row["instruction_type"],
+            int(row["run"]), int(row["step"]),
+        )
+        cand = step_index.get((qid, group, itype, run, step))
+        ref_b = step_index.get((qid, group, itype, run, 0))
+        ref_c = step_index.get((qid, group, itype, run, step - 1))
+
+        if cand is None or ref_b is None:
+            candidates.append("")
+            refs_baseline.append("")
+            refs_consecutive.append("")
+            has_consecutive.append(False)
+            skipped_baseline += 1
+            continue
+
+        candidates.append(cand)
+        refs_baseline.append(ref_b)
+
+        if ref_c is not None and step >= 1:
+            refs_consecutive.append(ref_c)
+            has_consecutive.append(True)
         else:
-            bert_p.append(None)
-            bert_r.append(None)
-            bert_f1.append(None)
-        
-        if i % 5 == 0:
-            elapsed = time.time() - t_start
-            eta = (elapsed / i) * (len(merged) - i)
-            print(f"   [{i}/{len(merged)}] {row['group']}/{row['instruction_type']}/step{row['step']} "
-                  f"| F1={bert_f1[-1]:.4f} | ETA: {eta:.0f}s")
-    
-    print()
-    print(f"✓ Tempo totale: {(time.time() - t_start):.1f}s")
-    print()
-    
-    # Aggiungi colonne BERTScore
-    factscore_df["bert_precision"] = bert_p
-    factscore_df["bert_recall"] = bert_r
-    factscore_df["bert_f1"] = bert_f1
-    
-    # Salva
-    factscore_df.to_csv(OUTPUT_PATH, index=False)
-    print(f"✅ Salvato: {OUTPUT_PATH}")
-    print()
-    
-    # Statistiche
+            refs_consecutive.append("")
+            has_consecutive.append(False)
+            skipped_consecutive += 1
+
+    valid_baseline_idx = [i for i, c in enumerate(candidates) if c and refs_baseline[i]]
+    valid_consec_idx = [i for i, _ in enumerate(candidates) if has_consecutive[i] and candidates[i]]
+
+    print(f"\nBaseline pairs:    {len(valid_baseline_idx)} (skipped: {skipped_baseline})")
+    print(f"Consecutive pairs: {len(valid_consec_idx)} (skipped: {skipped_consecutive})")
+    print(f"BERTScore model: {BERT_MODEL} (layer {BERT_NUM_LAYERS}), batch={BERT_BATCH_SIZE}")
+
+    # Baseline mode: sim(E_t, E_0)
+    print("\nComputing Baseline BERTScore...")
+    t0 = time.time()
+    cand_b = [candidates[i] for i in valid_baseline_idx]
+    ref_b = [refs_baseline[i] for i in valid_baseline_idx]
+    P_b, R_b, F1_b = compute_bertscore_pairs(cand_b, ref_b)
+    print(f"  done in {time.time() - t0:.1f}s")
+
+    # Consecutive mode: sim(E_t, E_{t-1})
+    print("Computing Consecutive BERTScore...")
+    t0 = time.time()
+    cand_c = [candidates[i] for i in valid_consec_idx]
+    ref_c = [refs_consecutive[i] for i in valid_consec_idx]
+    P_c, R_c, F1_c = compute_bertscore_pairs(cand_c, ref_c)
+    print(f"  done in {time.time() - t0:.1f}s")
+
+    bp_b = [None] * len(factscore_df)
+    br_b = [None] * len(factscore_df)
+    bf_b = [None] * len(factscore_df)
+    bp_c = [None] * len(factscore_df)
+    br_c = [None] * len(factscore_df)
+    bf_c = [None] * len(factscore_df)
+
+    for k, i in enumerate(valid_baseline_idx):
+        bp_b[i], br_b[i], bf_b[i] = P_b[k], R_b[k], F1_b[k]
+    for k, i in enumerate(valid_consec_idx):
+        bp_c[i], br_c[i], bf_c[i] = P_c[k], R_c[k], F1_c[k]
+
+    out = factscore_df.copy()
+    out["bert_precision_baseline"] = bp_b
+    out["bert_recall_baseline"] = br_b
+    out["bert_f1_baseline"] = bf_b
+    out["bert_precision_consecutive"] = bp_c
+    out["bert_recall_consecutive"] = br_c
+    out["bert_f1_consecutive"] = bf_c
+
+    out.to_csv(OUTPUT_PATH, index=False)
+    print(f"\nSaved: {OUTPUT_PATH}")
+
+    print("\n" + "=" * 70)
+    print("BERTScore F1 — mean per (group, instruction_type, step)")
     print("=" * 70)
-    print("STATISTICHE BERTScore")
+    pivot_b = out.pivot_table(
+        index=["group", "instruction_type"],
+        columns="step",
+        values="bert_f1_baseline",
+        aggfunc="mean",
+    )
+    print("\nBaseline (vs E_0):")
+    print(pivot_b.round(3))
+
+    pivot_c = out.pivot_table(
+        index=["group", "instruction_type"],
+        columns="step",
+        values="bert_f1_consecutive",
+        aggfunc="mean",
+    )
+    print("\nConsecutive (vs E_{t-1}):")
+    print(pivot_c.round(3))
+
+    print("\n" + "=" * 70)
+    print("Pearson correlations")
     print("=" * 70)
-    print()
-    print(factscore_df[["group", "instruction_type", "bert_f1"]].groupby(
-        ["group", "instruction_type"]
-    )["bert_f1"].agg(["mean", "std", "min", "max"]).round(4))
-    print()
-    
-    # Correlazione FactScore vs BERTScore
-    print("=" * 70)
-    print("CORRELAZIONE FactScore vs BERTScore")
-    print("=" * 70)
-    print()
-    
-    valid_mask = factscore_df["bert_f1"].notna() & factscore_df["factscore"].notna()
-    if valid_mask.sum() > 0:
-        corr = factscore_df[valid_mask][["factscore", "bert_f1"]].corr()
-        print(f"Pearson correlation: {corr.iloc[0, 1]:.4f}")
-    else:
-        print("Nessun dato valido per calcolare correlazione")
-    print()
+    valid = out["bert_f1_baseline"].notna() & out["init_score"].notna()
+    if valid.sum() > 0:
+        r = out[valid][["init_score", "bert_f1_baseline"]].corr().iloc[0, 1]
+        print(f"  FactScore vs BERTScore (Baseline):    r = {r:.4f}")
+    valid = out["bert_f1_consecutive"].notna() & out["init_score"].notna()
+    if valid.sum() > 0:
+        r = out[valid][["init_score", "bert_f1_consecutive"]].corr().iloc[0, 1]
+        print(f"  FactScore vs BERTScore (Consecutive): r = {r:.4f}")
+
 
 if __name__ == "__main__":
     main()

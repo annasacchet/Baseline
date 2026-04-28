@@ -23,11 +23,19 @@ OUTPUT_PDF = REPO_ROOT / "results" / "analisi_factscore_bertscore.pdf"
 def prepare_data():
     """Carica e prepara i dati"""
     df = pd.read_csv(CSV_PATH)
-    
+
+    # Legacy CSVs (pre-Consecutive mode) used unsuffixed column names.
+    # Map them onto the current Baseline-mode names so older data still loads.
+    df = df.rename(columns={
+        "bert_precision": "bert_precision_baseline",
+        "bert_recall": "bert_recall_baseline",
+        "bert_f1": "bert_f1_baseline",
+    })
+
     # Calcola percentuale fatti supportati
     df['pct_supported'] = (df['n_supported'] / df['n_facts'] * 100).round(1)
     df['pct_contradicted'] = (df['n_contradicted'] / df['n_facts'] * 100).round(1)
-    
+
     return df
 
 def plot_scatter_correlation(df, ax):
@@ -42,7 +50,7 @@ def plot_scatter_correlation(df, ax):
             
             ax.scatter(
                 subset['factscore'],
-                subset['bert_f1'],
+                subset['bert_f1_baseline'],
                 s=150,
                 alpha=0.7,
                 color=colors[group],
@@ -60,7 +68,7 @@ def plot_scatter_correlation(df, ax):
     ax.plot(lims, lims, 'k--', alpha=0.3, linewidth=2, label='Perfect correlation')
     
     # Pearson correlation
-    corr = df[['factscore', 'bert_f1']].corr().iloc[0, 1]
+    corr = df[['factscore', 'bert_f1_baseline']].corr().iloc[0, 1]
     
     ax.set_xlabel('FactScore (Correttezza Fattuale)', fontsize=12, fontweight='bold')
     ax.set_ylabel('BERTScore F1 (Similarità Semantica)', fontsize=12, fontweight='bold')
@@ -86,7 +94,7 @@ def plot_evolution_by_instruction(df, ax):
         )
         ax.plot(
             subset['step'],
-            subset['bert_f1'],
+            subset['bert_f1_baseline'],
             marker='s',
             linewidth=2.5,
             markersize=8,
@@ -124,7 +132,7 @@ def plot_boxplot_by_type(df, ax):
         pos += 1
         
         # BERTScore
-        data_to_plot.append(subset['bert_f1'].values)
+        data_to_plot.append(subset['bert_f1_baseline'].values)
         labels.append(f"{instr_type}\n(BS)")
         positions.append(pos)
         colors_list.append(color_map['BERTScore'])
@@ -186,8 +194,8 @@ def create_summary_table(df, fig):
             instr_type,
             f"{subset['factscore'].mean():.4f}",
             f"{subset['factscore'].std():.4f}",
-            f"{subset['bert_f1'].mean():.4f}",
-            f"{subset['bert_f1'].std():.4f}",
+            f"{subset['bert_f1_baseline'].mean():.4f}",
+            f"{subset['bert_f1_baseline'].std():.4f}",
             f"{subset['pct_supported'].mean():.1f}%",
             f"{subset['pct_contradicted'].mean():.1f}%",
         ])
@@ -267,7 +275,7 @@ def main():
         subset = df[df['instruction_type'] == instr_type]
         print(f"{instr_type.upper():15s} | n={len(subset)}")
         print(f"  FactScore    : {subset['factscore'].mean():.4f} ± {subset['factscore'].std():.4f}  (range: {subset['factscore'].min():.4f} - {subset['factscore'].max():.4f})")
-        print(f"  BERTScore    : {subset['bert_f1'].mean():.4f} ± {subset['bert_f1'].std():.4f}  (range: {subset['bert_f1'].min():.4f} - {subset['bert_f1'].max():.4f})")
+        print(f"  BERTScore    : {subset['bert_f1_baseline'].mean():.4f} ± {subset['bert_f1_baseline'].std():.4f}  (range: {subset['bert_f1_baseline'].min():.4f} - {subset['bert_f1_baseline'].max():.4f})")
         print(f"  Supportati   : {subset['pct_supported'].mean():.1f}%")
         print(f"  Contraddetti : {subset['pct_contradicted'].mean():.1f}%")
         print()

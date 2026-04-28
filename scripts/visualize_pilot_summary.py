@@ -25,6 +25,15 @@ OUT = REPO / "slides" / "img"
 OUT.mkdir(parents=True, exist_ok=True)
 
 FS_BS = pd.read_csv(RESULTS / "rewriting_chains32b_factscore_bertscore.csv")
+
+# Legacy CSVs (pre-Consecutive mode) used unsuffixed column names.
+# Map them onto the current Baseline-mode names so older data still loads.
+FS_BS = FS_BS.rename(columns={
+    "bert_precision": "bert_precision_baseline",
+    "bert_recall": "bert_recall_baseline",
+    "bert_f1": "bert_f1_baseline",
+})
+
 TOK = pd.read_csv(RESULTS / "rewriting_chains32b_token_counts.csv")
 AF1_PATH = RESULTS / "rewriting_chains32b_answer_f1 (1).csv"
 AF1 = pd.read_csv(AF1_PATH) if AF1_PATH.exists() else None
@@ -81,7 +90,7 @@ ax.legend(fontsize=10, loc="lower left")
 ax = axes[0, 1]
 for itype in ["elaborate", "shorten", "formality", "paraphrase"]:
     sub = FS_BS[FS_BS["instruction_type"] == itype].sort_values("step")
-    ax.plot(sub["step"], sub["bert_f1"], marker=MARKERS[itype], markersize=10,
+    ax.plot(sub["step"], sub["bert_f1_baseline"], marker=MARKERS[itype], markersize=10,
             linewidth=2.5, color=COLORS[itype],
             label=f"{itype} ({GROUP_OF[itype]})")
 ax.set_xticks([1, 2, 3])
@@ -299,7 +308,7 @@ fig, ax = plt.subplots(figsize=(11, 8.5))
 for itype in ["elaborate", "shorten", "formality", "paraphrase"]:
     sub = FS_BS[FS_BS["instruction_type"] == itype].sort_values("step")
     fs = sub["factscore"].values
-    bs = sub["bert_f1"].values
+    bs = sub["bert_f1_baseline"].values
     # linea con frecce
     for i in range(len(fs) - 1):
         ax.annotate(
@@ -317,7 +326,7 @@ for itype in ["elaborate", "shorten", "formality", "paraphrase"]:
                     fontsize=10, fontweight="bold")
 
 # correlation
-corr = FS_BS[["factscore", "bert_f1"]].corr().iloc[0, 1]
+corr = FS_BS[["factscore", "bert_f1_baseline"]].corr().iloc[0, 1]
 ax.set_xlabel("FactScore (source-grounded)", fontsize=14)
 ax.set_ylabel("BERTScore F1", fontsize=14)
 ax.set_title(
