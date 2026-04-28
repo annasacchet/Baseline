@@ -334,7 +334,7 @@ def main():
     n_to_do = total_chains - len(done)
     t_start = time.time()
 
-    for q in questions:
+    for q in questions[:1]:
         qid = q["id"]
         question_text = q["question"]
         E0 = build_E0(q, only_supporting=args.only_supporting)
