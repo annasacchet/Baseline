@@ -271,8 +271,8 @@ def main():
         help="Run only on the 2-hop pilot question (matches the existing pilot CSV).",
     )
     parser.add_argument(
-        "--all-paragraphs", action="store_true",
-        help="Use all 20 paragraphs as E0 (matches the pilot). Default: only supporting paragraphs.",
+        "--only-supporting", action="store_true",
+        help="Use only supporting paragraphs as E0. Default: all 20 paragraphs.",
     )
     args = parser.parse_args()
 
@@ -337,7 +337,7 @@ def main():
     for q in questions:
         qid = q["id"]
         question_text = q["question"]
-        E0 = build_E0(q, only_supporting=not args.all_paragraphs)
+        E0 = build_E0(q, only_supporting=args.only_supporting)
 
         for (group, instruction_type), pool in ALL_INSTRUCTIONS.items():
             for run, instruction in enumerate(pool):
