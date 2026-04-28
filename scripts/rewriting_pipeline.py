@@ -309,7 +309,7 @@ def main():
             sys.exit(1)
         print(f"\n*** SMOKE TEST: 1 question (pilot 2-hop) ***", flush=True)
     else:
-        questions = balance_by_hop(raw, args.n_per_hop, args.seed)
+        questions = balance_by_hop(raw, 1, args.seed)
         print(f"\nUsing {len(questions)} questions, balanced across hop counts", flush=True)
 
     # Resume support
