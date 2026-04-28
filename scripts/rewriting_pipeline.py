@@ -309,7 +309,7 @@ def main():
             sys.exit(1)
         print(f"\n*** SMOKE TEST: 1 question (pilot 2-hop) ***", flush=True)
     else:
-        questions = balance_by_hop(raw, 1, args.seed)
+        questions = balance_by_hop(raw, 5, args.seed)
         print(f"\nUsing {len(questions)} questions, balanced across hop counts", flush=True)
 
     # Resume support
@@ -334,7 +334,7 @@ def main():
     n_to_do = total_chains - len(done)
     t_start = time.time()
 
-    for q in questions[:1]:
+    for q in questions:
         qid = q["id"]
         question_text = q["question"]
         E0 = build_E0(q, only_supporting=args.only_supporting)
