@@ -22,7 +22,7 @@ from openai import OpenAI
 from rank_bm25 import BM25Okapi
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_9q.csv"
+CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_15q.csv"
 DEMOS_PATH = Path(os.path.expanduser("~/.cache/factscore/demos/demons.json"))
 JUDGE_MODEL = "gpt-4o-mini"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]

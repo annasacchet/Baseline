@@ -1,24 +1,39 @@
 """
-OpenFActScore-style evaluation (source faithfulness variant) — fully open backend.
+OpenFActScore-style evaluation (source-faithfulness variant) — fully open backend.
 
-Implements the same two-stage pipeline as factscore_eval.py (Min et al. 2023)
-but replaces the closed-source GPT-4o-mini judge with two HuggingFace models,
-following Lage & Ostermann (2025) — OpenFActScore. Models are aligned with the
-official repo (https://github.com/lflage/OpenFActScore):
-  - AFG (Atomic Fact Generation): allenai/OLMo-2-1124-7B-SFT
-  - AFV (Atomic Fact Validation): google/gemma-3-4b-it
+Faithful re-implementation of the OpenFActScore pipeline of Lage & Ostermann
+(2025, arXiv:2507.05965) following the official repository
+https://github.com/lflage/OpenFActScore. Two stages:
 
-Verification source = E_0 of the chain (source faithfulness, not Wikipedia).
-This matches the existing factscore_eval.py setup and is the variant relevant
-to RQ3 (factuality preservation across iterative rewriting).
+  AFG (Atomic Fact Generation): allenai/OLMo-2-1124-7B-SFT (default).
+  AFV (Atomic Fact Validation): google/gemma-3-4b-it (default).
 
-Output schema mirrors factscore_eval.py so downstream visualization scripts
-work without changes:
+The only deliberate divergence from the upstream pipeline is the knowledge
+source for AFV: instead of Wikipedia retrieval over a topic entity, we use
+E_0 (the chain's step-0 text) as the context, treating the topic field as the
+chain's `qid`. This is the source-faithfulness variant relevant to RQ3
+(factuality preservation across iterative rewriting).
+
+Everything else mirrors the upstream code:
+  - AFG few-shot: k=1 BM25-retrieved demo only (no fixed 7-demos block; that
+    block is upstream-applied only when AFG model == "InstructGPT").
+  - AFG chat formatting: demo block goes into the *system* message, the final
+    "Please breakdown the following sentence …: <sent>" goes into the *user*
+    message (as the upstream HFmodel.chat_formatter does via rsplit).
+  - AFG instruction wording: "Please breakdown" (one word), matching upstream.
+  - AFV prompt: "Title: ... / Text: ..." block + "Input: <atom> True or False?
+    \\nAnswer:" (no square brackets).
+  - AFV parsing: prefer first true/false token; fall back to the upstream
+    keyword heuristic ("not", "cannot", "unknown", "information").
+
+Output schema (chain-CSV friendly):
   qid, group, instruction_type, run, step, instruction_used,
   n_facts, n_supported, n_not_supported, n_contradicted,
   init_score, factscore
 
 Plus a sidecar `_details.csv` with one row per (chain, step, fact).
+The CONTRADICTED column is kept for compatibility with factscore_eval.py but
+is always 0 here (OpenFActScore is binary True/False).
 """
 
 import argparse
@@ -45,7 +60,6 @@ CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 AFG_MODEL_ID = "allenai/OLMo-2-1124-7B-SFT"
 AFV_MODEL_ID = "google/gemma-3-4b-it"
 
-N_FIXED_DEMOS = 7
 K_BM25 = 1
 AFG_MAX_NEW_TOKENS = 256
 AFV_MAX_NEW_TOKENS = 8
@@ -55,7 +69,7 @@ nltk.download("punkt_tab", quiet=True)
 
 
 # ---------------------------------------------------------------------------
-# Sentence splitting (same as factscore_eval.py)
+# Sentence splitting (verbatim from upstream factscore/atomic_facts.py)
 # ---------------------------------------------------------------------------
 
 def detect_initials(text):
@@ -94,43 +108,45 @@ def sentences_from_text(text):
 
 
 # ---------------------------------------------------------------------------
-# Atomic Fact Generation (AFG) — OLMo-2 7B Instruct
+# Atomic Fact Generation (AFG)
 # ---------------------------------------------------------------------------
 
-# System prompt from OpenFActScore (Lage & Ostermann 2025), appendix A.1.
-# We embed the BM25-selected demo into the system prompt as the paper does.
-AFG_SYSTEM_PROMPT_TEMPLATE = """You are an annotator that breaks down sentences into independent facts, short statements that each contain one piece of information contained in the given sentence. In the next paragraphs you have examples of sentences broken down in atomic facts. You have to complete the example given by the user. Do not add new entities, do not deviate from the subject of the sentence given by the user, do not hallucinate, do not repeat facts in the system prompt. List the sentences using "- " as bullet.
-
-{demos}"""
-
-AFG_USER_PROMPT_TEMPLATE = "Please break down the following sentence into independent facts: {sentence}"
+# Upstream system instruction (factscore/HFmodel.py::chat_formatter, mode="afg").
+# Verbatim — the demo block is appended to it, then the final user line is the
+# "Please breakdown … <sentence>" prompt.
+AFG_SYSTEM_INSTRUCT = (
+    "\n                You are an annotator that breaks down sentences into "
+    "independent facts, short statements that each contain one piece of "
+    "information contained in the given sentence.\n"
+    "                in the next paragraphs you have examples of sentences "
+    "broken down in atomic facts. \n"
+    "                You have to complete the example given by the user.\n"
+    "                Do not add new entities, do not deviate from the subject "
+    "of the sentence given by the user, do not hallucinate, do not repeat "
+    "facts in the system prompt.\n"
+    "                List the sentences using -\n                "
+)
 
 
 def build_afg_demos_block(demons, demon_keys, bm25, sentence):
-    """Construct the demonstration block (fixed demos + 1 BM25-retrieved demo)."""
-    parts = []
-    for i in range(N_FIXED_DEMOS):
-        key = demon_keys[i]
-        parts.append(f"Please break down the following sentence into independent facts: {key}")
-        for fact in demons[key]:
-            parts.append(f"- {fact}")
-        parts.append("")
-
+    """k=1 BM25 demo, formatted exactly like upstream `get_init_atomic_facts_from_sentence`."""
     tokenized_query = sentence.split(" ")
     top_matches = bm25.get_top_n(tokenized_query, demon_keys, K_BM25)
+    parts = []
     for match in top_matches:
-        parts.append(f"Please break down the following sentence into independent facts: {match}")
+        parts.append(f"Please breakdown the following sentence into independent facts: {match}")
         for fact in demons[match]:
             parts.append(f"- {fact}")
         parts.append("")
-
-    return "\n".join(parts)
+    return "\n".join(parts).rstrip("\n")
 
 
 def parse_atomic_facts(generated_text):
-    """Pull out '- fact' lines until the model stops emitting bullets."""
+    """Pull '- fact' lines from the model output, mirroring upstream `text_to_sentences`."""
+    text = generated_text.replace("<|eot_id|>", "")
+    text = re.sub(r"-\s*\n", "", text)
     facts = []
-    for line in generated_text.split("\n"):
+    for line in text.split("\n"):
         line = line.strip()
         if line.startswith("- "):
             fact = line[2:].strip()
@@ -142,42 +158,49 @@ def parse_atomic_facts(generated_text):
             if facts:
                 break
         else:
-            # non-bullet, non-empty: stop here (model has moved on to new content)
             if facts:
                 break
     return facts
 
 
 # ---------------------------------------------------------------------------
-# Atomic Fact Validation (AFV) — Gemma 3 12B IT
+# Atomic Fact Validation (AFV)
 # ---------------------------------------------------------------------------
 
-# Adapted from the original FActScore prompt (Min et al. 2023, §2.3) and
-# OpenFActScore appendix A.2, but the "knowledge source" is replaced by the
-# chain's E_0 — that's the source-faithfulness variant.
-AFV_SYSTEM_PROMPT = (
-    "You are an annotator that verifies the factuality of a sentence according "
-    "to a given source text. You answer only True or False and provide no "
-    "further explanations."
+# Upstream system instruction (factscore/HFmodel.py::chat_formatter, mode="afv").
+AFV_SYSTEM_INSTRUCT = (
+    "You are an annotator that verifies the factuality of a sentence "
+    "according to a given source text. You answer only True or False and "
+    "provides no further explanations."
 )
 
-AFV_USER_PROMPT_TEMPLATE = """Answer the question about {topic} based on the given context.
 
-[Title: {topic}]
-[Text: {source}]
-
-Input: {claim} True or False?
-Answer:"""
+def build_afv_user_prompt(topic, source, claim):
+    """Reproduce upstream `_get_score` prompt construction with E_0 as the only passage."""
+    definition = f"Answer the question about {topic} based on the given context.\n\n"
+    context = f"Title: {topic}\nText: {source.strip()}\n\n"
+    definition += context.strip()
+    if definition[-1] not in string.punctuation:
+        definition += "."
+    return f"{definition.strip()}\n\nInput: {claim.strip()} True or False?\nAnswer:"
 
 
 def parse_afv_label(generated_text):
-    """Look for the first True/False token in the model output."""
-    text = generated_text.strip()
-    # match whole word, case-insensitive
-    m = re.search(r"\b(true|false)\b", text, re.IGNORECASE)
-    if not m:
-        return "NOT_SUPPORTED"
-    return "SUPPORTED" if m.group(1).lower() == "true" else "NOT_SUPPORTED"
+    """Upstream parsing: prefer first true/false token, then keyword fallback."""
+    answer = generated_text.lower()
+    if "true" in answer or "false" in answer:
+        if "true" in answer and "false" not in answer:
+            is_supported = True
+        elif "false" in answer and "true" not in answer:
+            is_supported = False
+        else:
+            is_supported = answer.index("true") > answer.index("false")
+    else:
+        stripped = answer.translate(str.maketrans("", "", string.punctuation)).split()
+        is_supported = all(
+            kw not in stripped for kw in ("not", "cannot", "unknown", "information")
+        )
+    return "SUPPORTED" if is_supported else "NOT_SUPPORTED"
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +223,11 @@ class HFChatModel:
             trust_remote_code=True,
         )
         self.model.eval()
-        print(f"[{role_label}] loaded in {time.time()-t0:.1f}s · device map: {getattr(self.model, 'hf_device_map', 'n/a')}", flush=True)
+        print(
+            f"[{role_label}] loaded in {time.time()-t0:.1f}s · device map: "
+            f"{getattr(self.model, 'hf_device_map', 'n/a')}",
+            flush=True,
+        )
 
     @torch.no_grad()
     def generate(self, system_prompt, user_prompt, max_new_tokens):
@@ -214,7 +241,6 @@ class HFChatModel:
                 messages, tokenize=False, add_generation_prompt=True
             )
         else:
-            # fallback: simple concatenation
             sys_block = f"{system_prompt}\n\n" if system_prompt else ""
             text = f"{sys_block}{user_prompt}"
 
@@ -237,11 +263,11 @@ def extract_atomic_facts(afg_model, text, demons, demon_keys, bm25):
     sentences = sentences_from_text(text)
     all_facts = []
     for sent in sentences:
-        if sent.lower().startswith(("sure", "here are", "please", "i hope")):
-            continue
         demos_block = build_afg_demos_block(demons, demon_keys, bm25, sent)
-        system_prompt = AFG_SYSTEM_PROMPT_TEMPLATE.format(demos=demos_block)
-        user_prompt = AFG_USER_PROMPT_TEMPLATE.format(sentence=sent)
+        # Match upstream `chat_formatter` for AFG: demos in system, only the
+        # final "Please breakdown … <sentence>" line in user.
+        system_prompt = f"{AFG_SYSTEM_INSTRUCT}\n{demos_block}"
+        user_prompt = f"Please breakdown the following sentence into independent facts: {sent}"
         out = afg_model.generate(system_prompt, user_prompt, AFG_MAX_NEW_TOKENS)
         all_facts.extend(parse_atomic_facts(out))
     return all_facts
@@ -250,10 +276,8 @@ def extract_atomic_facts(afg_model, text, demons, demon_keys, bm25):
 def validate_facts(afv_model, source, facts, topic):
     results = []
     for fact in facts:
-        user_prompt = AFV_USER_PROMPT_TEMPLATE.format(
-            topic=topic, source=source.strip(), claim=fact,
-        )
-        out = afv_model.generate(AFV_SYSTEM_PROMPT, user_prompt, AFV_MAX_NEW_TOKENS)
+        user_prompt = build_afv_user_prompt(topic, source, fact)
+        out = afv_model.generate(AFV_SYSTEM_INSTRUCT, user_prompt, AFV_MAX_NEW_TOKENS)
         label = parse_afv_label(out)
         results.append({"fact": fact, "label": label, "raw": out})
     return results
@@ -273,10 +297,7 @@ def compute_factscore(afg_model, afv_model, source, generated, topic, demons, de
         }
 
     verified = validate_facts(afv_model, source, facts, topic)
-    counts = {"SUPPORTED": 0, "NOT_SUPPORTED": 0, "CONTRADICTED": 0}
-    # Note: OpenFActScore uses binary True/False → no CONTRADICTED label
-    # We keep the column for output-schema compatibility with factscore_eval.py
-    # but it will always be 0 for this backend.
+    counts = {"SUPPORTED": 0, "NOT_SUPPORTED": 0}
     for v in verified:
         counts[v["label"]] = counts.get(v["label"], 0) + 1
 
@@ -288,7 +309,8 @@ def compute_factscore(afg_model, afv_model, source, generated, topic, demons, de
         "n_facts": len(facts),
         "n_supported": counts["SUPPORTED"],
         "n_not_supported": counts["NOT_SUPPORTED"],
-        "n_contradicted": counts.get("CONTRADICTED", 0),
+        # OpenFActScore is binary; column kept for schema parity with factscore_eval.py
+        "n_contradicted": 0,
         "init_score": init_score,
         "factscore": final_score,
         "verified_facts": verified,
@@ -306,6 +328,7 @@ def main():
     parser.add_argument("--afg-model", default=AFG_MODEL_ID, help=f"HF model id for AFG (default: {AFG_MODEL_ID})")
     parser.add_argument("--afv-model", default=AFV_MODEL_ID, help=f"HF model id for AFV (default: {AFV_MODEL_ID})")
     parser.add_argument("--limit", type=int, default=None, help="Smoke-test: only score the first N (step>0) rows.")
+    parser.add_argument("--qid", action="append", default=None, help="Restrict evaluation to one or more qid values (repeatable).")
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -338,6 +361,11 @@ def main():
     print(f"Loaded {len(df)} rows · {len(sources)} chains (step=0 sources)")
 
     to_eval = df[df["step"] > 0].copy()
+    if args.qid:
+        to_eval = to_eval[to_eval["qid"].isin(args.qid)]
+        if to_eval.empty:
+            raise RuntimeError(f"No rows match --qid {args.qid}")
+        print(f"*** Filtering to qid in {args.qid}: {len(to_eval)} rows ***")
     if args.limit:
         to_eval = to_eval.head(args.limit)
         print(f"*** SMOKE TEST: limiting to first {args.limit} rows ***")
@@ -347,7 +375,6 @@ def main():
     print(f"Output scores:  {out_scores_path}")
     print(f"Output details: {out_details_path}")
 
-    # Resume support: skip rows already in the output CSV
     done_keys = set()
     if out_scores_path.exists():
         prev = pd.read_csv(out_scores_path)
