@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains_15q.csv"
-BERT_CSV = REPO_ROOT / "results" / "rewriting_chains_15q_bertscore.csv"
-OUT_PATH = REPO_ROOT / "results" / "length_x_bertscore_15q.pdf"
+CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
+BERT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
+OUT_PATH = REPO_ROOT / "results" / "plots" / "15q" / "length_x_bertscore_15q.pdf"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 

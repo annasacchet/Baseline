@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CSV_PATH = REPO_ROOT / "results" / "rewriting_chains_15q_bertscore.csv"
-OUT_BY_INSTR = REPO_ROOT / "results" / "bertscore_15q_by_instruction.pdf"
-OUT_SUMMARY = REPO_ROOT / "results" / "bertscore_15q_summary.pdf"
+CSV_PATH = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
+OUT_BY_INSTR = REPO_ROOT / "results" / "plots" / "15q" / "bertscore_15q_by_instruction.pdf"
+OUT_SUMMARY = REPO_ROOT / "results" / "plots" / "15q" / "bertscore_15q_summary.pdf"
 
 COLORS = {
     "elaborate": "#e74c3c",

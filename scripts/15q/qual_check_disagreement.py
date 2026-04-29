@@ -19,10 +19,10 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS = REPO_ROOT / "results"
 
-OFS_PATH = RESULTS / "rewriting_chains_15q_openfactscore.csv"
-OFS_DETAILS_PATH = RESULTS / "rewriting_chains_15q_openfactscore_details.csv"
-FS_PATH = RESULTS / "rewriting_chains32b_factscore.csv"
-SOURCE_PATH = RESULTS / "rewriting_chains_15q.csv"
+OFS_PATH = RESULTS / "15q" / "rewriting_chains_15q_openfactscore.csv"
+OFS_DETAILS_PATH = RESULTS / "15q" / "rewriting_chains_15q_openfactscore_details.csv"
+FS_PATH = RESULTS / "archive" / "rewriting_chains32b_factscore.csv"
+SOURCE_PATH = RESULTS / "15q" / "rewriting_chains_15q.csv"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run", "step"]
 

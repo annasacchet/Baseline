@@ -40,9 +40,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains_15q.csv"
+CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
 MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
-OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains_15q_answer_f1.csv"
+OUTPUT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_answer_f1.csv"
 
 QA_MODEL_ID = "allenai/Olmo-3.1-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]

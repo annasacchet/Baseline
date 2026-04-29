@@ -20,12 +20,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CHAINS_CSV = REPO_ROOT / "results" / "rewriting_chains_15q.csv"
-BERT_CSV = REPO_ROOT / "results" / "rewriting_chains_15q_bertscore.csv"
+CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
+BERT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
 
-OUT_LENGTH = REPO_ROOT / "results" / "by_hop_15q_length.pdf"
-OUT_BERT = REPO_ROOT / "results" / "by_hop_15q_bertscore.pdf"
-OUT_SUMMARY = REPO_ROOT / "results" / "by_hop_15q_summary.pdf"
+OUT_LENGTH = REPO_ROOT / "results" / "plots" / "15q" / "by_hop_15q_length.pdf"
+OUT_BERT = REPO_ROOT / "results" / "plots" / "15q" / "by_hop_15q_bertscore.pdf"
+OUT_SUMMARY = REPO_ROOT / "results" / "plots" / "15q" / "by_hop_15q_summary.pdf"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 INSTRUCTIONS = ["elaborate", "shorten", "formality", "paraphrase"]

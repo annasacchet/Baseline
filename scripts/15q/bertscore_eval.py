@@ -25,8 +25,8 @@ from bert_score import score as compute_bert_score
 from tqdm import tqdm
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_CSV = REPO_ROOT / "results" / "rewriting_chains_15q.csv"
-DEFAULT_OUT = REPO_ROOT / "results" / "rewriting_chains_15q_bertscore.csv"
+DEFAULT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
+DEFAULT_OUT = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
