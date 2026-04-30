@@ -1,24 +1,15 @@
 """
-Rewriting pipeline — generates the rewriting chains E_0 -> E_1 -> E_2 -> E_3
-on the GPU server (Homer @ MITEL Lab).
+Rewriting pipeline — PAU variant (Laban et al., 2024).
 
-Pipeline
---------
-For each MuSiQue question (filtered/sampled), and for each (group, instruction_type):
-  - take the 3 wordings of the instruction (OpenRewriteEval, Shu et al. 2023)
-  - one wording = one run (run 0, run 1, run 2)
-  - apply the rewriter iteratively for n_iterations steps
-  - save one row per (qid, group, instruction_type, run, step) to CSV
+Same as rewriting_pipeline.py but adds --n-repetitions: each
+(qid, group, instruction_type, wording) is run n times with temperature > 0
+to produce the distribution needed for P/A/U statistics.
 
-Output schema matches the existing rewriting_chains*.csv files in results/.
+Output schema: same as rewriting_chains*.csv, plus:
+  - repetition : int, 0-indexed repetition index (0 = first run)
 
-Why this script (vs the Colab notebook)
----------------------------------------
-- No google.colab dependencies (no files.upload, no userdata)
-- HF_TOKEN read from environment variable
-- Resume support via CSV (skip already-done chains)
-- CLI flags for smoke test, model override, n questions
-- Designed to run inside `tmux` on Homer
+CHAIN_KEYS = [qid, group, instruction_type, run, repetition]
+where run = wording index (0/1/2) and repetition = stochastic repeat (0..n-1).
 """
 
 import argparse
@@ -35,11 +26,11 @@ import pandas as pd
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DATASET_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
-DEFAULT_OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains.csv"
+DEFAULT_OUTPUT_CSV = REPO_ROOT / "results" / "rewriting_chains_pau.csv"
 
-CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
+CHAIN_KEYS = ["qid", "group", "instruction_type", "run", "repetition"]
 
 
 # ---------------------------------------------------------------------------
@@ -103,11 +94,6 @@ def hop_count(item: dict) -> int:
 
 
 def build_E0(item: dict, only_supporting: bool) -> str:
-    """Concatenate paragraphs (titles + texts) into the source text E0.
-
-    only_supporting=True  → just the gold supporting paragraphs (clean)
-    only_supporting=False → all 20 paragraphs incl. distractors (matches the pilot)
-    """
     paragraphs = item["paragraphs"]
     if only_supporting:
         paragraphs = [p for p in paragraphs if p.get("is_supporting")]
@@ -162,7 +148,6 @@ def generate(
     temperature: float,
     max_new_tokens: int,
 ):
-    """Single-prompt generation via the model's chat template."""
     messages = [{"role": "user", "content": user_prompt}]
     if getattr(tokenizer, "chat_template", None):
         text = tokenizer.apply_chat_template(
@@ -196,7 +181,6 @@ def run_chain(
     temperature: float,
     max_new_tokens: int,
 ):
-    """Iteratively rewrite E0 with the same instruction. Returns [E0, E1, ..., En]."""
     chain = [E0]
     current = E0
     for _ in range(n_iterations):
@@ -214,15 +198,17 @@ def run_chain(
 # ---------------------------------------------------------------------------
 
 def load_done_keys(csv_path: Path) -> set:
-    """Read the existing CSV (if any) and return the set of (qid,group,instruction_type,run) already done."""
     if not csv_path.exists():
         return set()
     df = pd.read_csv(csv_path)
+    missing = [k for k in CHAIN_KEYS if k not in df.columns]
+    if missing:
+        print(f"WARNING: existing CSV missing columns {missing}, starting fresh.", flush=True)
+        return set()
     return {tuple(row[k] for k in CHAIN_KEYS) for _, row in df[CHAIN_KEYS].drop_duplicates().iterrows()}
 
 
 def append_rows(csv_path: Path, rows: list):
-    """Append rows to the CSV, creating it with header if it doesn't exist."""
     df = pd.DataFrame(rows)
     write_header = not csv_path.exists()
     df.to_csv(csv_path, mode="a", header=write_header, index=False, encoding="utf-8")
@@ -233,7 +219,9 @@ def append_rows(csv_path: Path, rows: list):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate rewriting chains on GPU.")
+    parser = argparse.ArgumentParser(
+        description="Generate rewriting chains with repeated runs for P/A/U analysis."
+    )
     parser.add_argument(
         "--model",
         default="allenai/OLMo-2-0325-32B-Instruct",
@@ -252,16 +240,20 @@ def main():
         help=f"Output CSV path (default: {DEFAULT_OUTPUT_CSV}).",
     )
     parser.add_argument(
-        "--n-per-hop", type=int, default=405,
-        help="Questions per hop count (2/3/4). Default 405 = full balanced subset.",
+        "--n-per-hop", type=int, default=5,
+        help="Questions per hop count (2/3/4). Default 5.",
     )
     parser.add_argument(
         "--n-iterations", type=int, default=3,
         help="Number of rewriting steps (E0 -> E1 -> ... -> En). Default 3.",
     )
     parser.add_argument(
+        "--n-repetitions", type=int, default=5,
+        help="Number of stochastic repetitions per (qid, instruction, wording). Default 5.",
+    )
+    parser.add_argument(
         "--temperature", type=float, default=0.7,
-        help="Sampling temperature for the rewriter. Default 0.7.",
+        help="Sampling temperature. Must be > 0 for P/A/U. Default 0.7.",
     )
     parser.add_argument(
         "--max-new-tokens", type=int, default=2048,
@@ -273,7 +265,7 @@ def main():
     )
     parser.add_argument(
         "--smoke-test", action="store_true",
-        help="Run only on the 2-hop pilot question (matches the existing pilot CSV).",
+        help="Run only on the 2-hop pilot question, 1 repetition.",
     )
     parser.add_argument(
         "--only-supporting", action="store_true",
@@ -285,13 +277,15 @@ def main():
     )
     args = parser.parse_args()
 
-    # Sanity checks
+    if args.temperature <= 0:
+        print("ERROR: --temperature must be > 0 for P/A/U analysis.", file=sys.stderr)
+        sys.exit(1)
+
     if not args.dataset.exists():
         print(f"ERROR: dataset not found: {args.dataset}", file=sys.stderr)
         sys.exit(1)
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
-    # HuggingFace login (optional — only needed for gated models)
     hf_token = os.environ.get("HF_TOKEN")
     if hf_token:
         from huggingface_hub import login
@@ -300,45 +294,37 @@ def main():
     else:
         print("HF_TOKEN not set — proceeding without login (fine for public models)", flush=True)
 
-    # Reproducibility
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    # Load + select questions
     print(f"\nLoading MuSiQue from {args.dataset}", flush=True)
     raw = load_musique(args.dataset)
     print(f"  loaded {len(raw)} items", flush=True)
-    print(f"  hop distribution: {dict((h, sum(1 for it in raw if hop_count(it)==h)) for h in (2,3,4))}", flush=True)
 
     if args.smoke_test:
-        # Pin to the same pilot question used for the existing CSV
         questions = [it for it in raw if it["id"] == "2hop__635544_110949"]
         if not questions:
             print("ERROR: pilot question not found in dataset", file=sys.stderr)
             sys.exit(1)
-        print(f"\n*** SMOKE TEST: 1 question (pilot 2-hop) ***", flush=True)
+        n_repetitions = 1
+        print(f"\n*** SMOKE TEST: 1 question, 1 repetition ***", flush=True)
     else:
-        questions = balance_by_hop(raw, 5, args.seed)
+        questions = balance_by_hop(raw, args.n_per_hop, args.seed)
+        n_repetitions = args.n_repetitions
         print(f"\nUsing {len(questions)} questions, balanced across hop counts", flush=True)
 
-    # Resume support
     done = load_done_keys(args.output)
     if done:
-        print(f"\nResume: {len(done)} chains already in {args.output} — will skip them.", flush=True)
+        print(f"\nResume: {len(done)} chains already done — will skip them.", flush=True)
 
-    # Total chains to do
-    total_chains = (
-        len(questions)
-        * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())  # = 4 instructions x 3 wordings = 12
-    )
-    print(f"\nPlan: {len(questions)} questions x 4 instructions x 3 wordings = {total_chains} chains")
-    print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations+1} rows")
+    n_wordings = sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
+    total_chains = len(questions) * n_wordings * n_repetitions
+    print(f"\nPlan: {len(questions)} questions x {n_wordings} wordings x {n_repetitions} repetitions = {total_chains} chains")
+    print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations + 1} rows")
     print(f"      total rows expected: {total_chains * (args.n_iterations + 1)}")
 
-    # Load the model
     tokenizer, model = load_rewriter(args.model, use_4bit=args.use_4bit)
 
-    # Main loop
     n_done = 0
     n_to_do = total_chains - len(done)
     t_start = time.time()
@@ -350,46 +336,44 @@ def main():
 
         for (group, instruction_type), pool in ALL_INSTRUCTIONS.items():
             for run, instruction in enumerate(pool):
-                key = (qid, group, instruction_type, run)
-                if key in done:
-                    continue
+                for rep in range(n_repetitions):
+                    key = (qid, group, instruction_type, run, rep)
+                    if key in done:
+                        continue
 
-                t0 = time.time()
-                chain = run_chain(
-                    tokenizer, model, E0, instruction,
-                    n_iterations=args.n_iterations,
-                    temperature=args.temperature,
-                    max_new_tokens=args.max_new_tokens,
-                )
-                elapsed = time.time() - t0
+                    t0 = time.time()
+                    chain = run_chain(
+                        tokenizer, model, E0, instruction,
+                        n_iterations=args.n_iterations,
+                        temperature=args.temperature,
+                        max_new_tokens=args.max_new_tokens,
+                    )
+                    elapsed = time.time() - t0
 
-                rows = []
-                for step, text in enumerate(chain):
-                    rows.append({
-                        "qid": qid,
-                        "question": question_text,
-                        "group": group,
-                        "instruction_type": instruction_type,
-                        "run": run,
-                        "instruction_used": instruction if step > 0 else "",
-                        "step": step,
-                        "text": text,
-                        # Token count using the rewriter's own tokenizer.
-                        # Skip special tokens so the value reflects the actual
-                        # generation load, not the chat-template overhead.
-                        "n_tokens": len(tokenizer.encode(text, add_special_tokens=False)),
-                    })
-                append_rows(args.output, rows)
-                n_done += 1
+                    rows = []
+                    for step, text in enumerate(chain):
+                        rows.append({
+                            "qid": qid,
+                            "question": question_text,
+                            "group": group,
+                            "instruction_type": instruction_type,
+                            "run": run,
+                            "repetition": rep,
+                            "instruction_used": instruction if step > 0 else "",
+                            "step": step,
+                            "text": text,
+                            "n_tokens": len(tokenizer.encode(text, add_special_tokens=False)),
+                        })
+                    append_rows(args.output, rows)
+                    n_done += 1
 
-                # Progress
-                avg = (time.time() - t_start) / max(n_done, 1)
-                remaining = (n_to_do - n_done) * avg
-                print(
-                    f"[{n_done}/{n_to_do}] {qid} | {group}/{instruction_type}/run{run} "
-                    f"| {elapsed:.1f}s | ETA {remaining/60:.1f} min",
-                    flush=True,
-                )
+                    avg = (time.time() - t_start) / max(n_done, 1)
+                    remaining = (n_to_do - n_done) * avg
+                    print(
+                        f"[{n_done}/{n_to_do}] {qid} | {group}/{instruction_type}/run{run}/rep{rep} "
+                        f"| {elapsed:.1f}s | ETA {remaining/60:.1f} min",
+                        flush=True,
+                    )
 
     print(f"\nDone. Output: {args.output}", flush=True)
 

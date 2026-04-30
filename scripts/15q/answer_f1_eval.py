@@ -28,6 +28,7 @@ Scope notes
   the script already scales to the full dataset: flip TEST_MODE to False.
 """
 
+import argparse
 import json
 import re
 import string
@@ -39,26 +40,12 @@ import pandas as pd
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
-MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
-OUTPUT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_answer_f1.csv"
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
+DEFAULT_MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
 
 QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
-
-# Generation config: deterministic, short answers.
-MAX_NEW_TOKENS = 64
-TEMPERATURE = 0.0
-BATCH_SIZE = 8
-
-# 4-bit quantization — only needed for 3090 (24GB). On homer (A6000 48GB x2)
-# bfloat16 fits natively across both GPUs via device_map="auto".
-USE_4BIT = False
-
-# Process the whole input CSV (all qids, all runs).
-TEST_MODE = False
-TEST_FILTER = {"qid": "2hop__635544_110949", "run": 0}
 
 
 QA_USER_TEMPLATE = """{context}
@@ -153,15 +140,15 @@ def best_f1(pred, gold, aliases):
 # OLMo model wrapper
 # ---------------------------------------------------------------------------
 
-def load_model(model_id: str):
-    print(f"Loading {model_id} (4-bit={USE_4BIT}) ...")
+def load_model(model_id: str, use_4bit: bool):
+    print(f"Loading {model_id} (4-bit={use_4bit}) ...")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"  # needed for decoder-only batched generation
 
     kwargs = {"device_map": "auto"}
-    if USE_4BIT:
+    if use_4bit:
         kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
@@ -224,16 +211,52 @@ def generate_batch(tokenizer, model, prompts):
 # ---------------------------------------------------------------------------
 
 def main():
-    if not CHAINS_CSV.exists():
-        raise FileNotFoundError(f"File non trovato: {CHAINS_CSV}")
-    if not MUSIQUE_PATH.exists():
-        raise FileNotFoundError(f"File non trovato: {MUSIQUE_PATH}")
+    parser = argparse.ArgumentParser(description="Answer F1 evaluation on rewriting chains.")
+    parser.add_argument(
+        "--input", type=Path, default=DEFAULT_CHAINS_CSV,
+        help=f"Input chains CSV (default: {DEFAULT_CHAINS_CSV}).",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=None,
+        help="Output CSV path. Default: derived from --input (stem + '_answer_f1.csv').",
+    )
+    parser.add_argument(
+        "--dataset", type=Path, default=DEFAULT_MUSIQUE_PATH,
+        help=f"MuSiQue dev jsonl (default: {DEFAULT_MUSIQUE_PATH}).",
+    )
+    parser.add_argument(
+        "--model", default=QA_MODEL_ID,
+        help=f"HF model id for QA (default: {QA_MODEL_ID}).",
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=8,
+        help="Generation batch size (default: 8).",
+    )
+    parser.add_argument(
+        "--use-4bit", action="store_true",
+        help="Enable 4-bit NF4 quantization (for lisa/3090). Default: bfloat16.",
+    )
+    parser.add_argument(
+        "--smoke-test", action="store_true",
+        help="Run only on the pilot question (2hop__635544_110949, run 0).",
+    )
+    args = parser.parse_args()
+
+    chains_csv = args.input
+    output_csv = args.output or chains_csv.with_name(chains_csv.stem + "_answer_f1.csv")
+    musique_path = args.dataset
+    batch_size = args.batch_size
+
+    if not chains_csv.exists():
+        raise FileNotFoundError(f"File non trovato: {chains_csv}")
+    if not musique_path.exists():
+        raise FileNotFoundError(f"File non trovato: {musique_path}")
 
     print("Loading MuSiQue index...")
-    musique = load_musique_index(MUSIQUE_PATH)
+    musique = load_musique_index(musique_path)
     print(f"  {len(musique)} questions indexed")
 
-    df = pd.read_csv(CHAINS_CSV)
+    df = pd.read_csv(chains_csv)
     df = df.sort_values(CHAIN_KEYS + ["step"]).reset_index(drop=True)
 
     qids_in_csv = set(df["qid"].unique())
@@ -243,10 +266,11 @@ def main():
 
     to_eval = df.copy()
 
-    if TEST_MODE and TEST_FILTER:
-        for k, v in TEST_FILTER.items():
-            to_eval = to_eval[to_eval[k] == v]
-        print(f"*** TEST MODE: filter={TEST_FILTER} -> {len(to_eval)} rows ***")
+    if args.smoke_test:
+        to_eval = to_eval[
+            (to_eval["qid"] == "2hop__635544_110949") & (to_eval["run"] == 0)
+        ]
+        print(f"*** SMOKE TEST: {len(to_eval)} rows ***")
 
     # Dedupe E_0: same text is repeated across all instructions of a (qid, run).
     # We still want F1 at step 0 as the per-chain ceiling, but computing it once
@@ -261,18 +285,18 @@ def main():
         raise RuntimeError("Nessuna riga da valutare dopo il filtro.")
 
     total = len(to_eval)
-    print(f"Answer F1 su {total} testi (incluso step 0) — QA model = {QA_MODEL_ID}")
-    print(f"Batch size: {BATCH_SIZE}")
+    print(f"Answer F1 su {total} testi (incluso step 0) — QA model = {args.model}")
+    print(f"Batch size: {batch_size}")
     print()
 
-    tokenizer, model = load_model(QA_MODEL_ID)
+    tokenizer, model = load_model(args.model, args.use_4bit)
 
     rows = to_eval.to_dict(orient="records")
     results = []
     t_start = time.time()
 
-    for i in range(0, len(rows), BATCH_SIZE):
-        batch = rows[i:i + BATCH_SIZE]
+    for i in range(0, len(rows), batch_size):
+        batch = rows[i:i + batch_size]
         prompts = build_prompts(tokenizer, batch, musique)
         preds = generate_batch(tokenizer, model, prompts)
 
@@ -306,9 +330,10 @@ def main():
         step_gt0 = results_df[results_df["step"] > 0]
         if not step0.empty:
             all_chains = df[CHAIN_KEYS].drop_duplicates()
-            if TEST_MODE and TEST_FILTER:
-                for k, v in TEST_FILTER.items():
-                    all_chains = all_chains[all_chains[k] == v]
+            if args.smoke_test:
+                all_chains = all_chains[
+                    (all_chains["qid"] == "2hop__635544_110949") & (all_chains["run"] == 0)
+                ]
             step0_broadcast = all_chains.merge(
                 step0.drop(columns=["group", "instruction_type"]),
                 on=["qid", "run"],
@@ -317,15 +342,16 @@ def main():
             results_df = pd.concat([step0_broadcast, step_gt0], ignore_index=True)
             results_df = results_df.sort_values(CHAIN_KEYS + ["step"]).reset_index(drop=True)
 
-    if OUTPUT_CSV.exists():
-        prev = pd.read_csv(OUTPUT_CSV)
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    if output_csv.exists():
+        prev = pd.read_csv(output_csv)
         merged = pd.concat([prev, results_df], ignore_index=True)
         merged = merged.drop_duplicates(subset=CHAIN_KEYS + ["step"], keep="last")
-        merged.to_csv(OUTPUT_CSV, index=False)
+        merged.to_csv(output_csv, index=False)
     else:
-        results_df.to_csv(OUTPUT_CSV, index=False)
+        results_df.to_csv(output_csv, index=False)
 
-    print(f"\nSaved: {OUTPUT_CSV}")
+    print(f"\nSaved: {output_csv}")
 
     print()
     print("=" * 70)

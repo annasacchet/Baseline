@@ -1,4 +1,4 @@
-"""
+f"""
 Self-Refine pipeline (RQ3) — generates the rewriting chains E_0 -> Ẽ_1 -> Ẽ_2 -> Ẽ_3
 using a three-stage Rewriter / Critic / Refiner loop.
 
@@ -44,7 +44,7 @@ from pathlib import Path
 
 import pandas as pd
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATASET_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
@@ -128,7 +128,6 @@ REFINER_TEMPLATE = """You will revise the DRAFT using the FEEDBACK so that every
 
 Rules:
 - Apply every correction listed under "Issues" in the feedback.
-- If the Issues list contains only "- None.", make no factual changes; produce a faithful pass-through that preserves the draft's content and style.
 - Do not introduce new facts that are not in the feedback or the draft.
 - Return ONLY the corrected text, with no preamble or commentary.
 
@@ -193,15 +192,20 @@ def balance_by_hop(items: list, n_per_hop: int, seed: int) -> list:
 # Model loading + generation
 # ---------------------------------------------------------------------------
 
-def load_model(model_id: str):
-    print(f"Loading model: {model_id}", flush=True)
+def load_model(model_id: str, use_4bit: bool = False):
+    print(f"Loading model: {model_id} (4-bit={use_4bit})", flush=True)
     tok = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-        trust_remote_code=True,
-    )
+    kwargs = {"device_map": "auto", "trust_remote_code": True}
+    if use_4bit:
+        kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+        )
+    else:
+        kwargs["torch_dtype"] = torch.bfloat16
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     model.eval()
@@ -440,6 +444,10 @@ def main():
         "--all-paragraphs", action="store_true",
         help="Use all 20 paragraphs as E0 (matches the pilot). Default: only supporting paragraphs.",
     )
+    parser.add_argument(
+        "--use-4bit", action="store_true",
+        help="Enable 4-bit NF4 quantization (for lisa/3090). Default: bfloat16.",
+    )
     args = parser.parse_args()
 
     if not args.dataset.exists():
@@ -485,7 +493,7 @@ def main():
     print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations+1} rows")
     print(f"      total rows expected: {total_chains * (args.n_iterations + 1)}")
 
-    tokenizer, model = load_model(args.model)
+    tokenizer, model = load_model(args.model, use_4bit=args.use_4bit)
 
     n_done = 0
     n_to_do = total_chains - len(done)

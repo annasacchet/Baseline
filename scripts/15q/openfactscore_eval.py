@@ -49,7 +49,7 @@ import pandas as pd
 import torch
 from nltk.tokenize import sent_tokenize
 from rank_bm25 import BM25Okapi
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
@@ -210,18 +210,23 @@ def parse_afv_label(generated_text):
 class HFChatModel:
     """Wraps an HF causal LM with chat-template + system-prompt support."""
 
-    def __init__(self, model_id, role_label):
-        print(f"[{role_label}] loading {model_id} ...", flush=True)
+    def __init__(self, model_id, role_label, use_4bit: bool = False):
+        print(f"[{role_label}] loading {model_id} (4-bit={use_4bit}) ...", flush=True)
         t0 = time.time()
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_id,
-            dtype=torch.bfloat16,
-            device_map="auto",
-            trust_remote_code=True,
-        )
+        kwargs = {"device_map": "auto", "trust_remote_code": True}
+        if use_4bit:
+            kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4",
+            )
+        else:
+            kwargs["torch_dtype"] = torch.bfloat16
+        self.model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
         self.model.eval()
         print(
             f"[{role_label}] loaded in {time.time()-t0:.1f}s · device map: "
@@ -329,6 +334,7 @@ def main():
     parser.add_argument("--afv-model", default=AFV_MODEL_ID, help=f"HF model id for AFV (default: {AFV_MODEL_ID})")
     parser.add_argument("--limit", type=int, default=None, help="Smoke-test: only score the first N (step>0) rows.")
     parser.add_argument("--qid", action="append", default=None, help="Restrict evaluation to one or more qid values (repeatable).")
+    parser.add_argument("--use-4bit", action="store_true", help="Enable 4-bit NF4 quantization (for lisa/3090). Default: bfloat16.")
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -381,8 +387,8 @@ def main():
         done_keys = {tuple(row[k] for k in CHAIN_KEYS + ["step"]) for _, row in prev.iterrows()}
         print(f"Resume: {len(done_keys)} (chain, step) rows already scored — will skip them.")
 
-    afg = HFChatModel(args.afg_model, "AFG")
-    afv = HFChatModel(args.afv_model, "AFV")
+    afg = HFChatModel(args.afg_model, "AFG", use_4bit=args.use_4bit)
+    afv = HFChatModel(args.afv_model, "AFV", use_4bit=args.use_4bit)
 
     total = len(to_eval)
     t_start = time.time()
