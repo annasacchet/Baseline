@@ -50,11 +50,11 @@ CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 # Generation config: deterministic, short answers.
 MAX_NEW_TOKENS = 64
 TEMPERATURE = 0.0
-BATCH_SIZE = 4
+BATCH_SIZE = 8
 
-# 4-bit quantization — keeps the 32B model within 24GB VRAM on a single 3090.
-# Set to False to load in bfloat16 (requires ~64GB VRAM, i.e. multi-GPU or A100).
-USE_4BIT = True
+# 4-bit quantization — only needed for 3090 (24GB). On homer (A6000 48GB x2)
+# bfloat16 fits natively across both GPUs via device_map="auto".
+USE_4BIT = False
 
 # Process the whole input CSV (all qids, all runs).
 TEST_MODE = False
