@@ -37,20 +37,24 @@ from pathlib import Path
 
 import pandas as pd
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
 MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
 OUTPUT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_answer_f1.csv"
 
-QA_MODEL_ID = "allenai/Olmo-3.1-32B-Instruct"
+QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
 # Generation config: deterministic, short answers.
 MAX_NEW_TOKENS = 64
 TEMPERATURE = 0.0
 BATCH_SIZE = 4
+
+# 4-bit quantization — keeps the 32B model within 24GB VRAM on a single 3090.
+# Set to False to load in bfloat16 (requires ~64GB VRAM, i.e. multi-GPU or A100).
+USE_4BIT = True
 
 # Process the whole input CSV (all qids, all runs).
 TEST_MODE = False
@@ -150,17 +154,24 @@ def best_f1(pred, gold, aliases):
 # ---------------------------------------------------------------------------
 
 def load_model(model_id: str):
-    print(f"Loading {model_id} ...")
+    print(f"Loading {model_id} (4-bit={USE_4BIT}) ...")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"  # needed for decoder-only batched generation
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-    )
+    kwargs = {"device_map": "auto"}
+    if USE_4BIT:
+        kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+        )
+    else:
+        kwargs["torch_dtype"] = torch.bfloat16
+
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
     model.eval()
     print(f"  device map: {getattr(model, 'hf_device_map', 'n/a')}")
     return tokenizer, model
