@@ -1,4 +1,4 @@
-f"""
+"""
 Self-Refine pipeline (RQ3) — generates the rewriting chains E_0 -> Ẽ_1 -> Ẽ_2 -> Ẽ_3
 using a three-stage Rewriter / Critic / Refiner loop.
 
