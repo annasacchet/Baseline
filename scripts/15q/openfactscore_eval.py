@@ -51,9 +51,9 @@ from nltk.tokenize import sent_tokenize
 from rank_bm25 import BM25Okapi
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
-DEFAULT_DEMOS = Path(os.path.expanduser("~/.cache/factscore/demos/demons.json"))
+DEFAULT_DEMOS = REPO_ROOT / "data" / "demons.json"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
