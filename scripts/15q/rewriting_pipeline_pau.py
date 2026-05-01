@@ -306,8 +306,8 @@ def main():
         if not questions:
             print("ERROR: pilot question not found in dataset", file=sys.stderr)
             sys.exit(1)
-        n_repetitions = 1
-        print(f"\n*** SMOKE TEST: 1 question, 1 repetition ***", flush=True)
+        n_repetitions = args.n_repetitions
+        print(f"\n*** SMOKE TEST: 1 question, {n_repetitions} repetitions ***", flush=True)
     else:
         questions = balance_by_hop(raw, args.n_per_hop, args.seed)
         n_repetitions = args.n_repetitions
