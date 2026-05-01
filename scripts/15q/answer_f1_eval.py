@@ -48,9 +48,13 @@ QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
 
-QA_USER_TEMPLATE = """{context}
+QA_USER_TEMPLATE = """Answer the question based on the context below. Give a short, direct answer — a few words at most, no explanation.
 
-{question}"""
+Context:
+{context}
+
+Question: {question}
+Answer:"""
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +158,7 @@ def load_model(model_id: str, use_4bit: bool):
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_use_double_quant=True,
             bnb_4bit_quant_type="nf4",
+            llm_int8_enable_fp32_cpu_offload=True,
         )
     else:
         kwargs["torch_dtype"] = torch.bfloat16
