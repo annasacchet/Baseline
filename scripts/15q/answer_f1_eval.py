@@ -183,7 +183,7 @@ def build_prompts(tokenizer, rows, musique):
 
 
 @torch.no_grad()
-def generate_batch(tokenizer, model, prompts):
+def generate_batch(tokenizer, model, prompts, max_new_tokens: int = 64):
     enc = tokenizer(
         prompts,
         return_tensors="pt",
@@ -192,12 +192,10 @@ def generate_batch(tokenizer, model, prompts):
     ).to(model.device)
 
     gen_kwargs = dict(
-        max_new_tokens=MAX_NEW_TOKENS,
-        do_sample=TEMPERATURE > 0.0,
+        max_new_tokens=max_new_tokens,
+        do_sample=False,
         pad_token_id=tokenizer.pad_token_id,
     )
-    if TEMPERATURE > 0.0:
-        gen_kwargs["temperature"] = TEMPERATURE
 
     out = model.generate(**enc, **gen_kwargs)
     # strip the prompt tokens from each sequence
@@ -298,7 +296,7 @@ def main():
     for i in range(0, len(rows), batch_size):
         batch = rows[i:i + batch_size]
         prompts = build_prompts(tokenizer, batch, musique)
-        preds = generate_batch(tokenizer, model, prompts)
+        preds = generate_batch(tokenizer, model, prompts, max_new_tokens=64)
 
         for row, pred in zip(batch, preds):
             ref = musique[row["qid"]]
