@@ -6,6 +6,9 @@ Figure 2 — BERTScore by instruction type (mean + band)
 Figure 3 — F1 by hop count (mean + band)
 Figure 4 — F1 and BERTScore side by side by instruction type
 Figure 5 — F1 heatmap per question x step
+Figure 6 — F1 dot plot per question
+Figure 7 — Style vs Content
+Figure 8 — OpenFactScore by hop count (mean + band)
 """
 
 import re
@@ -19,6 +22,7 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 F1_CSV  = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_answer_f1.csv"
 BS_CSV  = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
+OFS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_openfactscore.csv"
 OUT_DIR = REPO_ROOT / "results" / "plots" / "15q"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -51,7 +55,13 @@ def load():
     bs = bs[bs["chain_id"].isin(answerable)].copy()
 
     print(f"Answerable chains: {len(answerable)}/180  |  questions: {f1['qid'].nunique()}/15")
-    return f1, bs
+
+    ofs = pd.read_csv(OFS_CSV)
+    ofs["chain_id"] = ofs["qid"] + "|" + ofs["instruction_type"] + "|" + ofs["run"].astype(str)
+    ofs["hop"] = ofs["qid"].apply(hop_count)
+    ofs = ofs[ofs["chain_id"].isin(answerable)].copy()
+
+    return f1, bs, ofs
 
 
 def style_ax(ax, title, xlabel, ylabel, xlim=None, ylim=None):
@@ -68,7 +78,7 @@ def style_ax(ax, title, xlabel, ylabel, xlim=None, ylim=None):
         ax.set_ylim(*ylim)
 
 
-def mean_band(ax, df, steps, metric, color, label):
+def mean_band(ax, df, steps, metric, color, label, label_offset=0.025, decimals=2):
     means = df.groupby("step")[metric].mean().reindex(steps)
     stds  = df.groupby("step")[metric].std().reindex(steps)
     ax.plot(steps, means.values, color=color, linewidth=2.5,
@@ -78,11 +88,6 @@ def mean_band(ax, df, steps, metric, color, label):
                     (means - stds).clip(lower=0).values,
                     (means + stds).clip(upper=1).values,
                     color=color, alpha=0.12, zorder=1)
-    # annotate every point
-    for s, v in zip(steps, means.values):
-        if not np.isnan(v):
-            ax.text(s, v + 0.025, f"{v:.2f}", ha="center", va="bottom",
-                    fontsize=7.5, color=color, fontweight="bold", zorder=4)
     return means
 
 
@@ -410,11 +415,41 @@ def fig7_style_vs_content(f1, bs):
 
 
 # ---------------------------------------------------------------------------
+# Figure 8 — OpenFactScore by hop count (mean + band)
+# ---------------------------------------------------------------------------
+
+def fig8_factscore_by_hop(ofs):
+    fig, ax = plt.subplots(figsize=(7, 5))
+    steps = [1, 2, 3]
+
+    for hop in [2, 3, 4]:
+        sub = ofs[(ofs["hop"] == hop) & (ofs["step"].isin(steps))]
+        n = sub[sub["step"] == 1]["qid"].nunique()
+        mean_band(ax, sub, steps, "factscore",
+                  HOP_COLORS[hop], f"{hop}-hop  (n={n} questions)",
+                  label_offset=0.008, decimals=3)
+
+    ax.set_xticks(steps)
+    ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+    style_ax(ax, "OpenFactScore by question complexity (hop count)",
+             "", "FactScore (source faithfulness)", xlim=(0.7, 3.5), ylim=(0.70, 1.02))
+    ax.legend(title="Hop count", fontsize=9, title_fontsize=9,
+              loc="lower left", framealpha=0.9)
+    n_chains = ofs[ofs["step"] == 1]["chain_id"].nunique()
+    ax.text(0.02, 0.02, f"n = {n_chains} answerable chains",
+            transform=ax.transAxes, fontsize=8, color="#777")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_factscore_by_hop.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    f1, bs = load()
+    f1, bs, ofs = load()
 
     print("\nFigure 1: F1 by instruction...")
     fig1_f1_by_instruction(f1)
@@ -436,5 +471,8 @@ if __name__ == "__main__":
 
     print("Figure 7: Style vs Content...")
     fig7_style_vs_content(f1, bs)
+
+    print("Figure 8: OpenFactScore by hop count...")
+    fig8_factscore_by_hop(ofs)
 
     print(f"\nDone. Plots saved to: {OUT_DIR}")
