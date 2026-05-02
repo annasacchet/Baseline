@@ -441,6 +441,10 @@ def main():
         help="Run only on the 2-hop pilot question (matches the existing pilot CSV).",
     )
     parser.add_argument(
+        "--qids-file", type=Path, default=None,
+        help="Path to a text file with one qid per line. If given, only those questions are used.",
+    )
+    parser.add_argument(
         "--only-supporting", action="store_true",
         help="Use only supporting paragraphs as E0. Default: all 20 paragraphs (matches baseline pipeline).",
     )
@@ -477,6 +481,14 @@ def main():
             print("ERROR: pilot question not found in dataset", file=sys.stderr)
             sys.exit(1)
         print(f"\n*** SMOKE TEST: 1 question (pilot 2-hop) ***", flush=True)
+    elif args.qids_file:
+        qids = set(args.qids_file.read_text().splitlines())
+        questions = [it for it in raw if it["id"] in qids]
+        missing = qids - {it["id"] for it in questions}
+        if missing:
+            print(f"ERROR: qids not found in dataset: {missing}", file=sys.stderr)
+            sys.exit(1)
+        print(f"\nUsing {len(questions)} questions from {args.qids_file}", flush=True)
     else:
         questions = balance_by_hop(raw, args.n_per_hop, args.seed)
         print(f"\nUsing {len(questions)} questions, balanced across hop counts", flush=True)
