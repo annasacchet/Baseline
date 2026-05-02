@@ -49,6 +49,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DATASET_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
 DEFAULT_OUTPUT_CSV = REPO_ROOT / "results" / "15q" / "self_refine_chains_15q.csv"
+DEFAULT_BASELINE_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
@@ -361,6 +362,24 @@ def run_chain(
 
 
 # ---------------------------------------------------------------------------
+# Load E0 texts from the baseline rewriting CSV
+# ---------------------------------------------------------------------------
+
+def load_e0_from_baseline(csv_path: Path) -> dict:
+    """Return {qid: (question_text, E0_text)} from step=0 rows of the baseline CSV.
+
+    Using the baseline CSV guarantees that E0 is byte-for-byte identical to what
+    the rewriting pipeline used — same tokenizer, same paragraph order, same text.
+    """
+    df = pd.read_csv(csv_path)
+    step0 = df[df["step"] == 0].drop_duplicates(subset=["qid"])
+    result = {}
+    for _, row in step0.iterrows():
+        result[row["qid"]] = (row["question"], row["text"])
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Resume support
 # ---------------------------------------------------------------------------
 
@@ -386,7 +405,7 @@ def main():
     parser.add_argument(
         "--model",
         default="allenai/OLMo-2-0325-32B-Instruct",
-        help="HF model id used for all three roles (default: OLMo-2 32B Instruct).",
+        help="HF model id used for all three roles. Must match the baseline rewriting pipeline model.",
     )
     parser.add_argument(
         "--dataset",
@@ -410,7 +429,9 @@ def main():
     )
     parser.add_argument(
         "--rewriter-temperature", type=float, default=0.7,
-        help="Sampling temperature for the rewriter. Default 0.7 (matches baseline).",
+        help="Sampling temperature for the rewriter. Default 0.7 — matches baseline pipeline. "
+             "Do NOT use 0.0: greedy decoding on the full 20-paragraph E0 causes the model to "
+             "summarize only the most salient topic instead of rewriting all paragraphs.",
     )
     parser.add_argument(
         "--critic-temperature", type=float, default=0.0,
@@ -445,8 +466,15 @@ def main():
         help="Path to a text file with one qid per line. If given, only those questions are used.",
     )
     parser.add_argument(
+        "--baseline-csv", type=Path, default=DEFAULT_BASELINE_CSV,
+        help=f"Path to the baseline rewriting CSV (step=0 rows used as E0). "
+             f"Default: {DEFAULT_BASELINE_CSV}. "
+             f"When provided, E0 is taken directly from this file instead of rebuilding from MuSiQue, "
+             f"guaranteeing identical starting text.",
+    )
+    parser.add_argument(
         "--only-supporting", action="store_true",
-        help="Use only supporting paragraphs as E0. Default: all 20 paragraphs (matches baseline pipeline).",
+        help="Use only supporting paragraphs as E0 (only applies when --baseline-csv is not used).",
     )
     parser.add_argument(
         "--use-4bit", action="store_true",
@@ -454,9 +482,6 @@ def main():
     )
     args = parser.parse_args()
 
-    if not args.dataset.exists():
-        print(f"ERROR: dataset not found: {args.dataset}", file=sys.stderr)
-        sys.exit(1)
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     hf_token = os.environ.get("HF_TOKEN")
@@ -470,38 +495,41 @@ def main():
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    print(f"\nLoading MuSiQue from {args.dataset}", flush=True)
-    raw = load_musique(args.dataset)
-    print(f"  loaded {len(raw)} items", flush=True)
-    print(f"  hop distribution: {dict((h, sum(1 for it in raw if hop_count(it)==h)) for h in (2,3,4))}", flush=True)
+    # Load E0 from the baseline CSV (guaranteed identical starting text)
+    if not args.baseline_csv.exists():
+        print(f"ERROR: baseline CSV not found: {args.baseline_csv}", file=sys.stderr)
+        sys.exit(1)
+    e0_lookup = load_e0_from_baseline(args.baseline_csv)
+    print(f"\nLoaded E0 for {len(e0_lookup)} questions from {args.baseline_csv}", flush=True)
 
+    # Determine which qids to process
     if args.smoke_test:
-        questions = [it for it in raw if it["id"] == "2hop__635544_110949"]
-        if not questions:
-            print("ERROR: pilot question not found in dataset", file=sys.stderr)
-            sys.exit(1)
+        qids_to_run = ["2hop__635544_110949"]
         print(f"\n*** SMOKE TEST: 1 question (pilot 2-hop) ***", flush=True)
     elif args.qids_file:
-        qids = set(args.qids_file.read_text().splitlines())
-        questions = [it for it in raw if it["id"] in qids]
-        missing = qids - {it["id"] for it in questions}
-        if missing:
-            print(f"ERROR: qids not found in dataset: {missing}", file=sys.stderr)
-            sys.exit(1)
-        print(f"\nUsing {len(questions)} questions from {args.qids_file}", flush=True)
+        qids_to_run = [q.strip() for q in args.qids_file.read_text().splitlines() if q.strip()]
+        print(f"\nUsing {len(qids_to_run)} questions from {args.qids_file}", flush=True)
     else:
-        questions = balance_by_hop(raw, args.n_per_hop, args.seed)
-        print(f"\nUsing {len(questions)} questions, balanced across hop counts", flush=True)
+        # Fall back to MuSiQue for full dataset runs
+        if not args.dataset.exists():
+            print(f"ERROR: dataset not found: {args.dataset}", file=sys.stderr)
+            sys.exit(1)
+        raw = load_musique(args.dataset)
+        qids_to_run = [it["id"] for it in balance_by_hop(raw, args.n_per_hop, args.seed)]
+        print(f"\nUsing {len(qids_to_run)} questions, balanced across hop counts", flush=True)
+
+    # Validate all qids have E0 in the baseline CSV
+    missing = [qid for qid in qids_to_run if qid not in e0_lookup]
+    if missing:
+        print(f"ERROR: {len(missing)} qids not found in baseline CSV: {missing}", file=sys.stderr)
+        sys.exit(1)
 
     done = load_done_keys(args.output)
     if done:
         print(f"\nResume: {len(done)} chains already in {args.output} — will skip them.", flush=True)
 
-    total_chains = (
-        len(questions)
-        * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
-    )
-    print(f"\nPlan: {len(questions)} questions x 4 instructions x 3 wordings = {total_chains} chains")
+    total_chains = len(qids_to_run) * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
+    print(f"\nPlan: {len(qids_to_run)} questions x 4 instructions x 3 wordings = {total_chains} chains")
     print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations+1} rows")
     print(f"      total rows expected: {total_chains * (args.n_iterations + 1)}")
 
@@ -511,10 +539,8 @@ def main():
     n_to_do = total_chains - len(done)
     t_start = time.time()
 
-    for q in questions:
-        qid = q["id"]
-        question_text = q["question"]
-        E0 = build_E0(q, only_supporting=args.only_supporting)
+    for qid in qids_to_run:
+        question_text, E0 = e0_lookup[qid]
 
         for (group, instruction_type), pool in ALL_INSTRUCTIONS.items():
             for run, instruction in enumerate(pool):

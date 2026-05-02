@@ -1,5 +1,5 @@
 # Data Analysis Notes — 15q Pilot
-_Last updated: 2026-05-01_
+_Last updated: 2026-05-02_
 
 ---
 
@@ -24,7 +24,7 @@ Ogni istruzione ha 3 formulazioni diverse (run 0, 1, 2). In totale: 15 domande �
 
 ### Metriche
 
-**Answer F1** misura la factualità in modo indiretto: il testo riscritto Eₜ viene dato a un modello QA (OLMo-2-1124-32B-Instruct), che risponde alla domanda originale. F1 token-level è calcolato tra la risposta predetta e la risposta gold.
+**Answer F1** misura la factualità in modo indiretto: il testo riscritto Eₜ viene dato a un modello QA (OLMo-3.1-32B-Instruct), che risponde alla domanda originale. F1 token-level è calcolato tra la risposta predetta e la risposta gold.
 
 La normalizzazione usata è quella ufficiale di MuSiQue (mutuata da SQuAD): lowercase, rimozione di punteggiatura e articoli, confronto token per token. Questa normalizzazione gestisce correttamente variazioni minori ("September 11, 1962" vs "11 September 1962" → F1=1.0) ma non copre parafrasi semantiche ("1400 years ago" vs "1,400 years" → F1=0.8, non 1.0).
 
@@ -160,31 +160,107 @@ La combinazione più informativa è: BERTScore conferma che la deriva semantica 
 
 ---
 
-## 6. Limiti dell'analisi attuale
+## 6. OpenFactScore — fedeltà fattuale rispetto a E₀
+
+OpenFactScore (OFS) misura la fedeltà fattuale in modo diretto e indipendente dal modello QA: il testo riscritto Eₜ viene decomposto in fatti atomici (AFG: OLMo-2-1124-7B-SFT), ciascuno verificato contro E₀ come knowledge source (AFV: Gemma-3-4b-it). Il risultato è la proporzione di fatti supportati da E₀.
+
+A differenza di Answer F1, OFS non richiede che il testo sia "answerable" — misura quanti fatti del testo riscritto sono ancora ancorati all'originale, indipendentemente dalla capacità del QA model di estrarre la risposta.
+
+OFS è calcolato su **tutte le 180 chain** (540 righe = 180 chain × 3 step), filtrate poi sulle 84 chain answerable per consistenza con le altre metriche.
+
+### 6.1 FactScore per istruzione (84 chain answerable)
+
+| Instruction | Step 1 | Step 2 | Step 3 | Drop (t1→t3) |
+|-------------|--------|--------|--------|--------------|
+| paraphrase  | 0.909  | 0.907  | 0.909  | −0.000       |
+| formality   | 0.899  | 0.903  | 0.899  | −0.000       |
+| shorten     | 0.902  | 0.893  | 0.894  | −0.008       |
+| elaborate   | 0.872  | 0.846  | 0.807  | −0.065       |
+
+**Osservazioni:**
+
+`elaborate` è l'istruzione più dannosa per la fedeltà fattuale: scende da 0.872 a 0.807, con il calo che accelera a step 3. Aggiungere dettagli introduce progressivamente fatti non supportati da E₀ (allucinazioni rispetto alla fonte).
+
+`paraphrase` e `formality` sono stabili — il FactScore non scende. Riformulare stile non introduce nuovi fatti.
+
+`shorten` ha un drop molto piccolo (−0.008): la compressione non *introduce* fatti sbagliati, ma *rimuove* quelli necessari per rispondere. Questo spiega la divergenza con Answer F1 (`shorten` ha il drop F1 maggiore −0.143 ma il drop OFS minore): le due metriche misurano aspetti complementari della degradazione.
+
+### 6.2 FactScore per hop count (84 chain answerable)
+
+| Hop | Step 1 | Step 2 | Step 3 | Drop (t1→t3) |
+|-----|--------|--------|--------|--------------|
+| 2   | 0.915  | 0.897  | 0.889  | −0.026       |
+| 3   | 0.888  | 0.886  | 0.859  | −0.029       |
+| 4   | 0.862  | 0.851  | 0.832  | −0.030       |
+
+**Osservazioni:**
+
+Il gradiente 2-hop > 3-hop > 4-hop è presente e monotono per tutti gli step: le domande più complesse hanno testi che partono già con FactScore più basso e degradano di più. È coerente con Answer F1 e con l'ipotesi della tesi.
+
+### 6.3 Relazione OFS — Answer F1
+
+Le due metriche misurano aspetti complementari:
+
+- **OFS** misura quanti fatti del testo riscritto sono supportati da E₀. È sensibile all'*introduzione* di fatti errati (allucinazioni).
+- **Answer F1** misura se il fatto specifico per rispondere è ancora presente e recuperabile. È sensibile alla *rimozione* di fatti.
+
+`elaborate`: OFS scende molto (allucinazioni), Answer F1 scende moderatamente.
+`shorten`: OFS quasi stabile (non introduce errori), Answer F1 scende molto (rimuove fatti).
+
+Questa dissociazione è uno dei risultati più interessanti del pilot.
+
+---
+
+## 7. Limiti dell'analisi attuale
 
 **Dimensione del pilot.** 15 domande, di cui 10 con chain answerable. I pattern per hop count (specialmente 3-hop) sono instabili. I risultati sono indicativi, non conclusivi.
 
 **Normalizzazione Answer F1.** La normalizzazione MuSiQue (SQuAD-style) gestisce bene variazioni ortografiche e di articoli, ma non parafrastica. Una risposta semanticamente corretta ma formulata diversamente può ricevere F1 basso. Il `gold_in_text_check` aiuta a separare questi casi, ma non è ancora integrato sistematicamente nell'analisi.
 
-**QA model e rifiuti.** Il 37.5% delle chain con F1=0 a step 1 sono rifiuti espliciti del modello QA ("cannot answer from context"), non degradazione fattuale del testo riscritto. Questo gonfia il numero di chain "non answerable" e richiede un'analisi separata.
+**QA model e rifiuti.** Il `gold_in_text_check` (analisi su 720 righe) classifica ogni riga in 4 categorie:
 
-**OpenFactScore.** Attualmente disponibile solo per 1 domanda su 15 (pilot). Quando completato su tutte le 15 domande, fornirà un segnale più diretto sulla perdita di fatti atomici, indipendente dal QA model.
+| Categoria | N | Significato |
+|-----------|---|-------------|
+| hit | 228 | Gold presente nel testo, F1>0 — risposta corretta |
+| degraded | 216 | Gold assente dal testo, F1=0 — **vera degradazione fattuale** |
+| false_negative | 172 | Gold presente ma F1=0 — **errore del QA model**, non del testo |
+| parametric_memory | 104 | Gold assente ma F1>0 — il modello risponde dalla memoria interna |
+
+172 false negatives significa che in molti casi il fatto era ancora nel testo riscritto ma il QA model non è riuscito a estrarlo — rifiuto esplicito o risposta sbagliata nonostante il gold fosse presente. Questi non sono degradazione fattuale.
+
+La conseguenza più importante emerge filtrando solo le chain answerable (84) e condizionando al gold presente nel testo:
+
+| | Step 1 | Step 2 | Step 3 | Drop |
+|--|--------|--------|--------|------|
+| F1 grezzo (answerable) | 0.738 | 0.669 | 0.652 | −0.086 |
+| F1 condizionato (gold presente) | 0.817 | 0.764 | 0.760 | −0.057 |
+
+Quando il gold è fisicamente presente nel testo riscritto, il F1 parte più alto (0.817) e degrada molto meno (−0.057 vs −0.086). La differenza tra i due — circa 0.03 punti di drop — è il contributo del QA model che fallisce su testi trasformati anche quando il fatto è ancora lì.
+
+Questo implica che **la vera degradazione fattuale è più lenta di quanto appaia dal F1 grezzo**. Il grafico `traj_f1_gold_in_text.pdf` mostra i due pannelli affiancati per istruzione.
+
+**OpenFactScore.** Completato su tutte le 15 domande (540 righe). Vedi sezione 6.
 
 **PAU analysis.** Non ancora eseguita (richiede n=5 ripetizioni per chain). Permetterà di distinguere capability erosion, stability loss e combined degradation (Laban et al., 2024).
 
-**Self-Refine (RQ3).** Non ancora eseguito. Il pipeline è pronto (`self_refine_pipeline.py`).
+**Self-Refine (RQ3).** Pipeline pronto (`self_refine_pipeline.py`). Smoke test completato (1 domanda, temperature=0.7). Run completo in corso su Homer con temperature=0.0 (stessa del rewriting baseline) per garantire confronto diretto.
 
 ---
 
-## 7. Grafici disponibili
+## 8. Grafici disponibili
 
-Tutti i grafici sono filtrati sulle 84 chain answerable (F1 > 0 a step 1).
+Tutti i grafici sono filtrati sulle 84 chain answerable (F1 > 0 a step 1), salvo `degradation_f1.pdf`.
 
 | File | Contenuto |
 |------|-----------|
 | `traj_f1_by_instruction.pdf` | F1 step 1→3, media ± std per istruzione |
 | `traj_bert_by_instruction.pdf` | BERTScore step 1→3, media ± std per istruzione |
 | `traj_f1_by_hop.pdf` | F1 step 1→3, una linea per hop count |
-| `traj_f1_vs_bert.pdf` | Traiettorie (BERTScore, F1) per chain, griglia per istruzione |
-| `traj_f1_heatmap.pdf` | F1 per domanda × step, una colonna per istruzione |
+| `traj_f1_vs_bert.pdf` | F1 e BERTScore affiancati, una linea per istruzione |
+| `traj_f1_heatmap.pdf` | F1 per domanda × step, ordinato per hop count |
+| `traj_f1_dotplot.pdf` | F1 per domanda, traiettorie individuali step 1→3 |
+| `traj_style_vs_content.pdf` | F1 e BERTScore: style-oriented vs content-oriented |
+| `traj_factscore_by_hop.pdf` | OpenFactScore step 1→3, una linea per hop count |
+| `traj_f1_gold_in_text.pdf` | F1 grezzo vs F1 condizionato al gold presente, per istruzione |
+| `chain_status_by_hop.pdf` | Distribuzione hit/degraded/refusal/empty per hop count (step 1) |
 | `degradation_f1.pdf` | Confronto tutte le chain vs solo answerable (pannelli affiancati) |

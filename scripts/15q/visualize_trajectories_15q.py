@@ -49,19 +49,25 @@ def load():
 
     # filter: only chains answerable at step 1
     answerable = f1[f1["step"] == 1].query("answer_f1 > 0")["chain_id"].unique()
+    f1_all = f1.copy()  # keep unfiltered for funnel plot
     f1 = f1[f1["chain_id"].isin(answerable)].copy()
+    # add group column
+    group_map = {"formality": "style", "paraphrase": "style", "shorten": "content", "elaborate": "content"}
+    f1["group"] = f1["instruction_type"].map(group_map)
 
     bs["chain_id"] = bs["qid"] + "|" + bs["instruction_type"] + "|" + bs["run"].astype(str)
     bs = bs[bs["chain_id"].isin(answerable)].copy()
+    bs["group"] = bs["instruction_type"].map(group_map)
 
     print(f"Answerable chains: {len(answerable)}/180  |  questions: {f1['qid'].nunique()}/15")
 
     ofs = pd.read_csv(OFS_CSV)
     ofs["chain_id"] = ofs["qid"] + "|" + ofs["instruction_type"] + "|" + ofs["run"].astype(str)
     ofs["hop"] = ofs["qid"].apply(hop_count)
+    ofs["group"] = ofs["instruction_type"].map(group_map)
     ofs = ofs[ofs["chain_id"].isin(answerable)].copy()
 
-    return f1, bs, ofs
+    return f1, bs, ofs, f1_all, answerable
 
 
 def style_ax(ax, title, xlabel, ylabel, xlim=None, ylim=None):
@@ -415,6 +421,148 @@ def fig7_style_vs_content(f1, bs):
 
 
 # ---------------------------------------------------------------------------
+# Figure 9 — OpenFactScore by instruction (mean + band) — for dissociation
+# ---------------------------------------------------------------------------
+
+def fig9_factscore_by_instruction(ofs):
+    fig, ax = plt.subplots(figsize=(7, 5))
+    steps = [1, 2, 3]
+
+    for instr in INSTRUCTIONS:
+        sub = ofs[(ofs["instruction_type"] == instr) & (ofs["step"].isin(steps))]
+        mean_band(ax, sub, steps, "factscore", COLORS[instr], instr,
+                  label_offset=0.008, decimals=3)
+
+    ax.set_xticks(steps)
+    ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+    style_ax(ax, "OpenFactScore by instruction type",
+             "", "FactScore (source faithfulness)", xlim=(0.7, 3.5), ylim=(0.70, 1.02))
+    ax.legend(title="Instruction", fontsize=9, title_fontsize=9,
+              loc="lower left", framealpha=0.9)
+    n_chains = ofs[ofs["step"] == 1]["chain_id"].nunique()
+    ax.text(0.02, 0.02, f"n = {n_chains} answerable chains",
+            transform=ax.transAxes, fontsize=8, color="#777")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_factscore_by_instruction.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
+# Figure 10 — Answerable chain funnel: stacked bar by hop, breakdown of
+#             why chains are excluded at step 1
+# ---------------------------------------------------------------------------
+
+def fig10_answerable_funnel(f1_all):
+    import matplotlib.patches as mpatches
+
+    steps1 = f1_all[f1_all["step"] == 1].copy()
+    steps1["chain_id"] = steps1["qid"] + "|" + steps1["instruction_type"] + "|" + steps1["run"].astype(str)
+    steps1["hop"] = steps1["qid"].apply(hop_count)
+
+    def classify(row):
+        pa = row["predicted_answer"]
+        f = row["answer_f1"]
+        if pd.isna(pa) or str(pa).strip() == "":
+            return "Empty/NaN"
+        if f > 0:
+            return "Answerable (F1>0)"
+        # check for explicit refusal pattern
+        refusal_kws = ["context does not", "cannot answer", "don't have", "does not provide",
+                       "no information", "not mentioned", "unable to", "i cannot"]
+        if any(kw in str(pa).lower() for kw in refusal_kws):
+            return "Explicit refusal"
+        return "Wrong answer (F1=0)"
+
+    steps1["status"] = steps1.apply(classify, axis=1)
+
+    CATS = ["Answerable (F1>0)", "Wrong answer (F1=0)", "Explicit refusal", "Empty/NaN"]
+    CAT_COLORS = ["#59a14f", "#e15759", "#f28e2b", "#bab0ac"]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    x = [0, 1, 2]
+    xlabels = ["2-hop", "3-hop", "4-hop"]
+    width = 0.55
+
+    for hop_idx, hop in enumerate([2, 3, 4]):
+        sub = steps1[steps1["hop"] == hop]
+        total = len(sub)
+        bottom = 0
+        for cat, color in zip(CATS, CAT_COLORS):
+            n = (sub["status"] == cat).sum()
+            pct = n / total if total > 0 else 0
+            bar = ax.bar(hop_idx, pct, width, bottom=bottom, color=color,
+                         edgecolor="white", linewidth=0.8, zorder=3)
+            if pct > 0.05:
+                ax.text(hop_idx, bottom + pct / 2, f"{n}\n({pct:.0%})",
+                        ha="center", va="center", fontsize=9,
+                        color="white", fontweight="bold")
+            bottom += pct
+
+        ax.text(hop_idx, -0.06, f"n={total}", ha="center", fontsize=9, color="#555",
+                transform=ax.get_xaxis_transform())
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(xlabels, fontsize=11)
+    ax.set_ylabel("Proportion of chains", fontsize=10)
+    ax.set_ylim(0, 1.08)
+    ax.set_title("Chain status at step 1 by hop count\n(why 96/180 chains are excluded from analysis)",
+                 fontsize=11, fontweight="bold", pad=10)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f"{y:.0%}"))
+    ax.grid(axis="y", linestyle="--", linewidth=0.5, alpha=0.4)
+
+    patches = [mpatches.Patch(color=CAT_COLORS[i], label=CATS[i]) for i in range(len(CATS))]
+    ax.legend(handles=patches, fontsize=9, loc="upper right",
+              framealpha=0.9, title="Status at step 1", title_fontsize=9)
+
+    fig.tight_layout()
+    out = OUT_DIR / "answerable_funnel.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
+# Figure 11 — F1 vs OFS side-by-side (dissociation), by instruction
+# ---------------------------------------------------------------------------
+
+def fig11_f1_vs_ofs(f1, ofs):
+    steps = [1, 2, 3]
+    fig, (ax_f1, ax_ofs) = plt.subplots(1, 2, figsize=(12, 5))
+
+    for instr in INSTRUCTIONS:
+        color = COLORS[instr]
+        sub_f1 = f1[(f1["instruction_type"] == instr) & (f1["step"].isin(steps))]
+        mean_band(ax_f1, sub_f1, steps, "answer_f1", color, instr)
+
+        sub_ofs = ofs[(ofs["instruction_type"] == instr) & (ofs["step"].isin(steps))]
+        mean_band(ax_ofs, sub_ofs, steps, "factscore", color, instr,
+                  label_offset=0.008, decimals=3)
+
+    for ax, title, ylabel, ylim in [
+        (ax_f1, "Answer F1  (sensitive to fact removal)", "Answer F1", (0.3, 1.05)),
+        (ax_ofs, "OpenFactScore  (sensitive to hallucination)", "FactScore", (0.70, 1.02)),
+    ]:
+        ax.set_xticks(steps)
+        ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+        style_ax(ax, title, "", ylabel, xlim=(0.7, 3.5), ylim=ylim)
+
+    ax_f1.legend(title="Instruction", fontsize=9, title_fontsize=9,
+                 loc="lower left", framealpha=0.9)
+
+    n = f1[f1["step"] == 1]["chain_id"].nunique()
+    fig.text(0.5, -0.02, f"n = {n} answerable chains  (mean ± 1 std)",
+             ha="center", fontsize=9, color="#777")
+    fig.suptitle("Answer F1 vs OpenFactScore: complementary failure modes",
+                 fontsize=13, fontweight="bold")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_f1_vs_ofs.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
 # Figure 8 — OpenFactScore by hop count (mean + band)
 # ---------------------------------------------------------------------------
 
@@ -449,7 +597,7 @@ def fig8_factscore_by_hop(ofs):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    f1, bs, ofs = load()
+    f1, bs, ofs, f1_all, answerable = load()
 
     print("\nFigure 1: F1 by instruction...")
     fig1_f1_by_instruction(f1)
@@ -474,5 +622,14 @@ if __name__ == "__main__":
 
     print("Figure 8: OpenFactScore by hop count...")
     fig8_factscore_by_hop(ofs)
+
+    print("Figure 9: OpenFactScore by instruction...")
+    fig9_factscore_by_instruction(ofs)
+
+    print("Figure 10: Answerable funnel by hop...")
+    fig10_answerable_funnel(f1_all)
+
+    print("Figure 11: F1 vs OFS dissociation...")
+    fig11_f1_vs_ofs(f1, ofs)
 
     print(f"\nDone. Plots saved to: {OUT_DIR}")
