@@ -88,14 +88,15 @@ ALL_INSTRUCTIONS = {
 # ---------------------------------------------------------------------------
 
 REWRITER_TEMPLATE = """You will rewrite the text below according to the instruction.
-Return ONLY the rewritten text, with no preamble or commentary.
+The text consists of multiple paragraphs. You MUST rewrite ALL of them — do not skip, omit, or merge any paragraph.
+Return ONLY the rewritten text, preserving the same multi-paragraph structure, with no preamble or commentary.
 
 Instruction: {instruction}
 
 Text:
 {text}
 
-Rewritten text:"""
+Rewritten text (all paragraphs):"""
 
 CRITIC_TEMPLATE = """You are a fact-checking critic. Compare the DRAFT to the ORIGINAL and review every factual aspect: facts that were changed, removed, or distorted (including dates, numbers, names, relations, and entities).
 
@@ -129,8 +130,9 @@ REFINER_TEMPLATE = """You will revise the DRAFT using the FEEDBACK so that every
 
 Rules:
 - Apply every correction listed under "Issues" in the feedback.
+- You MUST reproduce ALL paragraphs of the draft — do not skip, omit, or merge any paragraph.
 - Do not introduce new facts that are not in the feedback or the draft.
-- Return ONLY the corrected text, with no preamble or commentary.
+- Return ONLY the corrected text, preserving the same multi-paragraph structure, with no preamble or commentary.
 
 DRAFT:
 {draft}
@@ -138,7 +140,7 @@ DRAFT:
 FEEDBACK:
 {feedback}
 {prior_feedback_block}
-Corrected text:"""
+Corrected text (all paragraphs):"""
 
 REFINER_PRIOR_FEEDBACK_BLOCK_TEMPLATE = """
 PRIOR FEEDBACK (from earlier iterations — these issues should already be fixed; do not reintroduce them):
@@ -442,8 +444,8 @@ def main():
         help="Sampling temperature for the refiner. Default 0.3.",
     )
     parser.add_argument(
-        "--rewriter-max-new-tokens", type=int, default=2048,
-        help="Max new tokens for the rewriter. Default 2048 (matches baseline).",
+        "--rewriter-max-new-tokens", type=int, default=4096,
+        help="Max new tokens for the rewriter. Default 4096 (E0 ~2300 tokens, needs headroom for rewrite).",
     )
     parser.add_argument(
         "--critic-max-new-tokens", type=int, default=1024,
@@ -460,6 +462,11 @@ def main():
     parser.add_argument(
         "--smoke-test", action="store_true",
         help="Run only on the 2-hop pilot question (matches the existing pilot CSV).",
+    )
+    parser.add_argument(
+        "--n-runs", type=int, default=None,
+        help="Limit to the first N wordings per instruction type (1-3). "
+             "Use --n-runs 1 with --smoke-test --n-iterations 1 for a quick sanity check.",
     )
     parser.add_argument(
         "--qids-file", type=Path, default=None,
@@ -543,7 +550,7 @@ def main():
         question_text, E0 = e0_lookup[qid]
 
         for (group, instruction_type), pool in ALL_INSTRUCTIONS.items():
-            for run, instruction in enumerate(pool):
+            for run, instruction in enumerate(pool[: args.n_runs]):
                 key = (qid, group, instruction_type, run)
                 if key in done:
                     continue
