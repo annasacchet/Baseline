@@ -406,7 +406,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate self-refine chains on GPU (RQ3).")
     parser.add_argument(
         "--model",
-        default="allenai/OLMo-2-0325-32B-Instruct",
+        default="allenai/OLMo-3.1-32B-Instruct",
         help="HF model id used for all three roles. Must match the baseline rewriting pipeline model.",
     )
     parser.add_argument(
