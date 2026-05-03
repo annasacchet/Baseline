@@ -535,8 +535,9 @@ def main():
     if done:
         print(f"\nResume: {len(done)} chains already in {args.output} — will skip them.", flush=True)
 
-    total_chains = len(qids_to_run) * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
-    print(f"\nPlan: {len(qids_to_run)} questions x 4 instructions x 3 wordings = {total_chains} chains")
+    n_runs_effective = args.n_runs if args.n_runs is not None else max(len(p) for p in ALL_INSTRUCTIONS.values())
+    total_chains = len(qids_to_run) * sum(min(len(pool), n_runs_effective) for pool in ALL_INSTRUCTIONS.values())
+    print(f"\nPlan: {len(qids_to_run)} questions x 4 instructions x {n_runs_effective} wording(s) = {total_chains} chains")
     print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations+1} rows")
     print(f"      total rows expected: {total_chains * (args.n_iterations + 1)}")
 
