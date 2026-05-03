@@ -444,16 +444,16 @@ def main():
         help="Sampling temperature for the refiner. Default 0.3.",
     )
     parser.add_argument(
-        "--rewriter-max-new-tokens", type=int, default=4096,
-        help="Max new tokens for the rewriter. Default 4096 (E0 ~2300 tokens, needs headroom for rewrite).",
+        "--rewriter-max-new-tokens", type=int, default=8192,
+        help="Max new tokens for the rewriter. Default 8192 (E0 ~2300 tokens, verbose rewrites can exceed 4096).",
     )
     parser.add_argument(
         "--critic-max-new-tokens", type=int, default=1024,
         help="Max new tokens for the critic. Default 1024.",
     )
     parser.add_argument(
-        "--refiner-max-new-tokens", type=int, default=2048,
-        help="Max new tokens for the refiner. Default 2048.",
+        "--refiner-max-new-tokens", type=int, default=8192,
+        help="Max new tokens for the refiner. Default 8192 (matches rewriter).",
     )
     parser.add_argument(
         "--seed", type=int, default=42,
