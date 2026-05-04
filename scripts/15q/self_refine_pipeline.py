@@ -281,7 +281,7 @@ def self_refine_step(
     critic_max_new_tokens: int,
     refiner_max_new_tokens: int,
 ):
-    """One self-refine iteration. Returns (E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt)."""
+    """One self-refine iteration. Returns (E_draft, feedback, E_tilde)."""
     # 1. Rewriter
     rewriter_prompt = REWRITER_TEMPLATE.format(instruction=instruction, text=prev_text)
     E_draft = generate(
@@ -314,7 +314,7 @@ def self_refine_step(
         max_new_tokens=refiner_max_new_tokens,
     )
 
-    return E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt
+    return E_draft, feedback, E_tilde
 
 
 def run_chain(
@@ -336,11 +336,11 @@ def run_chain(
     step=0 is the baseline (E0 only, no draft/feedback).
     step>=1 carries (E_draft, feedback, E_tilde) for the t-th iteration.
     """
-    steps = [{"E_draft": "", "feedback": "", "E_tilde": E0, "rewriter_prompt": "", "critic_prompt": "", "refiner_prompt": ""}]
+    steps = [{"E_draft": "", "feedback": "", "E_tilde": E0}]
     current = E0
     prior_feedbacks: list = []
     for _ in range(n_iterations):
-        E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt = self_refine_step(
+        E_draft, feedback, E_tilde = self_refine_step(
             tokenizer, model,
             E0=E0,
             prev_text=current,
@@ -353,7 +353,7 @@ def run_chain(
             critic_max_new_tokens=critic_max_new_tokens,
             refiner_max_new_tokens=refiner_max_new_tokens,
         )
-        steps.append({"E_draft": E_draft, "feedback": feedback, "E_tilde": E_tilde, "rewriter_prompt": rewriter_prompt, "critic_prompt": critic_prompt, "refiner_prompt": refiner_prompt})
+        steps.append({"E_draft": E_draft, "feedback": feedback, "E_tilde": E_tilde})
         current = E_tilde
         prior_feedbacks = prior_feedbacks + [feedback]
     return steps
@@ -580,9 +580,6 @@ def main():
                         "text": text,
                         "draft_text": draft,
                         "critic_feedback": s["feedback"],
-                        "rewriter_prompt": s["rewriter_prompt"],
-                        "critic_prompt": s["critic_prompt"],
-                        "refiner_prompt": s["refiner_prompt"],
                         "n_tokens": len(tokenizer.encode(text, add_special_tokens=False)),
                         "draft_n_tokens": (
                             len(tokenizer.encode(draft, add_special_tokens=False))
