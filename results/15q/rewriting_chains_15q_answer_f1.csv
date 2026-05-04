@@ -96,13 +96,13 @@ However, based on historical knowledge (not the context), the decree suspending 
 2hop__5658_25002,style,paraphrase,1,2,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,The question cannot be answered from the provided context.,10-year,0.0
 2hop__5658_25002,style,paraphrase,1,3,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,The context does not provide information about the duration of the pact between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR.,10-year,0.0
 2hop__5658_25002,style,paraphrase,2,0,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,10 years,10-year,0.0
-2hop__5658_25002,style,paraphrase,2,1,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,None,10-year,0.0
+2hop__5658_25002,style,paraphrase,2,1,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,,10-year,0.0
 2hop__5658_25002,style,paraphrase,2,2,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,The question cannot be answered from the provided context.,10-year,0.0
 2hop__5658_25002,style,paraphrase,2,3,How long did the pact last between Kravchuk and the person who signed the decree suspending the Communist Party of the Russian SFSR?,10-year,1991,10-year,0.0
 2hop__61143_165532,content,elaborate,0,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
-2hop__61143_165532,content,elaborate,0,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,content,elaborate,0,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,content,elaborate,0,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,content,elaborate,0,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,content,elaborate,0,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,content,elaborate,0,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,content,elaborate,1,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,content,elaborate,1,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,"Liam Neeson is not the actor who played Hannibal Smith in The A-Team; George Peppard played Hannibal Smith in the original TV series, and his spouse is not listed in the provided context. However, based on the context, the spouse of the actor who played Hannibal Smith in the 201",Sherry Boucher,0.0
 2hop__61143_165532,content,elaborate,1,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,No spouse listed,Sherry Boucher,0.0
@@ -112,15 +112,15 @@ However, based on historical knowledge (not the context), the decree suspending 
 2hop__61143_165532,content,elaborate,2,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,"Jeff Gourson is not the spouse of the actor who played Hannibal Smith in The A-Team. The actor who played Hannibal Smith in the 2010 film The A-Team was Liam Neeson. The text does not mention Liam Neeson's spouse. However, it mentions Jeff Gourson as",Sherry Boucher,0.0
 2hop__61143_165532,content,elaborate,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Linda Lee,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,0,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
-2hop__61143_165532,content,shorten,0,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,content,shorten,0,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,content,shorten,0,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,content,shorten,0,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,0,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Joy Harmon,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,1,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,1,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None provided in the context.,Sherry Boucher,0.0
-2hop__61143_165532,content,shorten,1,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,content,shorten,1,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,content,shorten,1,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,content,shorten,1,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,2,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
-2hop__61143_165532,content,shorten,2,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,content,shorten,2,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,2,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Not provided in the context.,Sherry Boucher,0.0
 2hop__61143_165532,content,shorten,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Not provided in the context.,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,0,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
@@ -129,12 +129,12 @@ However, based on historical knowledge (not the context), the decree suspending 
 2hop__61143_165532,style,formality,0,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,1,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,1,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None provided in the context.,Sherry Boucher,0.0
-2hop__61143_165532,style,formality,1,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,style,formality,1,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,style,formality,1,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,style,formality,1,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,2,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,2,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Linda Evans,Sherry Boucher,0.0
 2hop__61143_165532,style,formality,2,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Lori Tan Chinn,Sherry Boucher,0.0
-2hop__61143_165532,style,formality,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,style,formality,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,0,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,0,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None (the character is fictional),Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,0,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,"Liam Neeson is not married to anyone named in the context. The context does not provide the spouse of the actor who played Hannibal Smith in The A-Team. However, based on general knowledge not in the provided text, the actor is George Peppard, and his spouse was Betsy Wilson. But since",Sherry Boucher,0.0
@@ -147,8 +147,8 @@ But following the instruction to give a short,",Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,1,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Jessica Biel,Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,2,0,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,Larry Smith,Sherry Boucher,0.0
 2hop__61143_165532,style,paraphrase,2,1,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,No spouse listed,Sherry Boucher,0.0
-2hop__61143_165532,style,paraphrase,2,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
-2hop__61143_165532,style,paraphrase,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,None,Sherry Boucher,0.0
+2hop__61143_165532,style,paraphrase,2,2,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
+2hop__61143_165532,style,paraphrase,2,3,Who is the spouse of the actor who played hannibal smith in the a team?,Sherry Boucher,,Sherry Boucher,0.0
 2hop__612719_6455,content,elaborate,0,0,What was the resulting browser of the group that owns Mozilla Messaging?,Firefox,Firefox,Firefox,1.0
 2hop__612719_6455,content,elaborate,0,1,What was the resulting browser of the group that owns Mozilla Messaging?,Firefox,Firefox,Firefox,1.0
 2hop__612719_6455,content,elaborate,0,2,What was the resulting browser of the group that owns Mozilla Messaging?,Firefox,Firefox,Firefox,1.0
@@ -314,8 +314,8 @@ But following the instruction to give a short,",Sherry Boucher,0.0
 3hop1__305566_568433_47686,content,shorten,1,2,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
 3hop1__305566_568433_47686,content,shorten,1,3,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
 3hop1__305566_568433_47686,content,shorten,2,0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Rodoferroviária,Toronto Coach Terminal,0.0
-3hop1__305566_568433_47686,content,shorten,2,1,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Center City Greyhound Terminal,Toronto Coach Terminal,0.28571428571428575
-3hop1__305566_568433_47686,content,shorten,2,2,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Center City Greyhound Terminal,Toronto Coach Terminal,0.28571428571428575
+3hop1__305566_568433_47686,content,shorten,2,1,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Center City Greyhound Terminal,Toronto Coach Terminal,0.2857142857142857
+3hop1__305566_568433_47686,content,shorten,2,2,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Center City Greyhound Terminal,Toronto Coach Terminal,0.2857142857142857
 3hop1__305566_568433_47686,content,shorten,2,3,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
 3hop1__305566_568433_47686,style,formality,0,0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Rodoferroviária,Toronto Coach Terminal,0.0
 3hop1__305566_568433_47686,style,formality,0,1,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Saída Sul (South Exit) near the Parkshopping Mall,Toronto Coach Terminal,0.0
@@ -326,7 +326,7 @@ But following the instruction to give a short,",Sherry Boucher,0.0
 3hop1__305566_568433_47686,style,formality,1,2,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Central Bus Station,Toronto Coach Terminal,0.0
 3hop1__305566_568433_47686,style,formality,1,3,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Central Bus Station,Toronto Coach Terminal,0.0
 3hop1__305566_568433_47686,style,formality,2,0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Rodoferroviária,Toronto Coach Terminal,0.0
-3hop1__305566_568433_47686,style,formality,2,1,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Port Authority Bus Terminal,Toronto Coach Terminal,0.28571428571428575
+3hop1__305566_568433_47686,style,formality,2,1,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Port Authority Bus Terminal,Toronto Coach Terminal,0.2857142857142857
 3hop1__305566_568433_47686,style,formality,2,2,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Philadelphia Greyhound Terminal,Toronto Coach Terminal,0.3333333333333333
 3hop1__305566_568433_47686,style,formality,2,3,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Philadelphia Greyhound Terminal,Toronto Coach Terminal,0.3333333333333333
 3hop1__305566_568433_47686,style,paraphrase,0,0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Rodoferroviária,Toronto Coach Terminal,0.0
@@ -406,11 +406,11 @@ But following the instruction to give a short,",Sherry Boucher,0.0
 3hop1__840353_503371_21711,content,shorten,0,2,"When was the Palau de la Generalitat built, in the place of death of Martin, of the region where Almudévar was located?",built in the 15th century,"The question is asking for the construction date of the Palau de la Generalitat, located in the place of death of Martin, in the region where Almudévar is located.
 
 From the context:
-- Martin of Aragon died between 1396-1410, and his place of death is not explicitly",built in the 15th century,0.045454545454545456
+- Martin of Aragon died between 1396-1410, and his place of death is not explicitly",built in the 15th century,0.0454545454545454
 3hop1__840353_503371_21711,content,shorten,0,3,"When was the Palau de la Generalitat built, in the place of death of Martin, of the region where Almudévar was located?",built in the 15th century,"The question is asking for the construction date of the Palau de la Generalitat, located in the place of death of Martin, in the region where Almudévar is located.
 
 From the context:
-- Martin of Aragon (1396-1410) is mentioned with ""failed grandson's succession."" This",built in the 15th century,0.04878048780487805
+- Martin of Aragon (1396-1410) is mentioned with ""failed grandson's succession."" This",built in the 15th century,0.048780487804878
 3hop1__840353_503371_21711,content,shorten,1,0,"When was the Palau de la Generalitat built, in the place of death of Martin, of the region where Almudévar was located?",built in the 15th century,14th century,15th century,0.5
 3hop1__840353_503371_21711,content,shorten,1,1,"When was the Palau de la Generalitat built, in the place of death of Martin, of the region where Almudévar was located?",built in the 15th century,Unknown,built in the 15th century,0.0
 3hop1__840353_503371_21711,content,shorten,1,2,"When was the Palau de la Generalitat built, in the place of death of Martin, of the region where Almudévar was located?",built in the 15th century,No information provided,built in the 15th century,0.0
@@ -512,7 +512,7 @@ However, based on the context, Alaska has generally supported Republican candida
 4hop1__130276_59747_211319_557671,content,elaborate,2,0,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Fulton County,Presque Isle County,0.4
 4hop1__130276_59747_211319_557671,content,elaborate,2,1,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Fulton County,Presque Isle County,0.4
 4hop1__130276_59747_211319_557671,content,elaborate,2,2,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Clayton,Presque Isle County,0.0
-4hop1__130276_59747_211319_557671,content,elaborate,2,3,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,"DeKalb County, Georgia shares borders with multiple counties, including Rockdale, Newton, Henry, Butts, and Wilkinson counties.",Presque Isle County,0.10526315789473684
+4hop1__130276_59747_211319_557671,content,elaborate,2,3,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,"DeKalb County, Georgia shares borders with multiple counties, including Rockdale, Newton, Henry, Butts, and Wilkinson counties.",Presque Isle County,0.1052631578947368
 4hop1__130276_59747_211319_557671,content,shorten,0,0,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Fulton County,Presque Isle County,0.4
 4hop1__130276_59747_211319_557671,content,shorten,0,1,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Fulton County,Presque Isle County,0.4
 4hop1__130276_59747_211319_557671,content,shorten,0,2,Which county shares a border with the county where the most populous city in the state where Redan High School is located?,Presque Isle County,Fulton County,Presque Isle County,0.4

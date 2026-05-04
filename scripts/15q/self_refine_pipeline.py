@@ -88,15 +88,14 @@ ALL_INSTRUCTIONS = {
 # ---------------------------------------------------------------------------
 
 REWRITER_TEMPLATE = """You will rewrite the text below according to the instruction.
-The text consists of multiple paragraphs. You MUST rewrite ALL of them — do not skip, omit, or merge any paragraph.
-Return ONLY the rewritten text, preserving the same multi-paragraph structure, with no preamble or commentary.
+Return ONLY the rewritten text, with no preamble or commentary.
 
 Instruction: {instruction}
 
 Text:
 {text}
 
-Rewritten text (all paragraphs):"""
+Rewritten text:"""
 
 CRITIC_TEMPLATE = """You are a fact-checking critic. Compare the DRAFT to the ORIGINAL and review every factual aspect: facts that were changed, removed, or distorted (including dates, numbers, names, relations, and entities).
 
@@ -130,9 +129,8 @@ REFINER_TEMPLATE = """You will revise the DRAFT using the FEEDBACK so that every
 
 Rules:
 - Apply every correction listed under "Issues" in the feedback.
-- You MUST reproduce ALL paragraphs of the draft — do not skip, omit, or merge any paragraph.
 - Do not introduce new facts that are not in the feedback or the draft.
-- Return ONLY the corrected text, preserving the same multi-paragraph structure, with no preamble or commentary.
+- Return ONLY the corrected text, with no preamble or commentary.
 
 DRAFT:
 {draft}
@@ -140,7 +138,7 @@ DRAFT:
 FEEDBACK:
 {feedback}
 {prior_feedback_block}
-Corrected text (all paragraphs):"""
+Corrected text:"""
 
 REFINER_PRIOR_FEEDBACK_BLOCK_TEMPLATE = """
 PRIOR FEEDBACK (from earlier iterations — these issues should already be fixed; do not reintroduce them):
@@ -283,7 +281,7 @@ def self_refine_step(
     critic_max_new_tokens: int,
     refiner_max_new_tokens: int,
 ):
-    """One self-refine iteration. Returns (E_draft, feedback, E_tilde)."""
+    """One self-refine iteration. Returns (E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt)."""
     # 1. Rewriter
     rewriter_prompt = REWRITER_TEMPLATE.format(instruction=instruction, text=prev_text)
     E_draft = generate(
@@ -292,9 +290,7 @@ def self_refine_step(
         max_new_tokens=rewriter_max_new_tokens,
     )
 
-    # 2. Critic — compares E_draft against the ORIGINAL E0 (not the previous step)
-    #    so factual drift across iterations is caught and not silently propagated.
-    #    Past feedbacks are appended (Madaan 2023, "retain history of past experiences").
+    # 2. Critic
     critic_prior = _format_prior_feedback(prior_feedbacks, PRIOR_FEEDBACK_BLOCK_TEMPLATE)
     critic_prompt = CRITIC_TEMPLATE.format(
         original=E0, draft=E_draft, prior_feedback_block=critic_prior
@@ -305,7 +301,7 @@ def self_refine_step(
         max_new_tokens=critic_max_new_tokens,
     )
 
-    # 3. Refiner — always run, per §5.4 (Ẽₜ is always produced by the refiner).
+    # 3. Refiner
     refiner_prior = _format_prior_feedback(
         prior_feedbacks, REFINER_PRIOR_FEEDBACK_BLOCK_TEMPLATE
     )
@@ -318,7 +314,7 @@ def self_refine_step(
         max_new_tokens=refiner_max_new_tokens,
     )
 
-    return E_draft, feedback, E_tilde
+    return E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt
 
 
 def run_chain(
@@ -340,11 +336,11 @@ def run_chain(
     step=0 is the baseline (E0 only, no draft/feedback).
     step>=1 carries (E_draft, feedback, E_tilde) for the t-th iteration.
     """
-    steps = [{"E_draft": "", "feedback": "", "E_tilde": E0}]
+    steps = [{"E_draft": "", "feedback": "", "E_tilde": E0, "rewriter_prompt": "", "critic_prompt": "", "refiner_prompt": ""}]
     current = E0
     prior_feedbacks: list = []
     for _ in range(n_iterations):
-        E_draft, feedback, E_tilde = self_refine_step(
+        E_draft, feedback, E_tilde, rewriter_prompt, critic_prompt, refiner_prompt = self_refine_step(
             tokenizer, model,
             E0=E0,
             prev_text=current,
@@ -357,7 +353,7 @@ def run_chain(
             critic_max_new_tokens=critic_max_new_tokens,
             refiner_max_new_tokens=refiner_max_new_tokens,
         )
-        steps.append({"E_draft": E_draft, "feedback": feedback, "E_tilde": E_tilde})
+        steps.append({"E_draft": E_draft, "feedback": feedback, "E_tilde": E_tilde, "rewriter_prompt": rewriter_prompt, "critic_prompt": critic_prompt, "refiner_prompt": refiner_prompt})
         current = E_tilde
         prior_feedbacks = prior_feedbacks + [feedback]
     return steps
@@ -584,6 +580,9 @@ def main():
                         "text": text,
                         "draft_text": draft,
                         "critic_feedback": s["feedback"],
+                        "rewriter_prompt": s["rewriter_prompt"],
+                        "critic_prompt": s["critic_prompt"],
+                        "refiner_prompt": s["refiner_prompt"],
                         "n_tokens": len(tokenizer.encode(text, add_special_tokens=False)),
                         "draft_n_tokens": (
                             len(tokenizer.encode(draft, add_special_tokens=False))
