@@ -304,6 +304,7 @@ def main():
     rewriting_extra = [
         "--n-per-hop", str(args.n_per_hop),
         "--model", args.model,
+        "--dataset", str(REPO_ROOT / "musique_ans_v1.0_dev.jsonl"),
     ]
     if args.use_4bit:
         rewriting_extra.append("--use-4bit")
