@@ -286,10 +286,12 @@ def main():
         "--force", action="store_true",
         help="Re-run steps even if output already exists.",
     )
-    parser.add_argument(
-        "--rewriting-args", nargs="+", default=[],
-        help="Extra args forwarded to rewriting_pipeline.py (e.g. --n-per-hop 100 --model allenai/OLMo-3.1-32B-Instruct --use-4bit).",
-    )
+    parser.add_argument("--n-per-hop", type=int, default=5,
+        help="Questions per hop count for rewriting (default: 5).")
+    parser.add_argument("--model", default="allenai/OLMo-2-0325-32B-Instruct",
+        help="HF model id for the rewriter.")
+    parser.add_argument("--use-4bit", action="store_true",
+        help="Enable 4-bit quantization for the rewriter.")
     args = parser.parse_args()
 
     tag          = args.tag
@@ -297,6 +299,14 @@ def main():
     out          = outputs(tag)
     steps_to_run = args.only if args.only else [s for s in STEP_ORDER if s not in args.skip]
     chain_csv    = REPO_ROOT / "results" / tag / f"rewriting_chains_{tag}.csv"
+
+    # Build rewriting extra args from explicit flags
+    rewriting_extra = [
+        "--n-per-hop", str(args.n_per_hop),
+        "--model", args.model,
+    ]
+    if args.use_4bit:
+        rewriting_extra.append("--use-4bit")
 
     (REPO_ROOT / "results" / tag).mkdir(parents=True, exist_ok=True)
     (REPO_ROOT / "results" / "plots" / tag / "png").mkdir(parents=True, exist_ok=True)
@@ -316,7 +326,7 @@ def main():
             ok = run_parallel(name, eval_type, chain_csv, out[name], args.gpus, args.force)
         else:
             script, default_args = steps[name]
-            extra = args.rewriting_args if name == "rewriting" else []
+            extra = rewriting_extra if name == "rewriting" else []
             ok = run_step(name, script, default_args + extra, out.get(name), args.force)
 
         if not ok:
