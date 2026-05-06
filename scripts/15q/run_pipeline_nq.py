@@ -287,8 +287,8 @@ def main():
         help="Re-run steps even if output already exists.",
     )
     parser.add_argument(
-        "--rewriting-args", nargs=argparse.REMAINDER, default=[],
-        help="Extra args forwarded to rewriting_pipeline.py (e.g. -- --n-per-hop 100).",
+        "--rewriting-args", nargs="+", default=[],
+        help="Extra args forwarded to rewriting_pipeline.py (e.g. --n-per-hop 100 --model allenai/OLMo-3.1-32B-Instruct --use-4bit).",
     )
     args = parser.parse_args()
 
