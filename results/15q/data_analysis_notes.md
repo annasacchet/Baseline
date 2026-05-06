@@ -1,5 +1,5 @@
 # Data Analysis Notes — 15q Pilot
-_Last updated: 2026-05-02_
+_Last updated: 2026-05-04_
 
 ---
 
@@ -56,7 +56,7 @@ Le 96 chain con F1=0 a step 1 si distribuiscono così:
 - **36** rifiuti espliciti ("The context does not provide...", "I cannot answer...")
 - **4** output vuoti (NaN)
 
-I rifiuti espliciti sono particolarmente importanti da notare: il modello QA, ricevendo un testo riscritto, a volte diventa più conservativo e preferisce non rispondere piuttosto che estrarre l'informazione. Questo non è degradazione fattuale del testo — è un comportamento del QA model. Separarli con `gold_in_text_check` è necessario per un'analisi precisa.
+I rifiuti espliciti sono particolarmente importanti da notare: il modello QA, ricevendo un testo riscritto, a volte diventa più conservativo e preferisce non rispondere piuttosto che estrarre l'informazione. Questo non è necessariamente degradazione fattuale del testo — è un comportamento del QA model su testo trasformato.
 
 ---
 
@@ -215,29 +215,17 @@ Questa dissociazione è uno dei risultati più interessanti del pilot.
 
 **Dimensione del pilot.** 15 domande, di cui 10 con chain answerable. I pattern per hop count (specialmente 3-hop) sono instabili. I risultati sono indicativi, non conclusivi.
 
-**Normalizzazione Answer F1.** La normalizzazione MuSiQue (SQuAD-style) gestisce bene variazioni ortografiche e di articoli, ma non parafrastica. Una risposta semanticamente corretta ma formulata diversamente può ricevere F1 basso. Il `gold_in_text_check` aiuta a separare questi casi, ma non è ancora integrato sistematicamente nell'analisi.
+**Normalizzazione Answer F1.** La normalizzazione MuSiQue (SQuAD-style) gestisce bene variazioni ortografiche e di articoli, ma non parafrastica. Una risposta semanticamente corretta ma formulata diversamente può ricevere F1 basso.
 
-**QA model e rifiuti.** Il `gold_in_text_check` (analisi su 720 righe) classifica ogni riga in 4 categorie:
+**F1 conflates multiple failure modes.** Answer F1 = 0 può essere causato da almeno tre fenomeni distinti che la metrica non separa:
 
-| Categoria | N | Significato |
-|-----------|---|-------------|
-| hit | 228 | Gold presente nel testo, F1>0 — risposta corretta |
-| degraded | 216 | Gold assente dal testo, F1=0 — **vera degradazione fattuale** |
-| false_negative | 172 | Gold presente ma F1=0 — **errore del QA model**, non del testo |
-| parametric_memory | 104 | Gold assente ma F1>0 — il modello risponde dalla memoria interna |
+1. **Rimozione del fatto** — il rewriting rimuove fisicamente lo span che contiene la risposta. Verificabile con OFS (OFS stabile → il testo non ha inventato nulla, ma ha rimosso). Questo è il caso prevalente per `shorten`.
+2. **Rottura della catena di ragionamento** — il token gold è ancora nel testo, ma il contesto che lo collega alla domanda (es. il link intermedio in una catena multi-hop) è stato perso. Il modello estrae allora un'altra risposta plausibile dal testo. Esempio concreto: domanda "When was John's eldest son crowned?" — gold=1216, il testo contiene sia 1216 che 1220 come anni di incoronazione di Henry III. Se il rewriting spezza il collegamento "John → figlio maggiore = Henry III", il modello risponde 1220. Questo è degradazione reale causata dal rewriting, ma non è distinguibile dal caso 3 senza analisi manuale.
+3. **Sensibilità del QA model allo stile** — il testo è intatto ma il modello produce un rifiuto esplicito o risposta sbagliata perché il testo ha cambiato registro o struttura. Questo non è degradazione del testo.
 
-172 false negatives significa che in molti casi il fatto era ancora nel testo riscritto ma il QA model non è riuscito a estrarlo — rifiuto esplicito o risposta sbagliata nonostante il gold fosse presente. Questi non sono degradazione fattuale.
+Conseguenza: **Answer F1 è un lower bound sulla preservazione fattuale**. Il drop osservato è reale ma sovrastima la degradazione vera perché include i casi 2 (in parte) e 3. Separare i tre casi richiederebbe annotazione manuale o un'analisi zero-shot (testare il modello senza contesto per identificare le risposte da memoria parametrica).
 
-La conseguenza più importante emerge filtrando solo le chain answerable (84) e condizionando al gold presente nel testo:
-
-| | Step 1 | Step 2 | Step 3 | Drop |
-|--|--------|--------|--------|------|
-| F1 grezzo (answerable) | 0.738 | 0.669 | 0.652 | −0.086 |
-| F1 condizionato (gold presente) | 0.817 | 0.764 | 0.760 | −0.057 |
-
-Quando il gold è fisicamente presente nel testo riscritto, il F1 parte più alto (0.817) e degrada molto meno (−0.057 vs −0.086). La differenza tra i due — circa 0.03 punti di drop — è il contributo del QA model che fallisce su testi trasformati anche quando il fatto è ancora lì.
-
-Questo implica che **la vera degradazione fattuale è più lenta di quanto appaia dal F1 grezzo**. Il grafico `traj_f1_gold_in_text.pdf` mostra i due pannelli affiancati per istruzione.
+L'analisi `gold_in_text_check` precedentemente sviluppata è stata rimossa perché l'exact string match non è un proxy affidabile per "il fatto è presente": il token gold può essere assente perché parafrasato, oppure presente ma irrecuperabile per rottura della catena — due situazioni con cause completamente diverse che l'exact match non distingue.
 
 **OpenFactScore.** Completato su tutte le 15 domande (540 righe). Vedi sezione 6.
 
@@ -261,6 +249,6 @@ Tutti i grafici sono filtrati sulle 84 chain answerable (F1 > 0 a step 1), salvo
 | `traj_f1_dotplot.pdf` | F1 per domanda, traiettorie individuali step 1→3 |
 | `traj_style_vs_content.pdf` | F1 e BERTScore: style-oriented vs content-oriented |
 | `traj_factscore_by_hop.pdf` | OpenFactScore step 1→3, una linea per hop count |
-| `traj_f1_gold_in_text.pdf` | F1 grezzo vs F1 condizionato al gold presente, per istruzione |
+| `traj_f1_vs_ofs.pdf` | F1 e OpenFactScore affiancati, una linea per istruzione — mostra la dissociazione |
 | `chain_status_by_hop.pdf` | Distribuzione hit/degraded/refusal/empty per hop count (step 1) |
 | `degradation_f1.pdf` | Confronto tutte le chain vs solo answerable (pannelli affiancati) |

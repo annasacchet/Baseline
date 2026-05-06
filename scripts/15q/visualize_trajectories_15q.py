@@ -57,6 +57,7 @@ def load():
 
     bs["chain_id"] = bs["qid"] + "|" + bs["instruction_type"] + "|" + bs["run"].astype(str)
     bs = bs[bs["chain_id"].isin(answerable)].copy()
+    bs["hop"] = bs["qid"].apply(hop_count)
     bs["group"] = bs["instruction_type"].map(group_map)
 
     print(f"Answerable chains: {len(answerable)}/180  |  questions: {f1['qid'].nunique()}/15")
@@ -90,10 +91,6 @@ def mean_band(ax, df, steps, metric, color, label, label_offset=0.025, decimals=
     ax.plot(steps, means.values, color=color, linewidth=2.5,
             marker="o", markersize=7, markerfacecolor="white",
             markeredgewidth=2, label=label, zorder=3)
-    ax.fill_between(steps,
-                    (means - stds).clip(lower=0).values,
-                    (means + stds).clip(upper=1).values,
-                    color=color, alpha=0.12, zorder=1)
     return means
 
 
@@ -148,6 +145,93 @@ def fig2_bert_by_instruction(bs):
     fig.tight_layout()
     out = OUT_DIR / "traj_bert_by_instruction.pdf"
     fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
+# Figure 2b — BERTScore consecutive by instruction
+# ---------------------------------------------------------------------------
+
+def fig2b_bert_consecutive(bs):
+    fig, ax = plt.subplots(figsize=(7, 5))
+    steps = [1, 2, 3]
+
+    for instr in INSTRUCTIONS:
+        sub = bs[(bs["instruction_type"] == instr) & (bs["step"].isin(steps))]
+        mean_band(ax, sub, steps, "bert_f1_consecutive", COLORS[instr], instr)
+
+    ax.set_xticks(steps)
+    ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+    style_ax(ax, "Consecutive BERTScore sim(Eₜ, Eₜ₋₁) — single-step change",
+             "", "BERTScore F1 vs previous step", xlim=(0.7, 3.5), ylim=(0.75, 1.02))
+    ax.legend(title="Instruction", fontsize=9, title_fontsize=9,
+              loc="lower right", framealpha=0.9)
+    n = bs["chain_id"].nunique()
+    ax.text(0.02, 0.02, f"n = {n} answerable chains  ·  consecutive mode",
+            transform=ax.transAxes, fontsize=8, color="#777")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_bert_consecutive.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
+# Figure 2c — BERTScore baseline by hop count
+# ---------------------------------------------------------------------------
+
+def fig2c_bert_baseline_by_hop(bs):
+    fig, ax = plt.subplots(figsize=(7, 5))
+    steps = [1, 2, 3]
+
+    for hop in [2, 3, 4]:
+        sub = bs[(bs["hop"] == hop) & (bs["step"].isin(steps))]
+        n = sub[sub["step"] == 1]["chain_id"].nunique()
+        mean_band(ax, sub, steps, "bert_f1_baseline",
+                  HOP_COLORS[hop], f"{hop}-hop  (n={n})")
+
+    ax.set_xticks(steps)
+    ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+    style_ax(ax, "Semantic drift from E₀ (BERTScore) by hop count",
+             "", "BERTScore F1 vs E₀", xlim=(0.7, 3.5), ylim=(0.75, 1.02))
+    ax.legend(title="Hop count", fontsize=9, title_fontsize=9,
+              loc="upper right", framealpha=0.9)
+    n_chains = bs["chain_id"].nunique()
+    ax.text(0.02, 0.02, f"n = {n_chains} answerable chains",
+            transform=ax.transAxes, fontsize=8, color="#777")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_bert_baseline_by_hop.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    fig.savefig(OUT_DIR / "png" / "traj_bert_baseline_by_hop.png", bbox_inches="tight", dpi=150)
+    print(f"Saved: {out}")
+
+
+# ---------------------------------------------------------------------------
+# Figure 2d — BERTScore consecutive by hop count
+# ---------------------------------------------------------------------------
+
+def fig2d_bert_consecutive_by_hop(bs):
+    fig, ax = plt.subplots(figsize=(7, 5))
+    steps = [1, 2, 3]
+
+    for hop in [2, 3, 4]:
+        sub = bs[(bs["hop"] == hop) & (bs["step"].isin(steps))]
+        n = sub[sub["step"] == 1]["chain_id"].nunique()
+        mean_band(ax, sub, steps, "bert_f1_consecutive",
+                  HOP_COLORS[hop], f"{hop}-hop  (n={n})")
+
+    ax.set_xticks(steps)
+    ax.set_xticklabels(["Step 1\n(1st rewrite)", "Step 2", "Step 3\n(3rd rewrite)"], fontsize=9)
+    style_ax(ax, "Consecutive BERTScore sim(Eₜ, Eₜ₋₁) by hop count",
+             "", "BERTScore F1 vs previous step", xlim=(0.7, 3.5), ylim=(0.75, 1.02))
+    ax.legend(title="Hop count", fontsize=9, title_fontsize=9,
+              loc="lower right", framealpha=0.9)
+    n_chains = bs["chain_id"].nunique()
+    ax.text(0.02, 0.02, f"n = {n_chains} answerable chains  ·  consecutive mode",
+            transform=ax.transAxes, fontsize=8, color="#777")
+    fig.tight_layout()
+    out = OUT_DIR / "traj_bert_consecutive_by_hop.pdf"
+    fig.savefig(out, bbox_inches="tight")
+    fig.savefig(OUT_DIR / "png" / "traj_bert_consecutive_by_hop.png", bbox_inches="tight", dpi=150)
     print(f"Saved: {out}")
 
 
@@ -604,6 +688,8 @@ if __name__ == "__main__":
 
     print("Figure 2: BERTScore by instruction...")
     fig2_bert_by_instruction(bs)
+    print("Figure 2b: BERTScore consecutive by instruction...")
+    fig2b_bert_consecutive(bs)
 
     print("Figure 3: F1 by hop count...")
     fig3_f1_by_hop(f1)
@@ -619,6 +705,12 @@ if __name__ == "__main__":
 
     print("Figure 7: Style vs Content...")
     fig7_style_vs_content(f1, bs)
+
+    print("Figure 2c: BERTScore baseline by hop count...")
+    fig2c_bert_baseline_by_hop(bs)
+
+    print("Figure 2d: BERTScore consecutive by hop count...")
+    fig2d_bert_consecutive_by_hop(bs)
 
     print("Figure 8: OpenFactScore by hop count...")
     fig8_factscore_by_hop(ofs)

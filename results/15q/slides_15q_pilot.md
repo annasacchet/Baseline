@@ -58,9 +58,7 @@ style: |
 
 <br>
 
-**Anna Sacchet** · Master's Thesis · University of Udine · DMIF
-
-Model: OLMo-3.1-32B-Instruct &nbsp;·&nbsp; 2026-05-02
+**Anna Sacchet** &nbsp;·&nbsp; 2026-05-05
 
 ---
 
@@ -69,20 +67,23 @@ Model: OLMo-3.1-32B-Instruct &nbsp;·&nbsp; 2026-05-02
 
 <div class="rq-box">
 <div class="rq-label">RQ1 — Baseline degradation</div>
-<b>Does iterative rewriting degrade factuality?</b><br>
-When an LLM rewrites the same text 3 times (E₀ → E₁ → E₂ → E₃), does factual accuracy decrease with each step?
+<b>When an LL
+M rewrites the same text multiple times (t₀ → t₃), does the factual accuracy of the text get worse
+over time? How much does it change, and how
+fast?</b><br>
 </div>
 
 <div class="rq-box">
 <div class="rq-label">RQ2 — Instruction factors</div>
-<b>What type of instruction causes more degradation?</b><br>
-Style-oriented (paraphrase, formality) vs. content-oriented (shorten, elaborate). Does question complexity (2-hop vs 4-hop) also matter?
+<b>Does the type of rewriting instruction (style-oriented vs. content-oriented) affect how much factual
+accuracy is lost? Does the complexity of the original text (2-hop, 3-hop, or 4-hop) also play a role?</b><br>
 </div>
 
 <div class="rq-box">
-<div class="rq-label">RQ3 — Intervention (in progress)</div>
-<b>Can Self-Refine mitigate degradation?</b><br>
-A critic model checks each rewrite and corrects factual errors before the next step.
+<div class="rq-label">RQ3 — Intervention</div>
+<b>If we add a Self-Refine cycle after each rewriting step — where the model checks its own output and
+corrects factual errors — does this reduce the factual degradation compared to rewriting without any
+correction?</b><br>
 </div>
 
 ---
@@ -93,50 +94,75 @@ A critic model checks each rewrite and corrects factual errors before the next s
 **Dataset:** MuSiQue (Trivedi et al., 2022) — multi-hop QA.
 Each question requires connecting 2, 3, or 4 facts distributed across separate paragraphs.
 
-**Input text E₀:** 20 paragraphs per question — 2–4 *supporting* + 16–18 *distractors* · ~2311 tokens
+**Input text E₀:** 20 paragraphs per question — 2–4 *supporting* + 16–18 *distractors*
 
 **Pilot:** 15 questions · 5×2-hop · 5×3-hop · 5×4-hop · seed = 42
 
 **Rewriting pipeline:** E₀ → E₁ → E₂ → E₃ — same instruction applied at each step
 
-| Group | Instruction | What it asks the model to do |
-|-------|-------------|------------------------------|
-| **Style** | `formality` | Change register (informal ↔ formal) |
-| **Style** | `paraphrase` | Rephrase without changing content |
-| **Content** | `shorten` | Compress — keep only essentials |
-| **Content** | `elaborate` | Expand with more detail |
-
 **Scale:** 15 questions × 4 instructions × 3 wordings = **180 chains** · 720 rewrites
+
+---
+
+<!-- SLIDE 3b: Instruction wordings -->
+## The 3 Wordings per Instruction
+
+| Group | Instruction | Run 0 | Run 1 | Run 2 |
+|-------|-------------|-------|-------|-------|
+| **Style** | `formality` | "Make the text more formal." | "Rephrase it to be more formal." | "Too conversational, rephrase it to be more formal." |
+| **Style** | `paraphrase` | "Paraphrase this." | "Reword this text." | "Use different wording." |
+| **Content** | `elaborate` | "Elaborate on the content, adding relevant details while staying faithful to the source text." | "Expand the text with more context, without introducing information that is not supported by the original." | "Add more detail, keeping every fact grounded in the source material." |
+| **Content** | `shorten` | "Make wording more concise." | "Rephrase for clarity and conciseness." | "Improve accuracy, clarity, and conciseness of language." |
+
+<div class="note">Wordings drawn from OpenRewriteEval (Shu et al., 2023). Each run uses a different surface form of the same instruction to reduce prompt sensitivity.</div>
+
+---
+
+<!-- SLIDE 3c: OpenFactScore intro -->
+## From FActScore to OpenFactScore
+
+> Lage, L. F. & Ostermann, S. (2025). *OpenFActScore: Open-Source Atomic Evaluation of Factuality in Text Generation.* Philipps-Universität Marburg · DFKI · Saarland University.
+
+**FActScore** (Min et al., 2023) evaluates factuality as a two-stage pipeline:
+1. **AFG** — Atomic Fact Generation: decompose text into individual atomic claims
+2. **AFV** — Atomic Fact Validation: verify each claim against a trusted knowledge source
+
+Score = proportion of atomic claims supported by the knowledge source.
+
+**OpenFactScore** replaces the original closed models (InstructGPT, ChatGPT) with open-source models for both AFG and AFV.
+
+| Component | Original FActScore | OpenFactScore |
+|-----------|:-----------------:|:------------:|
+| AFG | InstructGPT | OLMo-2-1124-7B-SFT |
+| AFV | GPT-4o mini | Gemma-3-4b-it |
+| Knowledge source | Wikipedia | E₀ (original paragraphs) |
+
+- OFS become reproducible and also no API costs. Gemma+OLMo achieves **0.99 Pearson correlation** with original FActScore
+- Using E₀ as knowledge source measures grounding in the source text directly *(this is supported and documented in the repository)*
 
 ---
 
 <!-- SLIDE 4: Metrics -->
 ## Metrics: Three Complementary Perspectives
 
-**Answer F1** *(indirect, task-based)*
-The rewritten text Eₜ is given to a QA model (OLMo-3.1-32B-Instruct), which answers the original question. Token-level F1 vs. the gold answer (SQuAD-style normalization).
-→ Sensitive to **fact removal** — if the key fact is gone, F1 drops to 0.
+**OpenFactScore** *(direct fact verification)*
+Eₜ is decomposed into atomic claims (AFG: OLMo-2-1124-7B-SFT), each verified against E₀ as the knowledge source (AFV: Gemma-3-4b-it). Score = proportion of claims supported by E₀.
 
 **BERTScore** *(semantic drift)*
 Cosine similarity between Eₜ and E₀ in RoBERTa-large embedding space (layer 17).
 Two modes: *baseline* sim(Eₜ, E₀) measures cumulative drift; *consecutive* sim(Eₜ, Eₜ₋₁) measures single-step change.
-→ Sensitive to **cumulative semantic drift**, independent of QA model behavior.
 
-**OpenFactScore** *(direct fact verification)*
-Eₜ is decomposed into atomic claims (AFG: OLMo-2-1124-7B-SFT), each verified against E₀ as the knowledge source (AFV: Gemma-3-4b-it). Score = proportion of claims supported by E₀.
-→ Sensitive to **hallucination** — new claims that E₀ does not support.
-
-<div class="callout">
-The three metrics are <b>complementary</b>: a text can look fine on one metric while failing another. This becomes the central finding.
-</div>
+**Answer F1** *(indirect, task-based)*
+The rewritten text Eₜ is given to a QA model (OLMo-3.1-32B-Instruct), which answers the original question. Token-level F1 vs. the gold answer (SQuAD-style normalization).
 
 ---
 
 <!-- SLIDE 5: Why not E0 -->
-## The Starting Point Problem: Why Not E₀?
+## QA Performance on E₀: A Problematic Baseline
 
-E₀ contains all 20 MuSiQue paragraphs — 2–4 relevant facts buried among 16–18 distractors in ~2311 tokens.
-The QA model cannot reliably reason over this noisy, long input.
+At step 0, F1 is already low — not because the facts are missing, but because the QA model struggles to answer from E₀. MuSiQue is a hard dataset by design: the best model achieves only ~47 F1 (Trivedi et al., 2022).
+
+Of the 180 chains, only **84 are answerable** (F1 > 0 at step 1) and are used in all subsequent analyses. The remaining 96 have F1 = 0 at step 1 and are excluded.
 
 | Hop | Mean F1 at step 0 | Questions with F1 = 0 |
 |-----|:-----------------:|:---------------------:|
@@ -145,46 +171,136 @@ The QA model cannot reliably reason over this noisy, long input.
 | 4-hop | 0.280 | 2 / 5 |
 | **Overall** | **0.290** | **8 / 15** |
 
-8 out of 15 questions score F1 = 0 on the *unmodified* E₀ — not because facts are missing, but because the QA model fails to locate them. This is consistent with the literature: the best model on MuSiQue achieves only ~47 F1 (Trivedi et al., 2022).
-
 <div class="callout">
-<b>Analysis starts from step 1.</b> E₁ is the first coherent rewrite — compact, fluent, and a reliable starting point. We measure factuality loss from E₁ → E₃.
-</div>
+In 11 out of 96 chains with F1=0 at step 1, F1 rises at a later step — possibly because a subsequent rewrite produces a style the QA model handles better, rather than because the facts themselves return.</div>
 
 ---
 
-<!-- SLIDE 6: The 84/180 filter — graph -->
-## Which Chains Are Analysable? The 84/180 Filter
+<!-- SLIDE 7: Token count -->
+## How Much Does the Text Change in Length?
 
-At step 1, **96 out of 180 chains already have F1 = 0** — these cannot measure degradation because they were never answerable to begin with.
+| Instruction | Group | Step 0 | Step 1 | Step 2 | Step 3 |
+|-------------|:-----:|:------:|:------:|:------:|:------:|
+| `elaborate` | Content | 2311 | 1506 | 1543 | 1638 |
+| `formality` | Style | 2311 | 1310 | 1229 | 1197 |
+| `paraphrase` | Style | 2311 | 926 | 830 | 788 |
+| `shorten` | Content | 2311 | 603 | 505 | 464 |
 
-![w:800](../plots/15q/png/answerable_funnel.png)
+All instructions compress E₀ drastically at step 1 — from ~2311 tokens to 464–1506. 
 
----
+- **`elaborate`** is the only instruction that grows after step 1 (1506 → 1638)
+- **`shorten`** reaches 464 tokens by step 3 — 80% compression from E₀. 
+- **`paraphrase` and `formality`** continue to shrink slightly, converging toward a stable length.
 
-<!-- SLIDE 7: The 84/180 filter — explanation -->
-## Why Are 96 Chains Excluded?
-
-Three distinct reasons a chain scores F1 = 0 at step 1:
-
-| Reason | Count | Interpretation |
-|--------|:-----:|----------------|
-| **Wrong answer** | 56 | QA model extracts something plausible but incorrect |
-| **Explicit refusal** | 36 | Model says *"The context does not provide..."* — the fact may still be in the text, but the model refuses to extract it from a transformed text |
-| **Empty / NaN** | 4 | No output — generation failure |
-
-Note: the **36 explicit refusals** are a QA model behavior, not evidence of factual degradation. The gold answer may still be present in the text — the model simply becomes too conservative when the text style changes. The gold-in-text analysis (slide 17) quantifies this directly.
-
-<div class="callout">
-<b>All following analyses use only the 84 answerable chains</b> (F1 > 0 at step 1), drawn from 10 of the 15 questions.
-</div>
 
 ---
 
-<!-- SLIDE 8: F1 by instruction — graph -->
-## RQ1: Does Rewriting Degrade Factuality?
+<!-- SLIDE 8: OFS — graph -->
+## OpenFactScore by Instruction Type
 
-![w:860](../plots/15q/png/traj_f1_by_instruction.png)
+OFS answers: *"are the claims in the rewritten text still grounded in E₀?"*
+
+![w:700](../plots/15q/png/traj_factscore_by_instruction.png)
+
+<div class="note">Proportion of atomic claims in Eₜ supported by E₀ · AFG: OLMo-2-1124-7B-SFT · AFV: Gemma-3-4b-it · 84 answerable chains</div>
+
+---
+
+<!-- SLIDE 9: OFS — interpretation -->
+## OpenFactScore: What Each Instruction Does
+
+| Instruction | Step 1 | Step 2 | Step 3 | Drop |
+|-------------|:------:|:------:|:------:|:----:|
+| `paraphrase` | 0.889 | 0.889 | 0.878 | −0.011 |
+| `formality` | 0.885 | 0.887 | 0.878 | −0.008 |
+| `shorten` | 0.907 | 0.887 | 0.891 | −0.016 |
+| `elaborate` | 0.852 | 0.825 | 0.775 | **−0.076** |
+
+- **`paraphrase` and `formality`**: OFS drops slightly but remains high (≥0.878). Style rewrites introduce few unsupported claims.
+- **`shorten`**: small OFS drop (−0.016). Compression *removes* content but does not *invent* new content.
+- **`elaborate`**: steady decline, accelerating at step 3 (−0.076 total). Each elaboration step adds details that E₀ does not support.
+
+
+---
+
+<!-- SLIDE 10: BERTScore vs E0 — by instruction graph -->
+## BERTScore sim(Eₜ, E₀) — Drift by Instruction
+
+![w:700](../plots/15q/png/traj_bert_by_instruction.png)
+
+<div class="note">BERTScore F1 sim(Eₜ, E₀) — cumulative drift from the original · roberta-large layer 17 · 84 answerable chains</div>
+
+---
+
+<!-- SLIDE 10b: BERTScore vs E0 — by instruction table -->
+## BERTScore sim(Eₜ, E₀) — Numbers by Instruction
+
+| Instruction | Step 1 | Step 2 | Step 3 | Total drift |
+|-------------|:------:|:------:|:------:|:-----------:|
+| `formality` | 0.918 | 0.903 | 0.897 | −0.021 |
+| `elaborate` | 0.910 | 0.889 | 0.875 | −0.035 |
+| `paraphrase` | 0.882 | 0.865 | 0.861 | −0.021 |
+| `shorten` | 0.842 | 0.825 | 0.818 | −0.024 |
+
+All instructions drift away from E₀ monotonically. `shorten` starts furthest (0.842) — the aggressive compression already diverges structurally at step 1. `elaborate` accumulates the largest total drift (−0.035).
+
+---
+
+<!-- SLIDE 10c: BERTScore vs E0 — by hop graph -->
+## BERTScore sim(Eₜ, E₀) — Drift by Hop Count
+
+![w:700](../plots/15q/png/traj_bert_baseline_by_hop.png)
+
+<div class="note">BERTScore F1 sim(Eₜ, E₀) — cumulative drift from the original · roberta-large layer 17 · 84 answerable chains · one line per hop count</div>
+
+---
+
+<!-- SLIDE 11: BERTScore across iterations — by instruction graph -->
+## BERTScore sim(Eₜ, Eₜ₋₁) — Steps Become More Conservative
+
+![w:700](../plots/15q/png/traj_bert_consecutive.png)
+
+<div class="note">Consecutive BERTScore sim(Eₜ, Eₜ₋₁) — single-step change · roberta-large layer 17 · 84 answerable chains</div>
+
+---
+
+<!-- SLIDE 11a: BERTScore consecutive — numbers -->
+## BERTScore sim(Eₜ, Eₜ₋₁) — Numbers
+
+Each individual step introduces smaller and smaller changes — yet the cumulative drift from E₀ keeps growing. 
+
+| Step | Consecutive BERTScore |
+|------|-----------------------|
+| Step 1 | 0.889 |
+| Step 2 | 0.941 |
+| Step 3 | 0.960 |
+
+---
+
+<!-- SLIDE 11b: BERTScore across iterations — by hop graph -->
+## BERTScore sim(Eₜ, Eₜ₋₁) — By Hop Count
+
+![w:700](../plots/15q/png/traj_bert_consecutive_by_hop.png)
+
+<div class="note">Consecutive BERTScore sim(Eₜ, Eₜ₋₁) — single-step change · roberta-large layer 17 · 84 answerable chains · one line per hop count</div>
+
+---
+
+<!-- SLIDE 12: Style vs Content -->
+## Style vs Content: Two Groups, Two Trajectories
+
+![w:900](../plots/15q/png/traj_style_vs_content.png)
+
+<div class="note">Left: Answer F1 · Right: BERTScore · blue = style-oriented · red = content-oriented · 84 answerable chains</div>
+
+Both metrics agree: content-oriented instructions (shorten + elaborate) cause significantly more degradation than style-oriented ones (formality + paraphrase). The gap opens at step 1 and widens. **What you ask the model to change matters more than how many times you ask it.**
+
+---
+
+<!-- SLIDE 13: F1 by instruction — graph -->
+## Answer F1: Rewriting Degrades QA Performance
+
+![w:700](../plots/15q/png/traj_f1_by_instruction.png)
 
 <div class="note">84 answerable chains · mean ± 1 std · QA model: OLMo-3.1-32B-Instruct</div>
 
@@ -192,7 +308,7 @@ Note: the **36 explicit refusals** are a QA model behavior, not evidence of fact
 
 ---
 
-<!-- SLIDE 9: F1 by instruction — table -->
+<!-- SLIDE 14: F1 by instruction — table -->
 ## Answer F1: Numbers in Detail
 
 | Instruction | Step 1 | Step 2 | Step 3 | Drop t1→t3 | Chains that drop |
@@ -213,18 +329,7 @@ Content-oriented instructions degrade factuality <b>2–3× more</b> than style-
 
 ---
 
-<!-- SLIDE 10: F1 by hop — graph -->
-## RQ2: Does Question Complexity Matter?
-
-![w:860](../plots/15q/png/traj_f1_by_hop.png)
-
-<div class="note">84 answerable chains · mean ± 1 std · one line per hop count</div>
-
-**Yes** — harder questions degrade faster and start lower. 4-hop questions have 4 reasoning links that each rewriting step can break; 2-hop questions only 2.
-
----
-
-<!-- SLIDE 11: F1 by hop — table -->
+<!-- SLIDE 15: F1 by hop — table -->
 ## Answer F1 by Hop Count: Numbers
 
 | Hop | Step 1 | Step 2 | Step 3 | Drop t1→t3 | Answerable chains |
@@ -243,167 +348,80 @@ Questions requiring more reasoning steps are more vulnerable to iterative rewrit
 
 ---
 
-<!-- SLIDE 12: Heatmap -->
+<!-- SLIDE 16: F1 by hop — graph -->
+## Answer F1 by Hop Count
+
+![w:700](../plots/15q/png/traj_f1_by_hop.png)
+
+<div class="note">84 answerable chains · mean ± 1 std · one line per hop count</div>
+
+
+---
+
+<!-- SLIDE 17: Heatmap -->
 ## Per-Question View: F1 Heatmap
 
-![w:720](../plots/15q/png/traj_f1_heatmap.png)
+<table style="border:none; width:100%; border-collapse:collapse;">
+<tr>
+<td style="border:none; width:52%; vertical-align:middle; padding-right:24px;">
 
-Each row is one question; each column is a rewriting step. Color encodes mean F1 (averaged across all instructions and runs). Top rows (2-hop) stay dark throughout. Bottom rows (4-hop) start lighter and fade further right — several collapse to near zero by step 3. The view reveals **within-group heterogeneity**: some questions are resilient regardless of instruction; others degrade quickly regardless of hop count.
+![w:520](../plots/15q/png/traj_f1_heatmap.png)
 
----
+</td>
+<td style="border:none; vertical-align:middle; font-size:18px;">
 
-<!-- SLIDE 13: BERTScore — graph -->
-## Semantic Drift: BERTScore
+Each row is one question; each column is a rewriting step. Color encodes mean F1 (averaged across all instructions and runs).
 
-![w:860](../plots/15q/png/traj_bert_by_instruction.png)
-
-<div class="note">BERTScore F1 sim(Eₜ, E₀) — baseline mode · roberta-large layer 17 · 84 answerable chains</div>
-
-BERTScore measures semantic drift **independently of the QA model**. Every instruction causes monotonic drift from E₀ — no exceptions. The ranking mirrors F1: `shorten` drifts most, `formality` least.
-
----
-
-<!-- SLIDE 14: BERTScore — interpretation -->
-## BERTScore: Cumulative vs Consecutive
-
-| Instruction | Step 1 | Step 2 | Step 3 | Total drift |
-|-------------|:------:|:------:|:------:|:-----------:|
-| `formality` | 0.918 | 0.903 | 0.897 | −0.021 |
-| `elaborate` | 0.910 | 0.889 | 0.875 | −0.035 |
-| `paraphrase` | 0.882 | 0.865 | 0.861 | −0.021 |
-| `shorten` | 0.842 | 0.825 | 0.818 | −0.024 |
-
-The **consecutive** BERTScore (similarity between Eₜ and Eₜ₋₁) tells a different story:
-
-| Step | Consecutive BERTScore |
-|------|-----------------------|
-| Step 1 | 0.889 |
-| Step 2 | 0.941 |
-| Step 3 | 0.960 |
-
-Each individual step introduces smaller and smaller changes — yet the cumulative drift from E₀ keeps growing. This is the signature of **iterative degradation**: every single rewrite looks conservative, but the effects accumulate.
-
----
-
-<!-- SLIDE 15: Style vs Content -->
-## Style vs Content: Two Groups, Two Trajectories
-
-![w:1000](../plots/15q/png/traj_style_vs_content.png)
-
-<div class="note">Left: Answer F1 · Right: BERTScore · blue = style-oriented · red = content-oriented · 84 answerable chains</div>
-
-Both metrics agree: content-oriented instructions (shorten + elaborate) cause significantly more degradation than style-oriented ones (formality + paraphrase). The gap opens at step 1 and widens. **What you ask the model to change matters more than how many times you ask it.**
-
----
-
-<!-- SLIDE 16: OFS — graph -->
-## OpenFactScore: Does the Text Invent New Facts?
-
-OFS answers a different question from F1: not *"can you still answer?"* but *"are the claims in the rewritten text still grounded in E₀?"*
-
-![w:860](../plots/15q/png/traj_factscore_by_instruction.png)
-
-<div class="note">Proportion of atomic claims in Eₜ supported by E₀ · AFG: OLMo-2-1124-7B-SFT · AFV: Gemma-3-4b-it · 84 answerable chains</div>
-
----
-
-<!-- SLIDE 17: OFS — interpretation -->
-## OpenFactScore: What Each Instruction Does
-
-| Instruction | Step 1 | Step 2 | Step 3 | Drop |
-|-------------|:------:|:------:|:------:|:----:|
-| `paraphrase` | 0.909 | 0.907 | 0.909 | −0.000 |
-| `formality` | 0.899 | 0.903 | 0.899 | −0.000 |
-| `shorten` | 0.902 | 0.893 | 0.894 | −0.008 |
-| `elaborate` | 0.872 | 0.846 | 0.807 | **−0.065** |
-
-- **`paraphrase` and `formality`**: OFS is flat across all steps. Style rewrites do not introduce unsupported claims.
-- **`shorten`**: almost no OFS drop (−0.008). Compression *removes* content but does not *invent* new content.
-- **`elaborate`**: steady decline, accelerating at step 3 (−0.065 total). Each elaboration step adds details that E₀ does not support — these are **hallucinations relative to the source**.
-
-OFS is independent of the QA model. When it drops, the text itself has changed factually — not just the model's ability to extract the answer.
+</td>
+</tr>
+</table>
 
 ---
 
 <!-- SLIDE 18: Dissociation — graph -->
-## Key Finding: F1 and OFS Capture Opposite Failures
+## The Text Changes More Than the QA Score Suggests
 
-![w:1000](../plots/15q/png/traj_f1_vs_ofs.png)
+The QA model can still extract an answer in many cases — but the underlying text has drifted further from E₀ than F1 alone would suggest.
 
-<div class="note">Left: Answer F1 · Right: OpenFactScore · same 84 answerable chains · mean ± 1 std</div>
+![w:900](../plots/15q/png/traj_f1_vs_ofs.png)
 
-`shorten` (red) dominates on the left — huge F1 drop. `elaborate` (green) dominates on the right — large OFS drop. The two instructions swap ranks between the two metrics.
+<div class="note">Left: Answer F1 · Right: OpenFactScore · same 84 answerable chains</div>
 
 ---
 
-<!-- SLIDE 19: Dissociation — table -->
-## The Dissociation: What Is Really Happening
+<!-- SLIDE 16b: F1 vs OFS by hop -->
+## F1 and OFS by Hop Count
 
-| Instruction | F1 drop | OFS drop | Failure mode |
-|-------------|:-------:|:--------:|--------------|
-| `shorten` | **−0.143** | −0.008 | Facts are **removed** → answer disappears from text |
-| `elaborate` | −0.104 | **−0.065** | Facts are **invented** → hallucination relative to E₀ |
-| `formality` | −0.057 | −0.000 | Style change only → both metrics mostly stable |
-| `paraphrase` | −0.042 | −0.000 | Rephrasing only → both metrics stable |
+![w:900](../plots/15q/png/traj_f1_vs_ofs_by_hop.png)
 
-The two metrics measure **complementary failure modes**:
+<div class="note">Left: Answer F1 · Right: OpenFactScore · 84 answerable chains · one line per hop count</div>
 
-- Answer F1 is sensitive to **fact removal** (shortening destroys the answer)
-- OpenFactScore is sensitive to **fact invention** (elaboration adds unsupported claims)
+---
 
-<div class="callout">
-Using only one metric misses half the picture. A system that only monitors F1 would not detect the hallucinations introduced by <code>elaborate</code>. A system that only monitors OFS would underestimate how dangerous <code>shorten</code> is.
+<!-- SLIDE 22: Conclusions -->
+## Conclusions *(preliminary — 15 questions)*
+
+**Iterative rewriting appears to degrade factuality — but the failure mode varies by instruction.**
+
+<div class="rq-box">
+<div class="rq-label">Content instructions — preliminary evidence</div>
+<code>shorten</code>: F1 drops sharply while OFS stays stable — consistent with fact removal, though not confirmed directly.<br>
+<code>elaborate</code>: OFS declines steadily — suggests the model adds claims not grounded in E₀.
 </div>
 
----
-
-<!-- SLIDE 20: Gold-in-text — graph -->
-## How Much of the F1 Drop Is the QA Model Failing?
-
-The QA model sometimes fails even when the gold answer is still in the text. The gold-in-text analysis checks whether the gold string appears literally in Eₜ, then cross-references with F1.
-
-![w:860](../plots/15q/png/traj_f1_gold_in_text.png)
-
-<div class="note">Left: raw Answer F1 · Right: F1 conditioned on gold answer present in text · 84 answerable chains · by instruction</div>
-
-When the gold is physically present, F1 is higher and drops less. The gap between the two curves is the QA model's contribution to the observed degradation.
-
----
-
-<!-- SLIDE 21: Gold-in-text — table -->
-## Gold-in-Text: Separating True Degradation from QA Failure
-
-| Category | N | Meaning |
-|----------|:-:|---------|
-| **hit** | 228 | Gold present, F1 > 0 — text and QA both work correctly |
-| **degraded** | 216 | Gold absent, F1 = 0 — **true factual degradation** |
-| **false negative** | 172 | Gold present but F1 = 0 — **QA model failure** on transformed text |
-| **parametric memory** | 104 | Gold absent but F1 > 0 — model answers from training knowledge |
-
-172 false negatives: the fact was still in the rewritten text, but the QA model refused to extract it or gave a wrong answer — often because the text style changed.
-
-| | Step 1 | Step 2 | Step 3 | Drop |
-|--|:------:|:------:|:------:|:----:|
-| F1 raw (answerable chains) | 0.738 | 0.669 | 0.652 | −0.086 |
-| F1 conditioned on gold present | 0.817 | 0.764 | 0.760 | **−0.057** |
-
-<div class="callout">
-~0.03 points of the observed drop is the QA model failing on transformed text — not actual factual degradation. True degradation is real but slower than raw F1 suggests.
+<div class="rq-box">
+<div class="rq-label">Style instructions</div>
+<code>formality</code> and <code>paraphrase</code> show limited degradation on both metrics across 3 steps.
 </div>
 
----
+<div class="rq-box">
+<div class="rq-label">Degradation appears cumulative</div>
+Each individual step looks conservative (consecutive BERTScore → 0.96), yet cumulative drift grows monotonically. More hops correlates with higher vulnerability: F1 at step 3 ranges from 0.909 (2-hop) to 0.510 (4-hop).
+</div>
 
-<!-- SLIDE 22: Summary -->
-## Summary of Findings
-
-| Finding | Evidence |
-|---------|----------|
-| ✅ **RQ1: Yes, rewriting degrades factuality** | F1 drops −0.042 to −0.143 by instruction; BERTScore drifts monotonically for all |
-| ✅ **Content instructions are more damaging** | `shorten` −0.143, `elaborate` −0.104 vs ≤−0.057 for style |
-| ✅ **Degradation is cumulative** | Consecutive BERTScore rises (0.889→0.960) yet baseline BERTScore drops at every step |
-| ✅ **More hops = more vulnerable** | F1 at step 3: 2-hop 0.909 → 4-hop 0.510 |
-| ✅ **Two distinct failure modes** | `shorten` removes facts (F1↓, OFS stable); `elaborate` adds hallucinations (OFS↓) |
-| ✅ **True degradation < raw F1 drop** | Gold-in-text: −0.057 vs −0.086 (0.03 is QA model failure) |
+<div class="callout">
+<b>One metric is not enough.</b> F1 and OFS appear to capture complementary failure modes — both are needed to characterise degradation fully.
+</div>
 
 ---
 
@@ -411,22 +429,12 @@ When the gold is physically present, F1 is higher and drops less. The gap betwee
 ## Limitations
 
 - **Small pilot** — 15 questions total; 3-hop patterns (16 answerable chains from 5 questions) are likely noise and should not be over-interpreted
-- **F1 normalization** — SQuAD-style does not handle paraphrastic correct answers; factuality may be slightly underestimated
-- **Gold-in-text uses exact string match** — surface variation in correct answers can be counted as degraded when the fact is actually preserved
-- **OFS cost** — OpenFactScore runs an LLM per atomic claim; not scalable to the full dataset without batching optimization
+- **F1 normalization** — SQuAD-style handles minor orthographic variation well (e.g. "September 11, 1962" = "11 September 1962" → F1=1.0) but not semantic paraphrases (e.g. "1400 years ago" vs "1,400 years" → F1=0.8); factuality may be slightly underestimated
 
 ---
 
 <!-- SLIDE 24: Next Steps -->
 ## Next Steps
 
-**RQ3 — Self-Refine** *(running on Homer server)*
-15 questions × 180 chains with `--rewriter-temperature 0.0` to match the baseline.
-A critic model verifies each rewrite factually; a refiner corrects identified errors before the next step.
-Hypothesis: the critic catches the hallucinations from `elaborate` and the fact removals from `shorten`, slowing degradation on both metrics.
-
-**PAU analysis** *(Laban et al., 2024)*
-With n=5 repetitions per chain: separates **Performance** (mean F1), **Aptitude** (best-case F1), and **Unreliability** (variance between runs). Can distinguish *capability erosion* (mean drops) from *stability loss* (variance grows) — two different kinds of degradation.
-
-**Scale-up to full MuSiQue dev set**
-~1200 questions, balanced across hop counts. Required for statistically robust conclusions on all three RQs and for the final thesis results.
+**RQ3 — Self-Refine** *(pipeline ready, under debugging)*
+The pipeline is implemented and smoke-tested end-to-end. However, initial results show an unexpected pattern: token count drops sharply across iterations, suggesting the refiner is compressing the text rather than correcting it — leading to heavy information loss between steps.
