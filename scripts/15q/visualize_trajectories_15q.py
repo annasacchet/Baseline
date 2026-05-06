@@ -11,6 +11,7 @@ Figure 7 — Style vs Content
 Figure 8 — OpenFactScore by hop count (mean + band)
 """
 
+import argparse
 import re
 from pathlib import Path
 
@@ -20,11 +21,22 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-F1_CSV  = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_answer_f1.csv"
-BS_CSV  = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_bertscore.csv"
-OFS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q_openfactscore.csv"
-OUT_DIR = REPO_ROOT / "results" / "plots" / "15q"
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tag", default="15q", help="Dataset tag (e.g. 15q, 200q). Controls input/output paths.")
+    return parser.parse_args()
+
+
+_args = parse_args()
+TAG     = _args.tag
+F1_CSV  = REPO_ROOT / "results" / TAG / f"rewriting_chains_{TAG}_answer_f1.csv"
+BS_CSV  = REPO_ROOT / "results" / TAG / f"rewriting_chains_{TAG}_bertscore.csv"
+OFS_CSV = REPO_ROOT / "results" / TAG / f"rewriting_chains_{TAG}_openfactscore.csv"
+OUT_DIR = REPO_ROOT / "results" / "plots" / TAG
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+(OUT_DIR / "png").mkdir(parents=True, exist_ok=True)
 
 INSTRUCTIONS = ["formality", "paraphrase", "shorten", "elaborate"]
 COLORS = {

@@ -317,7 +317,13 @@ def main():
             results.append(out)
             label = f"{out['group']}/{out['instruction_type']}/run{out['run']}/step{out['step']}"
             pred_short = (pred[:50] + "...") if len(pred) > 50 else pred
-            print(f"[{len(results)}/{total}] {label}  pred={pred_short!r:55s} gold={ref['answer']!r:25s} F1={f1:.3f}")
+            n_done = len(results)
+            avg = (time.time() - t_start) / max(n_done, 1)
+            eta = (total - n_done) * avg
+            print(
+                f"[{n_done}/{total}] {label}  pred={pred_short!r:55s} gold={ref['answer']!r:25s} "
+                f"F1={f1:.3f}  ETA {eta/60:.1f} min"
+            )
 
     elapsed = time.time() - t_start
     print(f"\nTempo totale: {elapsed:.1f}s ({elapsed/60:.1f} min)")

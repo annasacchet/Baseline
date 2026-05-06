@@ -1,0 +1,18 @@
+test,subset,mean_a,mean_b,n,pos,neg,direction,p,sig
+1_factscore_vs_1.0,instruction = ELABORATE,0.872,1.0,45,44,1,a<1.0,0.0,***
+1_factscore_vs_1.0,instruction = SHORTEN,0.9017,1.0,45,44,1,a<1.0,0.0,***
+1_factscore_vs_1.0,instruction = PARAPHRASE,0.909,1.0,45,45,0,a<1.0,0.0,***
+1_factscore_vs_1.0,instruction = FORMALITY,0.8992,1.0,45,45,0,a<1.0,0.0,***
+1_factscore_vs_1.0,group = CONTENT,0.8868,1.0,90,88,2,a<1.0,0.0,***
+1_factscore_vs_1.0,group = STYLE,0.9041,1.0,90,90,0,a<1.0,0.0,***
+1_factscore_vs_1.0,TOTALE,0.8955,1.0,180,178,2,a<1.0,0.0,***
+2_factscore_step1_vs_step3,instruction = ELABORATE,0.872,0.8072,45,38,7,a>b,3e-06,***
+2_factscore_step1_vs_step3,instruction = SHORTEN,0.9017,0.8937,45,24,21,a>b,0.765992,ns
+2_factscore_step1_vs_step3,instruction = PARAPHRASE,0.909,0.9091,44,23,21,a>b,0.880396,ns
+2_factscore_step1_vs_step3,instruction = FORMALITY,0.8992,0.8991,45,25,20,a>b,0.551484,ns
+2_factscore_step1_vs_step3,group = CONTENT,0.8868,0.8505,90,62,28,a>b,0.000438,***
+2_factscore_step1_vs_step3,group = STYLE,0.9041,0.9041,89,48,41,a>b,0.525015,ns
+2_factscore_step1_vs_step3,TOTALE,0.8955,0.8773,179,110,69,a>b,0.002691,**
+3_elaborate_vs_other_step1,elaborate vs shorten,0.872,0.9017,45,15,30,a<b,0.035698,*
+3_elaborate_vs_other_step1,elaborate vs paraphrase,0.872,0.909,45,11,34,a<b,0.000824,***
+3_elaborate_vs_other_step1,elaborate vs formality,0.872,0.8992,45,12,33,a<b,0.002459,**

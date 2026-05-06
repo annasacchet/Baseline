@@ -59,13 +59,27 @@ def call_gpt(client: OpenAI, original: str, rewritten: str, retries: int = 3) ->
                     )}
                 ],
             )
-            return json.loads(resp.choices[0].message.content)
+            raw = resp.choices[0].message.content
+            try:
+                return json.loads(raw)
+            except json.JSONDecodeError:
+                # Fallback: extract analysis text and lists with regex
+                import re
+                analysis = re.search(r'"analysis"\s*:\s*"(.*?)"(?=\s*,\s*"(?:lost|added)")', raw, re.DOTALL)
+                lost     = re.findall(r'"([^"]+)"', re.search(r'"lost"\s*:\s*\[(.*?)\]', raw, re.DOTALL).group(1) if re.search(r'"lost"\s*:\s*\[(.*?)\]', raw, re.DOTALL) else "")
+                added    = re.findall(r'"([^"]+)"', re.search(r'"added"\s*:\s*\[(.*?)\]', raw, re.DOTALL).group(1) if re.search(r'"added"\s*:\s*\[(.*?)\]', raw, re.DOTALL) else "")
+                return {
+                    "analysis": analysis.group(1) if analysis else raw[:2000],
+                    "lost": lost,
+                    "added": added,
+                }
         except Exception as e:
             if attempt < retries - 1:
                 print(f"  retry {attempt+1} after error: {e}", flush=True)
                 time.sleep(2 ** attempt)
             else:
-                raise
+                print(f"  WARNING: skipping after {retries} failures: {e}", flush=True)
+                return {"analysis": f"ERROR: {e}", "lost": [], "added": []}
 
 
 def format_md_block(qid: str, run: int, label: str, result: dict) -> str:
