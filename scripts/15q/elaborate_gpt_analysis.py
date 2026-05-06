@@ -34,7 +34,7 @@ Tell me what changed between them. Be specific and use concrete examples and quo
 I want to understand: what was lost, what was distorted, what was added that wasn't in the original, \
 how the tone or style shifted, and whether the rewrite actually elaborated or just compressed/paraphrased.
 
-Then give your overall assessment in a JSON with two fields:
+Answer in Italian. Then give your overall assessment in a JSON with two fields:
 - "analysis": your full free-form commentary (as detailed as you like)
 - "lost": a list of specific factual claims that disappeared or were distorted, each as a short string
 - "added": a list of claims introduced that are not grounded in the original, each as a short string
