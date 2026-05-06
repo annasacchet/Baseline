@@ -1,13 +1,16 @@
 """
-GPT-4o analysis of what is lost/added between rewriting steps for the 'elaborate' instruction.
+GPT-4o-mini analysis of what is lost/added between rewriting steps for the 'elaborate' instruction.
 
 For each (qid, run), compares:
   - consecutive pairs: (0→1), (1→2), (2→3)
   - overall:           (0→3)
 
-Output: results/15q/elaborate_gpt_analysis.csv
+Output:
+  - results/15q/elaborate_gpt_analysis.csv  (structured, one row per comparison)
+  - results/15q/elaborate_gpt_analysis.md   (human-readable report)
 """
 
+import json
 import os
 import sys
 import time
@@ -19,24 +22,22 @@ from openai import OpenAI
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CHAINS_CSV = REPO_ROOT / "results" / "15q" / "rewriting_chains_15q.csv"
 OUT_CSV    = REPO_ROOT / "results" / "15q" / "elaborate_gpt_analysis.csv"
+OUT_MD     = REPO_ROOT / "results" / "15q" / "elaborate_gpt_analysis.md"
 
 MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
 JUDGE_PROMPT = """\
-You are a fact-checking assistant. You are given two versions of a text: an ORIGINAL and a REWRITTEN version.
+Here are two versions of the same text. The second was produced by a language model asked to "elaborate" on the first.
 
-Your task:
-1. List all factual claims present in ORIGINAL but missing or distorted in REWRITTEN (LOST).
-2. List all factual claims present in REWRITTEN but not grounded in ORIGINAL (ADDED).
-3. Give a brief overall summary (1-2 sentences) of what changed.
+Tell me what changed between them. Be specific and use concrete examples and quotes from both texts. \
+I want to understand: what was lost, what was distorted, what was added that wasn't in the original, \
+how the tone or style shifted, and whether the rewrite actually elaborated or just compressed/paraphrased.
 
-Respond in this exact JSON format:
-{{
-  "lost": ["claim 1", "claim 2", ...],
-  "added": ["claim 1", "claim 2", ...],
-  "summary": "..."
-}}
+Then give your overall assessment in a JSON with two fields:
+- "analysis": your full free-form commentary (as detailed as you like)
+- "lost": a list of specific factual claims that disappeared or were distorted, each as a short string
+- "added": a list of claims introduced that are not grounded in the original, each as a short string
 
 ORIGINAL:
 {original}
@@ -58,7 +59,6 @@ def call_gpt(client: OpenAI, original: str, rewritten: str, retries: int = 3) ->
                     )}
                 ],
             )
-            import json
             return json.loads(resp.choices[0].message.content)
         except Exception as e:
             if attempt < retries - 1:
@@ -66,6 +66,26 @@ def call_gpt(client: OpenAI, original: str, rewritten: str, retries: int = 3) ->
                 time.sleep(2 ** attempt)
             else:
                 raise
+
+
+def format_md_block(qid: str, run: int, label: str, result: dict) -> str:
+    lines = []
+    lines.append(f"## {qid} | run {run} | {label}\n")
+
+    analysis = result.get("analysis", "")
+    if analysis:
+        lines.append(f"{analysis}\n")
+
+    lost = result.get("lost", [])
+    if lost:
+        lines.append(f"**Lost ({len(lost)}):** " + " | ".join(f"`{c}`" for c in lost) + "\n")
+
+    added = result.get("added", [])
+    if added:
+        lines.append(f"**Added ({len(added)}):** " + " | ".join(f"`{c}`" for c in added) + "\n")
+
+    lines.append("---\n")
+    return "\n".join(lines)
 
 
 def main():
@@ -79,10 +99,8 @@ def main():
     df = pd.read_csv(CHAINS_CSV)
     elab = df[df["instruction_type"] == "elaborate"].copy()
 
-    # Build pivot: rows = (qid, run), cols = step 0..3
     pivot = elab.pivot_table(index=["qid", "run"], columns="step", values="text", aggfunc="first")
 
-    # Resume: skip already-done (qid, run, comparison)
     done = set()
     if OUT_CSV.exists():
         done_df = pd.read_csv(OUT_CSV)
@@ -95,6 +113,10 @@ def main():
     total = len(pivot) * len(comparisons)
     n_done = 0
     t_start = time.time()
+
+    md_file = open(OUT_MD, "a", encoding="utf-8")
+    if OUT_MD.stat().st_size == 0 if OUT_MD.exists() else True:
+        md_file.write("# GPT-4o-mini Analysis: Elaborate Rewriting Chains\n\n")
 
     for (qid, run), texts in pivot.iterrows():
         for (src_step, tgt_step) in comparisons:
@@ -117,29 +139,36 @@ def main():
             elapsed = time.time() - t0
             print(f"{elapsed:.1f}s | lost={len(result.get('lost',[]))} added={len(result.get('added',[]))}", flush=True)
 
+            # Write markdown block immediately
+            md_file.write(format_md_block(qid, run, label, result))
+            md_file.flush()
+
+            lost_list  = result.get("lost", [])
+            added_list = result.get("added", [])
             rows.append({
                 "qid":        qid,
                 "run":        run,
                 "comparison": label,
                 "src_step":   src_step,
                 "tgt_step":   tgt_step,
-                "n_lost":     len(result.get("lost", [])),
-                "n_added":    len(result.get("added", [])),
-                "lost":       " | ".join(result.get("lost", [])),
-                "added":      " | ".join(result.get("added", [])),
-                "summary":    result.get("summary", ""),
+                "n_lost":     len(lost_list),
+                "n_added":    len(added_list),
+                "lost":       " | ".join(lost_list),
+                "added":      " | ".join(added_list),
+                "analysis":   result.get("analysis", ""),
             })
             n_done += 1
 
-            # Append incrementally so progress is saved
-            if rows:
-                new_df = pd.DataFrame(rows)
-                write_header = not OUT_CSV.exists()
-                new_df.to_csv(OUT_CSV, mode="a", header=write_header, index=False)
-                rows = []
+            new_df = pd.DataFrame(rows)
+            write_header = not OUT_CSV.exists()
+            new_df.to_csv(OUT_CSV, mode="a", header=write_header, index=False)
+            rows = []
 
+    md_file.close()
     elapsed_total = time.time() - t_start
-    print(f"\nDone in {elapsed_total/60:.1f} min. Output: {OUT_CSV}", flush=True)
+    print(f"\nDone in {elapsed_total/60:.1f} min.", flush=True)
+    print(f"CSV:      {OUT_CSV}", flush=True)
+    print(f"Report:   {OUT_MD}", flush=True)
 
 
 if __name__ == "__main__":
