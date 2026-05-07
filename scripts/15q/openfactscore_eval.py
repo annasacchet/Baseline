@@ -390,6 +390,34 @@ def main():
     afg = HFChatModel(args.afg_model, "AFG", use_4bit=args.use_4bit)
     afv = HFChatModel(args.afv_model, "AFV", use_4bit=args.use_4bit)
 
+    # Extract and save E_0 facts once per qid (used later to compute recall)
+    e0_facts_cache = {}
+    done_e0_qids = set()
+    if out_details_path.exists():
+        prev_details = pd.read_csv(out_details_path)
+        done_e0_qids = set(prev_details[prev_details["step"] == 0]["qid"].unique())
+
+    print("\nExtracting E_0 facts (for recall computation)...")
+    for chain_id, e0_text in sources.items():
+        qid = chain_id[0]  # first element of CHAIN_KEYS is qid
+        if qid in e0_facts_cache or qid in done_e0_qids:
+            continue
+        print(f"  [AFG/E0] {qid} ...", end=" ", flush=True)
+        t0 = time.time()
+        facts = extract_atomic_facts(afg, e0_text, demons, demon_keys, bm25)
+        e0_facts_cache[qid] = facts
+        print(f"{len(facts)} facts [{time.time()-t0:.1f}s]", flush=True)
+        # Save E_0 facts to details CSV with step=0
+        e0_row = df[(df["qid"] == qid) & (df["step"] == 0)].iloc[0]
+        if facts:
+            e0_details = pd.DataFrame([
+                {**{k: e0_row[k] for k in CHAIN_KEYS},
+                 "step": 0, "fact": f, "label": "E0", "raw": ""}
+                for f in facts
+            ])
+            e0_details.to_csv(out_details_path, mode="a",
+                              header=not out_details_path.exists(), index=False, encoding="utf-8")
+
     total = len(to_eval)
     t_start = time.time()
     n_done = 0

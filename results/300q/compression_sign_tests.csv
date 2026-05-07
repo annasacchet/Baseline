@@ -1,0 +1,15 @@
+test,dataset,subset,mean_a,threshold,n,pos,neg,direction,p,sig,mean_b
+1_compression_vs_1.0,300q,elaborate,0.3438,1.0,105,105,0,a<1.0,0.0,***,
+1_compression_vs_1.0,300q,shorten,0.2373,1.0,105,105,0,a<1.0,0.0,***,
+1_compression_vs_1.0,300q,paraphrase,0.2989,1.0,108,108,0,a<1.0,0.0,***,
+1_compression_vs_1.0,300q,formality,0.4355,1.0,108,108,0,a<1.0,0.0,***,
+1_compression_vs_1.0,300q,TOTALE,0.3294,1.0,426,426,0,a<1.0,0.0,***,
+3_bertscore_vs_0.9,300q,elaborate,0.8496,0.9,105,86,19,a<0.9,0.0,***,
+3_bertscore_vs_0.9,300q,shorten,0.849,0.9,105,103,2,a<0.9,0.0,***,
+3_bertscore_vs_0.9,300q,paraphrase,0.8558,0.9,108,93,15,a<0.9,0.0,***,
+3_bertscore_vs_0.9,300q,formality,0.886,0.9,108,65,43,a<0.9,0.021404,*,
+3_bertscore_vs_0.9,300q,TOTALE,0.8602,0.9,426,347,79,a<0.9,0.0,***,
+3_compression_step1_vs_step3,300q,elaborate,0.3438,,105,53,52,a>b,1.0,ns,0.3048
+3_compression_step1_vs_step3,300q,shorten,0.2373,,105,105,0,a>b,0.0,***,0.1564
+3_compression_step1_vs_step3,300q,paraphrase,0.2989,,107,96,11,a>b,0.0,***,0.1892
+3_compression_step1_vs_step3,300q,formality,0.4355,,107,94,13,a>b,0.0,***,0.3046
