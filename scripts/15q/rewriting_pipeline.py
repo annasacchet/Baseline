@@ -276,6 +276,13 @@ def main():
         help="Run only on the 2-hop pilot question (matches the existing pilot CSV).",
     )
     parser.add_argument(
+        "--qids-file", type=Path, default=None,
+        help="Path to a file with one MuSiQue qid per line. When set, run on "
+             "exactly these qids (overrides --n-per-hop and --smoke-test). "
+             "Used to pin the 4-bit run to the same 15 qids as the full-precision "
+             "pilot for an apples-to-apples quantization comparison.",
+    )
+    parser.add_argument(
         "--only-supporting", action="store_true",
         help="Use only supporting paragraphs as E0. Default: all 20 paragraphs.",
     )
@@ -310,7 +317,25 @@ def main():
     print(f"  loaded {len(raw)} items", flush=True)
     print(f"  hop distribution: {dict((h, sum(1 for it in raw if hop_count(it)==h)) for h in (2,3,4))}", flush=True)
 
-    if args.smoke_test:
+    if args.qids_file:
+        # Run on the exact qids listed in the file (one per line, empty/# lines skipped).
+        wanted = set()
+        with open(args.qids_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    wanted.add(line)
+        questions = [it for it in raw if it["id"] in wanted]
+        missing = wanted - {q["id"] for q in questions}
+        if missing:
+            print(f"WARNING: {len(missing)} qids from {args.qids_file} not found in dataset:", file=sys.stderr)
+            for m in sorted(missing):
+                print(f"  {m}", file=sys.stderr)
+        if not questions:
+            print(f"ERROR: no qids from {args.qids_file} matched the dataset", file=sys.stderr)
+            sys.exit(1)
+        print(f"\n*** PINNED to {len(questions)}/{len(wanted)} qids from {args.qids_file} ***", flush=True)
+    elif args.smoke_test:
         # Pin to the same pilot question used for the existing CSV
         questions = [it for it in raw if it["id"] == "2hop__635544_110949"]
         if not questions:

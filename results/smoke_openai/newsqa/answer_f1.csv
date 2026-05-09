@@ -1,0 +1,33 @@
+qid,group,instruction_type,run,step,question,gold_answer,predicted_answer,matched_reference,answer_f1
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,formality,0,0,what happened in the attack in the war-torn capital?,nine people were killed,Mortars hit a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,formality,0,1,what happened in the attack in the war-torn capital?,nine people were killed,"Mortars struck a residence, killing nine.",nine people were killed,0.22222222222222224
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,formality,0,2,what happened in the attack in the war-torn capital?,nine people were killed,Mortar strikes killed nine individuals.,nine people were killed,0.4444444444444445
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,formality,0,3,what happened in the attack in the war-torn capital?,nine people were killed,Mortar strikes killed at least nine.,nine people were killed,0.4
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,paraphrase,0,0,what happened in the attack in the war-torn capital?,nine people were killed,Mortars hit a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,paraphrase,0,1,what happened in the attack in the war-torn capital?,nine people were killed,"Mortars struck a residence, killing nine.",nine people were killed,0.22222222222222224
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,paraphrase,0,2,what happened in the attack in the war-torn capital?,nine people were killed,Mortars hit a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,style,paraphrase,0,3,what happened in the attack in the war-torn capital?,nine people were killed,Mortars struck a residence for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,shorten,0,0,what happened in the attack in the war-torn capital?,nine people were killed,Mortars hit a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,shorten,0,1,what happened in the attack in the war-torn capital?,nine people were killed,Mortars struck a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,shorten,0,2,what happened in the attack in the war-torn capital?,nine people were killed,"Mortars hit a veterans' home, killing nine.",nine people were killed,0.2
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,shorten,0,3,what happened in the attack in the war-torn capital?,nine people were killed,"Mortars struck a veterans' home, killing nine.",nine people were killed,0.2
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,elaborate,0,0,what happened in the attack in the war-torn capital?,nine people were killed,Mortars hit a home for disabled veterans.,nine people were killed,0.0
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,elaborate,0,1,what happened in the attack in the war-torn capital?,nine people were killed,"Mortars struck a veterans' home, killing nine.",nine people were killed,0.2
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,elaborate,0,2,what happened in the attack in the war-torn capital?,nine people were killed,A mortar attack killed at least nine people.,nine people were killed,0.5454545454545454
+./cnn/stories/d9ea64de844086c1430636ce80cd2849e3fb25e7.story,content,elaborate,0,3,what happened in the attack in the war-torn capital?,nine people were killed,A mortar attack killed at least nine people.,nine people were killed,0.5454545454545454
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,formality,0,0,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,formality,0,1,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,formality,0,2,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,formality,0,3,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,paraphrase,0,0,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,paraphrase,0,1,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,paraphrase,0,2,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,style,paraphrase,0,3,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,shorten,0,0,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,shorten,0,1,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,shorten,0,2,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,shorten,0,3,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,elaborate,0,0,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,elaborate,0,1,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,elaborate,0,2,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
+./cnn/stories/bc8f85297fa51310468d8f3990e0f4bb07176ce8.story,content,elaborate,0,3,Who found international fame with ''Farewell My Concubine''?,Chen Kaige,Chen Kaige,Chen Kaige,1.0
