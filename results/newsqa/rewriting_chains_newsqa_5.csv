@@ -1,0 +1,615 @@
+qid,question,gold_answer,gold_answer_aliases,group,instruction_type,run,instruction_used,step,text,n_tokens
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,0,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,0,Make the text more formal.,1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday acquitted Moninder Singh Pandher in a high-profile case involving the death of a teenager, which has been referred to as ""the house of horrors."" Pandher's domestic employee, Surinder Koli, however, had his death sentence confirmed by the High Court, according to Pandher's attorney, Sikandar B. Kochar.
+
+This case is regarded as one of the most gruesome instances of serial killing in recent years in India. Initially, Pandher was not considered a primary suspect by investigators. Nevertheless, he was subsequently charged as a co-accused during the proceedings. According to Kochar, Pandher was in Australia at the time the teenager was allegedly raped and killed.
+
+Pandher is scheduled to stand trial in connection with the remaining 18 alleged murders and may continue to be held in custody pending further judicial processes.",184
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,0,Make the text more formal.,2,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday delivered a verdict acquitting Moninder Singh Pandher in the high-profile case commonly referred to as the ""house of horrors."" However, the court upheld the death sentence of his domestic employee, Surinder Koli, as confirmed by Pandher's legal counsel, Sikandar B. Kochar.
+
+This case is recognized as one of the most gruesome instances of serial killing in recent years within India. Initially, Pandher was not regarded as a principal suspect by the investigating authorities. Nonetheless, he was subsequently included as a co-accused in the judicial proceedings. According to Kochar, Pandher was in Australia at the time the teenager was allegedly raped and murdered.
+
+Pandher is now set to face trial in relation to the remaining 18 alleged murders and may continue to be detained while further legal processes are underway.",181
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,0,Make the text more formal.,3,"NEW DELHI, India (CNN) -- The Allahabad High Court, on Friday, delivered a verdict acquitting Moninder Singh Pandher in the notorious case referred to as the ""house of horrors."" Nevertheless, the death sentence previously imposed on his domestic employee, Surinder Koli, was maintained, as confirmed by Pandher's legal counsel, Sikandar B. Kochar.
+
+This case is acknowledged as one of the most gruesome episodes of serial killing in recent Indian history. At the outset of the investigation, Pandher was not considered a primary suspect. However, he was later included as a co-accused in the ensuing judicial proceedings. As stated by Kochar, Pandher was in Australia at the time when a teenager was allegedly raped and murdered.
+
+Subsequently, Pandher is scheduled to stand trial concerning the remaining 18 alleged murders and may continue to be held in custody pending further legal proceedings.",184
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,1,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,1,Rephrase it to be more formal.,1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday acquitted Moninder Singh Pandher, a prominent businessman, in a case referred to as ""the house of horrors."" However, the court upheld the death sentence of his domestic employee, Surinder Koli, in connection with the rape and murder of a 14-year-old victim.
+
+Pandher and Koli had previously been sentenced to death by a lower court in February in relation to this crime.
+
+The case involved one of the most gruesome instances of serial killing in recent years in India, with a total of 19 victims, all of whom were children or young women.
+
+Following the discovery of body parts encased in plastic bags near the defendants' residence in Noida, a suburb of New Delhi, the property was described by the Indian media as a ""house of horrors."" Initially, Pandher was not considered a primary suspect by investigators; he was later included as a co-accused during the proceedings.
+
+According to his attorney, Sikandar B. Kochar, Pandher was in Australia at the time the teenager was killed. Pandher is still subject to trial regarding the remaining 18 killings and may continue to be held in custody pending further judicial proceedings.",252
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,1,Rephrase it to be more formal.,2,"NEW DELHI, India (CNN) — The Allahabad High Court on Friday acquitted Moninder Singh Pandher, a prominent businessman, in a case commonly referred to as the ""house of horrors."" Nevertheless, the court upheld the death sentence of his domestic employee, Surinder Koli, in connection with the rape and murder of a 14-year-old victim.
+
+Previously, both Pandher and Koli had been sentenced to death by a lower court in February in relation to this offense.
+
+The case pertains to one of the most egregious instances of serial killings in recent years in India, involving a total of 19 victims, all of whom were minors or young women.
+
+Subsequent to the discovery of dismembered bodies encased in plastic bags in close proximity to the defendants' residence in Noida, a suburb of New Delhi, the property was characterized by the Indian media as a ""house of horrors."" At the outset, Pandher was not regarded by investigators as a principal suspect; however, he was subsequently included as a co-accused during the judicial proceedings.
+
+According to his legal counsel, Sikandar B. Kochar, Pandher was in Australia at the time of the teenager’s death. He remains subject to trial in connection with the other 18 killings and may continue to be detained pending further judicial processes.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,1,Rephrase it to be more formal.,3,"NEW DELHI, India (CNN) — The Allahabad High Court on Friday acquitted Moninder Singh Pandher, a prominent businessman, in a matter commonly known as the ""house of horrors"" case. Nonetheless, the court affirmed the death sentence of his domestic employee, Surinder Koli, in relation to the rape and murder of a 14-year-old victim.
+
+Earlier, both Pandher and Koli had received death sentences from a lower court in February concerning this particular crime.
+
+This case relates to one of the most egregious instances of serial killings in recent years in India, with 19 victims, all of whom were minors or young women.
+
+Following the discovery of dismembered bodies encased in plastic near the defendants' residence in Noida, a suburb of New Delhi, the property was described by the Indian media as a ""house of horrors."" Initially, Pandher was not considered a primary suspect by investigators; however, he was subsequently charged as a co-accused in the ensuing judicial proceedings.
+
+As stated by his legal representative, Sikandar B. Kochar, Pandher was in Australia at the time of the teenager’s death. He is still subject to trial regarding the other 18 murders and may remain in custody pending further judicial determinations.",256
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,2,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,2,"Too conversational, rephrase it to be more formal.",1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday acquitted Moninder Singh Pandher, a prominent businessman, in a case involving the murder of a teenager that had been referred to as ""the house of horrors."" 
+
+Pandher had previously been sentenced to death by a lower court in February. The case is among the most gruesome instances of serial killings in recent years in India, with 19 victims, including children and young women.
+
+While Surinder Koli, Pandher's domestic employee, had his death sentence confirmed by the High Court, Pandher was acquitted of the charges related to the rape and murder of the 14-year-old victim, according to his lawyer, Sikandar B. Kochar.
+
+Initially, Pandher was not considered a primary suspect by investigators. However, he was later included as a co-accused during the proceedings. Kochar stated that his client was in Australia at the time the teenager was killed.
+
+Pandher still faces trial in connection with the remaining 18 murders and may continue to be held in custody pending further judicial processes.",222
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,2,"Too conversational, rephrase it to be more formal.",2,"NEW DELHI, India — The Allahabad High Court on Friday delivered a verdict acquitting Moninder Singh Pandher, a well-known businessman, in connection with the murder of a teenager that had been widely referred to as the ""house of horrors"" case. 
+
+Earlier, a lower court had sentenced Pandher to death in February. The case represents one of the most disturbing episodes of serial killings in recent Indian history, with a total of 19 victims, including children and young women.
+
+Although Surinder Koli, the domestic worker employed by Pandher, had his death sentence upheld by the High Court, Pandher was exonerated of the charges pertaining to the rape and murder of the 14-year-old victim, as indicated by his legal counsel, Sikandar B. Kochar.
+
+At the outset of the investigation, Pandher was not regarded as a principal suspect. He was subsequently included as a co-accused in the proceedings. According to his lawyer, Pandher was in Australia at the time of the teenager's death.
+
+Nonetheless, Pandher continues to face trial in relation to the remaining 18 counts of murder and may remain in custody pending further judicial proceedings.",239
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,formality,2,"Too conversational, rephrase it to be more formal.",3,"NEW DELHI, India — The Allahabad High Court on Friday pronounced a verdict acquitting Moninder Singh Pandher, a prominent businessman, in connection with the murder of a minor that had been infamously associated with the ""house of horrors"" case. 
+
+A lower court had previously sentenced Pandher to death in February. This case is recognized as one of the most egregious instances of serial killings in recent Indian history, involving a total of 19 victims, including children and young women.
+
+Initially, Pandher was not considered a primary suspect in the investigation. However, he was later included as a co-accused. His legal representative, Sikandar B. Kochar, stated that Pandher was in Australia at the time of the victim's death.
+
+Despite the acquittal on the specific charges related to the rape and murder of the 14-year-old victim, Pandher remains charged in connection with the other 18 counts of murder. He may continue to be held in custody while further legal proceedings are underway.",206
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,0,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,0,Paraphrase this.,1,"A high court in Allahabad cleared a wealthy businessman, Moninder Singh Pandher, of the death penalty on Friday in a case known as ""the house of horrors,"" though his domestic worker, Surinder Koli, will still face execution. Pandher had previously been given a death sentence by a lower court in February for the rape and murder of a 14-year-old girl, one of 19 victims in a series of shocking killings. Although Pandher was not initially considered a primary suspect and claimed to be in Australia at the time of the crime, he was later included as a co-accused. He continues to stand trial in connection with the other 18 murders and may remain in custody pending those proceedings.",145
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,0,Paraphrase this.,2,"An Allahabad high court ruled on Friday that Moninder Singh Pandher, a wealthy businessman, would not face the death penalty in the ""house of horrors"" case. However, his domestic worker, Surinder Koli, is still set to be executed. Pandher had been sentenced to death by a lower court in February for the rape and murder of a 14-year-old girl, who was one of 19 victims in a series of gruesome killings. Initially not seen as a main suspect and having claimed he was in Australia when the crime occurred, Pandher was later added as a co-defendant. He is still awaiting trial on the other 18 murder charges and could remain in custody during those proceedings.",143
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,0,Paraphrase this.,3,"The Allahabad High Court decided on Friday that Moninder Singh Pandher, a prominent businessman, will not be given the death sentence in the ""house of horrors"" case. In contrast, his house help, Surinder Koli, is scheduled to receive a death sentence. Pandher had previously been given a death sentence by a lower court in February for the rape and murder of a 14-year-old girl, one of 19 victims in a series of brutal crimes. Although he was not initially considered a key suspect and had claimed he was in Australia at the time of the offense, he was later included as a co-accused. Pandher is still awaiting trial on the remaining 18 murder charges and may continue to be held in custody until those cases are resolved.",156
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,1,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,1,Reword this text.,1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday cleared a wealthy businessman of charges in a horrific case involving the murder of a teenager, while upholding the death sentence of his domestic worker. 
+
+The businessman, Moninder Singh Pandher, had been sentenced to death by a lower court in February alongside Surinder Koli for the rape and murder of a 14-year-old girl. The crimes were among the most brutal serial killings in recent Indian history.
+
+Initially, Pandher was not considered a primary suspect. He was called as a co-accused during the trial and was reportedly in Australia at the time of the teenager's death, his lawyer, Sikandar B. Kochar, said.
+
+Koli's death sentence was upheld by the high court, Kochar added. 
+
+Pandher still faces trial on charges related to the other 18 victims and may remain in custody pending further proceedings.",188
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,1,Reword this text.,2,"NEW DELHI, India (CNN) -- A wealthy businessman, Moninder Singh Pandher, was acquitted on Friday in a high-profile case where a teenage girl was raped and murdered, while the death penalty for his domestic worker, Surinder Koli, was confirmed. 
+
+Pandher was sentenced to death in February alongside Koli by a lower court in one of the most brutal serial killings in recent Indian history. He was not initially viewed as a main suspect and his attorney, Sikandar B. Kochar, stated Pandher was in Australia when the teenager died. 
+
+Kochar also confirmed that Koli’s death sentence was upheld by the Allahabad High Court. 
+
+Pandher continues to face charges related to 18 other victims and may remain in custody as those cases proceed.",161
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,1,Reword this text.,3,"NEW DELHI, India (CNN) -- Moninder Singh Pandher, a wealthy businessman, was found not guilty on Friday in a prominent case involving the rape and murder of a teenage girl. Koli, his domestic worker, had his death sentence upheld by the Allahabad High Court. 
+
+Earlier, a lower court had sentenced both Pandher and Koli to death in February, in connection with one of India's most gruesome recent serial killings. Pandher’s lawyer, Sikandar B. Kochar, noted that Pandher was not considered a primary suspect and was in Australia at the time of the girl's death. 
+
+Pandher still faces charges in connection with 18 additional victims and may remain in custody pending those trials.",149
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,2,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,2,Use different wording.,1,"ALLAHABAD, India (CNN) -- A prominent businessman was found not guilty Friday by a high court in northern India in a case known as ""the house of horrors.""
+
+In February, a lower court had sentenced Moninder Singh Pandher to death.
+
+The case involved 19 victims—children and young women—in some of India's most shocking serial murders in recent times.
+
+The Allahabad high court cleared Pandher of charges, while confirming the death penalty for his servant, Surinder Koli, lawyer Sikandar B. Kochar told CNN.
+
+Koli had already been given the death sentence for the rape and murder of a 14-year-old girl.
+
+Kochar stated that Pandher was in Australia at the time of the victim's death and was only brought in as an accomplice during the trial. He remains in custody as he is still on trial for the other 18 murders, the lawyer added.",186
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,2,Use different wording.,2,"ALLAHABAD, India (CNN) -- A leading businessman was acquitted Friday by a high court in northern India in a trial referred to as the ""house of horrors.""
+
+Previously, in February, a lower court had handed down a death sentence to Moninder Singh Pandher.
+
+The crimes involved 19 victims, including children and young women, making them among the most disturbing serial killings in India recently.
+
+According to lawyer Sikandar B. Kochar, the Allahabad high court maintained the death penalty for Pandher's servant, Surinder Koli, who had already been condemned for the rape and murder of a 14-year-old girl.
+
+Kochar noted that Pandher was in Australia when the victims died and was prosecuted only as an accessory during the proceedings. He remains detained as he faces charges in the other 18 cases.",169
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,style,paraphrase,2,Use different wording.,3,"ALLAHABAD, India (CNN) -- A prominent businessman was found not guilty Friday by a high court in northern India in a case known as the ""house of horrors.""
+
+Earlier, in February, a district court had sentenced Moninder Singh Pandher to death.
+
+The offenses involved 19 victims, including minors and young women, marking some of the most shocking serial killings in recent Indian history.
+
+Lawyer Sikandar B. Kochar said the high court upheld the death penalty for Surinder Koli, Pandher's employee, who had already been convicted for the rape and murder of a 14-year-old girl.
+
+Kochar added that Pandher was in Australia at the time of the killings and was prosecuted solely as an accomplice. He remains in custody, facing additional charges related to the other 18 cases.",167
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,0,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,0,Make wording more concise.,1,"NEW DELHI, India (CNN) -- An Indian high court on Friday acquitted Moninder Singh Pandher in the ""house of horrors"" case, while upholding the death sentence of his domestic worker Surinder Koli.
+
+Pandher and Koli were previously sentenced to death for the rape and murder of a 14-year-old. Pandher was a co-accused but not the main suspect; his lawyer said he was in Australia when the crime occurred.
+
+Pandher still faces trial in 18 other killings and may remain in custody.",111
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,0,Make wording more concise.,2,"NEW DELHI, India (CNN) -- An Indian high court on Friday acquitted Moninder Singh Pandher in the ""house of horrors"" case but upheld the death sentence for Surinder Koli. Pandher, a co-accused but not the main suspect, was in Australia during the crime. He still faces trial in 18 other killings and may remain in custody.",76
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,0,Make wording more concise.,3,"NEW DELHI: An Indian high court acquitted Moninder Singh Pandher in the ""house of horrors"" case but upheld Surinder Koli's death sentence. Pandher, who was in Australia at the time, still faces trial in 18 other killings and may stay in custody.",57
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,1,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,1,Rephrase for clarity and conciseness.,1,"NEW DELHI, India — A wealthy businessman was acquitted Friday by an Indian high court in a gruesome ""house of horrors"" case involving the rape and murder of a 14-year-old. His domestic employee, however, had his death sentence upheld. The businessman, Moninder Singh Pandher, was not considered a main suspect and claimed he was in Australia at the time of the crime. He still faces trial in 18 other killings.",88
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,1,Rephrase for clarity and conciseness.,2,"NEW DELHI — An Indian high court acquitted businessman Moninder Singh Pandher Friday in the rape and murder of a 14-year-old, but upheld the death sentence of his domestic worker. Pandher, who was not the primary suspect and said he was in Australia at the time, remains charged in 18 other killings.",65
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,1,Rephrase for clarity and conciseness.,3,"NEW DELHI — A high court acquitted businessman Moninder Singh Pandher Friday in the rape and murder of a 14-year-old girl but upheld the death sentence of his domestic worker. Pandher, who was not the main suspect and claims he was in Australia at the time, still faces charges in 18 other killings.",65
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,2,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,2,"Improve accuracy, clarity, and conciseness of language.",1,"NEW DELHI — An Allahabad high court on Friday acquitted Moninder Singh Pandher in a high-profile ""house of horrors"" case, while upholding the death sentence of his domestic employee, Surinder Koli. 
+
+Pandher had been sentenced to death by a lower court in February for the rape and murder of a 14-year-old girl, one of 19 victims in a series of gruesome killings near Noida, a New Delhi suburb. 
+
+Initially not considered a main suspect, Pandher was charged as a co-accused during the trial. His lawyer, Sikandar B. Kochar, stated that Pandher was in Australia at the time of the crime. 
+
+Pandher still faces trial in connection with the other 18 killings and may remain in custody.",161
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,2,"Improve accuracy, clarity, and conciseness of language.",2,"NEW DELHI — The Allahabad High Court on Friday acquitted Moninder Singh Pandher in the notorious ""house of horrors"" case but upheld the death sentence of his domestic worker, Surinder Koli. 
+
+Pandher had been convicted to death by a lower court in February for the rape and murder of a 14-year-old girl, one of 19 victims found near Noida, a suburb of New Delhi. 
+
+Although not originally considered a primary suspect, Pandher was later charged as an accomplice. His attorney, Sikandar B. Kochar, argued that Pandher was in Australia during the crimes. 
+
+Pandher remains charged in connection with the other 18 murders and may continue to be held in custody.",150
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,shorten,2,"Improve accuracy, clarity, and conciseness of language.",3,"NEW DELHI — The Allahabad High Court on Friday acquitted Moninder Singh Pandher in the ""house of horrors"" case but upheld the death sentence of his domestic worker, Surinder Koli. Pandher was initially sentenced to death by a lower court for the rape and murder of a 14-year-old girl, one of 19 victims discovered near Noida, a New Delhi suburb. Though not a primary suspect at first, Pandher was subsequently charged as an accomplice. His lawyer, Sikandar B. Kochar, maintained that Pandher was in Australia at the time of the crimes. Pandher still faces charges related to the other 18 murders and could remain in custody.",141
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,0,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,0,"Elaborate on the content, adding relevant details while staying faithful to the source text.",1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday delivered a verdict in the notorious ""house of horrors"" case, acquitting Moninder Singh Pandher, a wealthy businessman who had been sentenced to death by a lower court in February. Pandher was accused alongside his domestic worker, Surinder Koli, in the brutal rape and murder of a 14-year-old girl, which was part of a series of 19 horrific killings of children and young women in the Noida area, a suburb of New Delhi. The case, considered among the most gruesome serial killings in India in recent years, gained significant attention after human remains in plastic bags were discovered near the suspects' residence. Initially, Pandher was not regarded as a primary suspect by investigators, but he was later included as a co-accused during the trial proceedings. Pandher’s legal counsel, Sikandar B. Kochar, confirmed to CNN that Pandher was in Australia at the time of the teen’s murder and was not present in the country. However, Kochar noted that Pandher still faces trial in connection with the other 18 killings, and he may continue to be held in custody pending further judicial processes. Meanwhile, the death sentence for Surinder Koli was upheld by the high court.",263
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,0,"Elaborate on the content, adding relevant details while staying faithful to the source text.",2,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday issued its decision in the widely publicized ""house of horrors"" case, overturning the death sentence previously handed to Moninder Singh Pandher, a prominent businessman. Pandher had been convicted alongside Surinder Koli, his domestic helper, in the brutal rape and murder of a 14-year-old girl. This crime was one of a series of 19 shocking incidents involving the murders of children and young women in and around Noida, a major suburb of New Delhi. The case captured national attention after the discovery of several human remains, packed in plastic bags, near the suspects' home. Although initial police investigations did not focus on Pandher as a key suspect, he was subsequently added as a co-accused during the trial. Pandher’s attorney, Sikandar B. Kochar, confirmed to CNN that his client was in Australia at the time of the girl’s murder and thus could not have been physically present in India during the crime. Nonetheless, Pandher remains implicated in the other 18 cases and may continue to be detained as legal proceedings related to those charges progress. In contrast, the high court upheld the death sentence for Surinder Koli in connection with the murder of the teenager.",260
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,0,"Elaborate on the content, adding relevant details while staying faithful to the source text.",3,"NEW DELHI, India (CNN) -- The Allahabad High Court delivered its verdict on Friday in the sensational ""house of horrors"" case, reversing the death sentence previously imposed on Moninder Singh Pandher, a well-known businessman. Pandher had been found guilty alongside Surinder Koli, his former domestic worker, in the heinous rape and murder of a 14-year-old girl. This incident was part of a disturbing series of 19 cases involving the murders of children and young women in and around Noida, a significant suburb of New Delhi. The case garnered extensive national media coverage after police uncovered multiple human remains, carefully packed in plastic bags, close to the suspects' residence. Initially, the police investigation did not target Pandher as a primary suspect. However, during the course of the trial, he was included as a co-accused. Pandher’s legal representative, Sikandar B. Kochar, confirmed to CNN that his client was in Australia at the time the girl was killed, making it impossible for him to have been in India when the crime occurred. Despite this, Pandher is still facing charges in the remaining 18 cases and may remain in custody as those trials continue. In a contrasting decision, the high court upheld the death sentence for Surinder Koli specifically in relation to the murder of the teenager.",272
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,1,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,1,"Expand the text with more context, without introducing information that is not supported by the original.",1,"NEW DELHI, India (CNN) -- In a decision announced on Friday, the Allahabad High Court in northern India acquitted Moninder Singh Pandher in a high-profile case involving the gruesome murder of a 14-year-old girl, which had been referred to by Indian media as ""the house of horrors."" Pandher, a wealthy businessman, had previously been sentenced to death by a lower court in February alongside his domestic employee, Surinder Koli, in connection with the rape and murder of the teenager. The pair had been convicted for this crime, which was one of 19 shocking incidents involving children and young women in the area. While Koli's death sentence was upheld by the high court, Pandher was found not guilty in this particular case. According to his lawyer, Sikandar B. Kochar, Pandher was not considered a main suspect at the outset and was called as a co-accused only during the trial. Kochar also stated that Pandher was in Australia at the time of the teenager's death. Pandher still faces trial in connection with the other 18 alleged killings and may remain in custody during legal proceedings.",232
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,1,"Expand the text with more context, without introducing information that is not supported by the original.",2,"NEW DELHI, India (CNN) -- The Allahabad High Court announced its verdict on Friday in a sensational case that had gripped the nation. In this decision, the high court acquitted Moninder Singh Pandher, a wealthy businessman, in the high-profile murder of a 14-year-old girl, a crime that the Indian media dubbed ""the house of horrors."" Earlier, a lower court had sentenced both Pandher and his domestic employee, Surinder Koli, to death in February, convicting them for the rape and murder of the teenager. This incident was among 19 disturbing cases of violence against children and young women in the region. The high court upheld Koli's death sentence but ruled that Pandher was not guilty in this specific case. Pandher's lawyer, Sikandar B. Kochar, said that Pandher was not considered a primary suspect initially and was only charged as a co-accused during the trial. Kochar also noted that Pandher was in Australia at the time of the girl's death. Despite this acquittal, Pandher continues to face charges related to the other 18 alleged murders and may remain in custody as those legal proceedings continue.",239
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,1,"Expand the text with more context, without introducing information that is not supported by the original.",3,"NEW DELHI, India (CNN) -- On Friday, the Allahabad High Court delivered its decision in a case that had attracted widespread attention across India. The court acquitted Moninder Singh Pandher, a prominent businessman, in connection with the murder of a 14-year-old girl, a crime that had been widely publicized by Indian media under the name ""the house of horrors."" Previously, a sessions court had found both Pandher and his domestic worker, Surinder Koli, guilty and sentenced them to death for the rape and murder of the teenager. This particular case was one of 19 shocking instances of violence against children and young women in the area. The high court maintained Koli's death sentence but determined that Pandher was not guilty in this case. Pandher's legal representative, Sikandar B. Kochar, stated that his client had not been considered a main suspect at the outset and was only charged as an accomplice during the trial. Kochar also pointed out that Pandher was in Australia when the girl died. However, Pandher remains in custody as he is still facing charges in connection with the other 18 alleged crimes.",233
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,2,,0,"NEW DELHI, India (CNN) -- A high court in northern India on Friday acquitted a wealthy businessman facing the death sentence for the killing of a teen in a case dubbed ""the house of horrors.""
+
+
+
+Moninder Singh Pandher was sentenced to death by a lower court in February.
+
+
+
+The teen was one of 19 victims -- children and young women -- in one of the most gruesome serial killings in India in recent years.
+
+
+
+The Allahabad high court has acquitted Moninder Singh Pandher, his lawyer Sikandar B. Kochar told CNN.
+
+
+
+Pandher and his domestic employee Surinder Koli were sentenced to death in February by a lower court for the rape and murder of the 14-year-old.
+
+
+
+The high court upheld Koli's death sentence, Kochar said.
+
+
+
+The two were arrested two years ago after body parts packed in plastic bags were found near their home in Noida, a New Delhi suburb. Their home was later dubbed a ""house of horrors"" by the Indian media.
+
+
+
+Pandher was not named a main suspect by investigators initially, but was summoned as co-accused during the trial, Kochar said.
+
+
+
+Kochar said his client was in Australia when the teen was raped and killed.
+
+
+
+Pandher faces trial in the remaining 18 killings and could remain in custody, the attorney said.",269
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,2,"Add more detail, keeping every fact grounded in the source material.",1,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday cleared Moninder Singh Pandher of charges related to the rape and murder of a 14-year-old girl, whose case became known as the ""house of horrors."" However, Surinder Koli, Pandher's domestic employee, had his death sentence confirmed by the high court, according to Pandher's lawyer Sikandar B. Kochar. 
+
+In February, a lower court had sentenced both Pandher and Koli to death for the crime. The victim was one of 19 individuals—mostly children and young women—murdered in a series of horrific killings near Noida, a suburb of New Delhi. 
+
+Authorities discovered body parts, packed in plastic bags, near Pandher and Koli's residence, which led the Indian media to refer to the property as a ""house of horrors."" Initially, Pandher was not considered a primary suspect by investigators. He was later included as a co-accused during the trial. Kochar stated that Pandher was in Australia at the time the 14-year-old victim was killed. 
+
+Pandher still faces trial in connection with the other 18 killings and may remain in custody during the proceedings, Kochar added.",255
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,2,"Add more detail, keeping every fact grounded in the source material.",2,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday acquitted Moninder Singh Pandher of the charges related to the rape and murder of a 14-year-old girl, a case that gained infamy as the ""house of horrors."" In contrast, the court upheld the death sentence previously imposed on Surinder Koli, Pandher's domestic employee, according to Pandher's lawyer Sikandar B. Kochar. 
+
+Earlier, in February, a sessions court had convicted both Pandher and Koli, sentencing them to death for the crime. The victim was among 19 individuals—predominantly children and young women—whose murders occurred in a series of brutal incidents near Noida, a satellite city of New Delhi. 
+
+Police investigations revealed human remains, dismembered and stored in plastic bags, at a property linked to Pandher and Koli, prompting widespread media coverage that labeled the site as the ""house of horrors."" Initially, Pandher was not regarded as a main suspect by investigators; he was added as a co-accused during the judicial trial. Pandher's legal team asserted that he was in Australia at the time of the victim's death. 
+
+Despite his acquittal in the 14-year-old girl's case, Pandher continues to face trial on charges connected to the other 18 murders and may remain in custody pending those proceedings, Kochar added.",285
+./cnn/stories/42d01e187213e86f5fe617fe32e716ff7fa3afc4.story,The court aquitted Moninder Singh Pandher of what crime?,rape and murder,rape and murder,content,elaborate,2,"Add more detail, keeping every fact grounded in the source material.",3,"NEW DELHI, India (CNN) -- The Allahabad High Court on Friday acquitted Moninder Singh Pandher of all charges related to the rape and murder of a 14-year-old girl, a case that became notorious due to the discovery of numerous dismembered human remains at a property in Noida, a satellite city of New Delhi. This property, associated with both Pandher and his domestic employee Surinder Koli, was referred to in media coverage as the ""house of horrors"" following the shocking discovery of the remains, which were stored in plastic bags. 
+
+According to the court, Surinder Koli’s death sentence was upheld in the same proceedings, while Moninder Singh Pandher’s conviction was overturned. Earlier, in February, a sessions court had found both men guilty and sentenced them to death for the murder of the 14-year-old girl. The victim was one of 19 individuals, mostly children and young women, whose murders were part of a series of heinous crimes near Noida. 
+
+During the investigation, police recovered the remains from the property, leading to extensive media attention and the infamous nickname. Notably, Pandher was not considered a primary suspect initially and his legal counsel, Sikandar B. Kochar, maintained that Pandher was in Australia at the time of the victim’s death. The high court’s ruling found Pandher not guilty in relation to this specific case, but he still faces separate trials regarding the other 18 murders. Kochar also stated that Pandher may remain in custody pending the outcome of these additional proceedings.",319
