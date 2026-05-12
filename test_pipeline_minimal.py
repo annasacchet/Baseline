@@ -5,8 +5,10 @@ Evaluates with:
   - Answer F1 (OLMo-3.1 32B QA model)
   - OpenFactScore (OLMo-2 7B AFG + Gemma-3 4B AFV)
 
-Note: models will be downloaded to HF cache on first run.
-Models: OLMo-3.1-32B (QA), OLMo-2-1124-7B (AFG), Gemma-3-4B (AFV)
+Mirrors the logic of the production scripts:
+  - NewsQA: parses validated_answers / answer_char_ranges into real text spans
+  - QA: uses apply_chat_template and decodes only new tokens (no "assistant\\n" noise)
+  - F1: max over (gold + aliases)
 """
 
 import json
@@ -21,13 +23,7 @@ import nltk
 import pandas as pd
 import torch
 from nltk.tokenize import sent_tokenize
-from rank_bm25 import BM25Okapi
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-
-try:
-    from huggingface_hub import hf_hub_download
-except ImportError:
-    hf_hub_download = None
 
 REPO_ROOT = Path(__file__).resolve().parent
 NEWSQA_DATA = Path("/workspace/Baseline/data/newsqa/combined-newsqa-data-v1.csv")
@@ -38,15 +34,15 @@ QA_MODEL_ID = "allenai/OLMo-3.1-32B-Instruct"
 AFG_MODEL_ID = "allenai/OLMo-2-1124-7B-SFT"
 AFV_MODEL_ID = "google/gemma-3-4b-it"
 
-# Download demons.json for AFG few-shot if it exists in repo
-DEMONS_PATH = REPO_ROOT / "data" / "demons.json"
-
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
 
 
+# ============================================================================
+# HFChatModel wrapper (used by AFG/AFV/QA)
+# ============================================================================
+
 class HFChatModel:
-    """Wrapper for HF chat models (AFG, AFV)."""
     def __init__(self, model_id, role_label, use_4bit: bool = False):
         print(f"[{role_label}] loading {model_id} (4-bit={use_4bit}) ...", flush=True)
         t0 = time.time()
@@ -65,11 +61,7 @@ class HFChatModel:
             kwargs["dtype"] = torch.bfloat16
         self.model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
         self.model.eval()
-        print(
-            f"[{role_label}] loaded in {time.time()-t0:.1f}s · device map: "
-            f"{getattr(self.model, 'hf_device_map', 'n/a')}",
-            flush=True,
-        )
+        print(f"[{role_label}] loaded in {time.time()-t0:.1f}s", flush=True)
 
     @torch.no_grad()
     def generate(self, system_prompt, user_prompt, max_new_tokens):
@@ -93,161 +85,197 @@ class HFChatModel:
             do_sample=False,
             pad_token_id=self.tokenizer.pad_token_id,
         )
+        # Decode ONLY new tokens — strips the "assistant\n" prefix
         new_tokens = out[0, inputs["input_ids"].shape[1]:]
         return self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
 
-def load_qa_model():
-    """Load QA model in 4-bit."""
-    print("[*] Loading QA model in 4-bit...")
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16,
-    )
+# ============================================================================
+# NewsQA: parse char-ranges from validated_answers / answer_char_ranges
+# ============================================================================
 
-    model = AutoModelForCausalLM.from_pretrained(
-        QA_MODEL_ID,
-        quantization_config=bnb_config,
-        device_map="auto",
-        dtype=torch.bfloat16,
-    )
-    tokenizer = AutoTokenizer.from_pretrained(QA_MODEL_ID)
-    return model, tokenizer
+def _span_to_text(span_key: str, story_text: str):
+    """Convert '294:297' or '10:20,30:40' to the actual answer text."""
+    parts = []
+    try:
+        for span in span_key.split(","):
+            s_str, e_str = span.split(":")
+            s, e = int(s_str), int(e_str)
+            parts.append(story_text[s:e])
+    except (ValueError, IndexError):
+        return None
+    out = " ".join(p.strip() for p in parts if p.strip()).strip()
+    return out or None
 
 
-def load_openfactscore_models():
-    """Load AFG (7B) and AFV (4B) models."""
-    afg_model = HFChatModel(AFG_MODEL_ID, "AFG", use_4bit=False)
-    afv_model = HFChatModel(AFV_MODEL_ID, "AFV", use_4bit=False)
-    return afg_model, afv_model
+def parse_validated_answers(value, story_text):
+    """Returns list of (answer_text, vote_count)."""
+    if not isinstance(value, str) or not value.strip():
+        return []
+    try:
+        d = json.loads(value)
+    except json.JSONDecodeError:
+        return []
+    answers = []
+    for key, count in d.items():
+        if key in ("none", "badQuestion"):
+            continue
+        ans = _span_to_text(key, story_text)
+        if ans:
+            answers.append((ans, int(count)))
+    answers.sort(key=lambda t: -t[1])
+    return answers
+
+
+def parse_sourcer_agreement(value, story_text):
+    """Returns list of (answer_text, vote_count) from |-separated answer_char_ranges."""
+    if not isinstance(value, str) or not value.strip():
+        return []
+    counts = {}
+    for raw in value.split("|"):
+        raw = raw.strip()
+        if not raw or raw == "None":
+            continue
+        ans = _span_to_text(raw, story_text)
+        if ans:
+            counts[ans] = counts.get(ans, 0) + 1
+    return sorted(counts.items(), key=lambda t: -t[1])
 
 
 def load_newsqa_sample():
-    """Load and sample one question from NewsQA."""
+    """Load NewsQA, parse char-ranges, return a usable Q with gold answer text + aliases."""
     print(f"[*] Loading NewsQA from {NEWSQA_DATA}...")
     df = pd.read_csv(NEWSQA_DATA)
     print(f"  Loaded {len(df)} rows")
 
-    # Drop rows where validated_answers or story_text is NaN
-    df = df.dropna(subset=['validated_answers', 'story_text', 'question'])
-    print(f"  After dropping NaN: {len(df)} rows")
+    df = df.dropna(subset=['story_text', 'question'])
 
-    # Sample one random row
-    sample = df.sample(n=1).iloc[0]
+    # Try to find a row where we can extract a real answer text from char-ranges
+    for _ in range(100):  # try up to 100 random rows
+        sample = df.sample(n=1).iloc[0]
+        story_text = str(sample['story_text'])
 
-    return {
-        'dataset': 'NewsQA',
-        'qid': str(sample['story_id']),
-        'question': str(sample['question']),
-        'gold_answer': str(sample['validated_answers']),
-        'text': str(sample['story_text']),
-    }
+        # Try validated_answers first
+        v_spans = parse_validated_answers(sample.get('validated_answers'), story_text)
+        v_agreed = [(a, c) for a, c in v_spans if c >= 2]
+
+        if v_agreed:
+            answers = sorted({a for a, _ in v_agreed})
+            return {
+                'dataset': 'NewsQA',
+                'qid': str(sample['story_id']),
+                'question': str(sample['question']),
+                'gold_answer': v_agreed[0][0],
+                'aliases': answers,
+                'text': story_text,
+            }
+
+        # Fall back to sourcer agreement
+        s_spans = parse_sourcer_agreement(sample.get('answer_char_ranges'), story_text)
+        s_agreed = [(a, c) for a, c in s_spans if c >= 2]
+        if s_agreed:
+            answers = sorted({a for a, _ in s_agreed})
+            return {
+                'dataset': 'NewsQA',
+                'qid': str(sample['story_id']),
+                'question': str(sample['question']),
+                'gold_answer': s_agreed[0][0],
+                'aliases': answers,
+                'text': story_text,
+            }
+
+    raise RuntimeError("Couldn't find an answerable NewsQA question after 100 tries")
 
 
 def load_fictionalqa_sample():
-    """Load and sample one question from FictionalQA (from Hugging Face Hub)."""
+    """Load FictionalQA from HF Hub."""
     print("[*] Loading FictionalQA from HF Hub...")
-
     from huggingface_hub import hf_hub_download
 
-    # Download parquet files (correct path with 'train-00000-of-00001')
     qa_path = hf_hub_download(
         repo_id="jwkirchenbauer/fictionalqa",
         filename="joined_qa/train-00000-of-00001.parquet",
         repo_type="dataset",
     )
-
     df = pd.read_parquet(qa_path)
-    print(f"  Loaded {len(df)} rows from FictionalQA")
-    print(f"  Columns: {list(df.columns)}")
+    print(f"  Loaded {len(df)} rows")
 
-    # Filter to infeasible questions (grade_blind == 0, grade_informed == 1)
     df = df[(df['grade_blind'] == 0) & (df['grade_informed'] == 1)]
-    print(f"  After grade filtering: {len(df)} rows")
-
-    # Drop NaN in essential fields
     df = df.dropna(subset=['natural_answer', 'fiction', 'question'])
-    print(f"  After NaN filtering: {len(df)} rows")
+    print(f"  After filtering: {len(df)} rows")
 
-    # Sample one
     sample = df.sample(n=1).iloc[0]
+    nat = str(sample['natural_answer']).strip()
+    aliases = [nat]
+    span = sample.get('span_answer')
+    if span and isinstance(span, str) and span.strip() and span.strip() != nat:
+        aliases.append(span.strip())
 
     return {
         'dataset': 'FictionalQA',
         'qid': str(sample['fiction_id']),
         'question': str(sample['question']),
-        'gold_answer': str(sample['natural_answer']),
+        'gold_answer': nat,
+        'aliases': aliases,
         'text': str(sample['fiction']),
     }
 
 
+# ============================================================================
+# Answer F1 (SQuAD-style)
+# ============================================================================
+
 def normalize_answer(s):
-    """Lower text and remove articles, punctuation, extra whitespace."""
     def remove_articles(text):
-        return re.sub(r'\b(a|an|the)\b', ' ', text)
-
+        return re.sub(r"\b(a|an|the)\b", " ", text, flags=re.UNICODE)
     def white_space_fix(text):
-        return ' '.join(text.split())
-
+        return " ".join(text.split())
     def remove_punc(text):
         exclude = set(string.punctuation)
-        return ''.join(ch for ch in text if ch not in exclude)
-
-    def lower(text):
-        return text.lower()
-
-    return white_space_fix(remove_articles(remove_punc(lower(s))))
+        return "".join(ch for ch in text if ch not in exclude)
+    return white_space_fix(remove_articles(remove_punc(s.lower())))
 
 
-def f1_score(prediction, gold):
-    """Compute F1 score."""
-    prediction_tokens = normalize_answer(prediction).split()
-    gold_tokens = normalize_answer(gold).split()
-    common = Counter(prediction_tokens) & Counter(gold_tokens)
+def compute_f1(a_gold, a_pred):
+    gold_toks = normalize_answer(a_gold).split() if a_gold else []
+    pred_toks = normalize_answer(a_pred).split() if a_pred else []
+    common = Counter(gold_toks) & Counter(pred_toks)
     num_same = sum(common.values())
-
-    if len(prediction_tokens) == 0 or len(gold_tokens) == 0:
-        return int(prediction_tokens == gold_tokens)
+    if len(gold_toks) == 0 or len(pred_toks) == 0:
+        return float(gold_toks == pred_toks)
     if num_same == 0:
-        return 0
-
-    precision = 1.0 * num_same / len(prediction_tokens)
-    recall = 1.0 * num_same / len(gold_tokens)
-    f1 = (2 * precision * recall) / (precision + recall)
-    return f1
+        return 0.0
+    precision = num_same / len(pred_toks)
+    recall = num_same / len(gold_toks)
+    return (2 * precision * recall) / (precision + recall)
 
 
-def run_qa(text, question, model, tokenizer):
-    """Run QA model on text + question."""
-    prompt = f"""Answer the following question based on the provided text.
-
-Text:
-{text[:2000]}
-
-Question: {question}
-
-Answer:"""
-
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-
-    with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=96,
-            temperature=0.7,
-            top_p=0.9,
-            do_sample=False,
-        )
-
-    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    answer = answer.split("Answer:")[-1].strip()
-    return answer
+def best_f1(pred, golds):
+    """Max F1 over all gold answer strings."""
+    return max((compute_f1(g, pred) for g in golds), default=0.0)
 
 
 # ============================================================================
-# OpenFactScore Functions
+# QA evaluation
+# ============================================================================
+
+QA_USER_TEMPLATE = """Answer the question based on the context below. Give a short, direct answer — a few words at most, no explanation.
+
+Context:
+{context}
+
+Question: {question}
+Answer:"""
+
+
+def run_qa(text, question, qa_model_wrapper):
+    """Run QA using the wrapper (handles chat template + new-tokens-only decode)."""
+    user_prompt = QA_USER_TEMPLATE.format(context=text.strip(), question=question.strip())
+    return qa_model_wrapper.generate(system_prompt=None, user_prompt=user_prompt, max_new_tokens=96)
+
+
+# ============================================================================
+# OpenFactScore
 # ============================================================================
 
 AFG_SYSTEM_INSTRUCT = (
@@ -267,17 +295,14 @@ AFV_SYSTEM_INSTRUCT = (
 
 
 def sentences_from_text(text):
-    """Split text into sentences, handling edge cases."""
     paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
     sentences = []
     for para in paragraphs:
-        curr = sent_tokenize(para)
-        sentences.extend(curr)
-    return sentences[:20]  # Limit to first 20 sentences for test
+        sentences.extend(sent_tokenize(para))
+    return sentences[:20]  # cap at 20 for the test
 
 
 def parse_atomic_facts(generated_text):
-    """Parse AFG output into atomic facts."""
     text = generated_text.replace("<|eot_id|>", "")
     text = re.sub(r"-\s*\n", "", text)
     facts = []
@@ -299,7 +324,6 @@ def parse_atomic_facts(generated_text):
 
 
 def build_afv_prompt(topic, source, claim):
-    """Build AFV user prompt."""
     definition = f"Answer the question about {topic} based on the given context.\n\n"
     context = f"Title: {topic}\nText: {source.strip()}\n\n"
     definition += context.strip()
@@ -309,25 +333,19 @@ def build_afv_prompt(topic, source, claim):
 
 
 def parse_afv_label(generated_text):
-    """Parse AFV output (True/False)."""
     answer = generated_text.lower()
     if "true" in answer or "false" in answer:
         if "true" in answer and "false" not in answer:
-            is_supported = True
+            return "SUPPORTED"
         elif "false" in answer and "true" not in answer:
-            is_supported = False
+            return "NOT_SUPPORTED"
         else:
-            is_supported = answer.index("true") > answer.index("false")
-    else:
-        stripped = answer.translate(str.maketrans("", "", string.punctuation)).split()
-        is_supported = all(
-            kw not in stripped for kw in ("not", "cannot", "unknown", "information")
-        )
-    return "SUPPORTED" if is_supported else "NOT_SUPPORTED"
+            return "SUPPORTED" if answer.index("true") > answer.index("false") else "NOT_SUPPORTED"
+    stripped = answer.translate(str.maketrans("", "", string.punctuation)).split()
+    return "SUPPORTED" if all(kw not in stripped for kw in ("not", "cannot", "unknown", "information")) else "NOT_SUPPORTED"
 
 
 def extract_atomic_facts(afg_model, text):
-    """Extract atomic facts from text using AFG."""
     sentences = sentences_from_text(text)
     all_facts = []
     for sent in sentences:
@@ -338,44 +356,33 @@ def extract_atomic_facts(afg_model, text):
 
 
 def validate_facts(afv_model, source, facts, topic):
-    """Validate facts against source using AFV."""
     results = []
     for fact in facts:
         user_prompt = build_afv_prompt(topic, source, fact)
         out = afv_model.generate(AFV_SYSTEM_INSTRUCT, user_prompt, 8)
-        label = parse_afv_label(out)
-        results.append({"fact": fact, "label": label})
+        results.append({"fact": fact, "label": parse_afv_label(out)})
     return results
 
 
 def compute_openfactscore(afg_model, afv_model, text, topic, gamma=10):
-    """Compute OpenFactScore for text."""
     facts = extract_atomic_facts(afg_model, text)
     if not facts:
-        return {
-            "n_facts": 0,
-            "n_supported": 0,
-            "n_not_supported": 0,
-            "factscore": None,
-        }
-
+        return {"n_facts": 0, "n_supported": 0, "factscore": None}
     verified = validate_facts(afv_model, text, facts, topic)
-    counts = {"SUPPORTED": 0, "NOT_SUPPORTED": 0}
-    for v in verified:
-        counts[v["label"]] = counts.get(v["label"], 0) + 1
-
-    init_score = counts["SUPPORTED"] / len(facts)
+    n_supported = sum(1 for v in verified if v["label"] == "SUPPORTED")
+    init_score = n_supported / len(facts)
     length_penalty = min(1.0, len(facts) / gamma) if gamma > 0 else 1.0
-    final_score = init_score * length_penalty
-
     return {
         "n_facts": len(facts),
-        "n_supported": counts["SUPPORTED"],
-        "n_not_supported": counts["NOT_SUPPORTED"],
+        "n_supported": n_supported,
         "init_score": init_score,
-        "factscore": final_score,
+        "factscore": init_score * length_penalty,
     }
 
+
+# ============================================================================
+# Main
+# ============================================================================
 
 def main():
     print("=" * 70)
@@ -384,73 +391,46 @@ def main():
     print("=" * 70)
 
     print("\n[*] Loading models...")
-    qa_model, qa_tokenizer = load_qa_model()
-    afg_model, afv_model = load_openfactscore_models()
+    qa_model = HFChatModel(QA_MODEL_ID, "QA", use_4bit=True)
+    afg_model = HFChatModel(AFG_MODEL_ID, "AFG", use_4bit=False)
+    afv_model = HFChatModel(AFV_MODEL_ID, "AFV", use_4bit=False)
     results = []
 
-    # NewsQA
-    print("\n[*] Testing NewsQA...")
-    newsqa = load_newsqa_sample()
-    print(f"  Question: {newsqa['question'][:80]}...")
-    print(f"  Gold answer: {newsqa['gold_answer'][:60]}...")
+    for loader_fn, name in [(load_newsqa_sample, "NewsQA"), (load_fictionalqa_sample, "FictionalQA")]:
+        print(f"\n[*] Testing {name}...")
+        sample = loader_fn()
+        print(f"  Question: {sample['question']}")
+        print(f"  Gold answer: {sample['gold_answer']}")
+        print(f"  Aliases: {sample['aliases']}")
+        print(f"  Text length: {len(sample['text'])} chars")
 
-    answer_newsqa = run_qa(newsqa['text'], newsqa['question'], qa_model, qa_tokenizer)
-    f1_newsqa = f1_score(answer_newsqa, newsqa['gold_answer'])
-    print(f"  Predicted: {answer_newsqa[:60]}...")
-    print(f"  Answer F1: {f1_newsqa:.3f}")
+        answer = run_qa(sample['text'], sample['question'], qa_model)
+        f1 = best_f1(answer, sample['aliases'])
+        print(f"  Predicted: {answer}")
+        print(f"  Answer F1: {f1:.3f}")
 
-    print(f"  Computing OpenFactScore...")
-    topic_newsqa = newsqa['text'].split('\n')[0][:200]
-    ofscore_newsqa = compute_openfactscore(afg_model, afv_model, newsqa['text'], topic_newsqa)
-    print(f"  OpenFactScore: {ofscore_newsqa['factscore']:.3f} ({ofscore_newsqa['n_supported']}/{ofscore_newsqa['n_facts']} facts)")
+        print(f"  Computing OpenFactScore...")
+        topic = sample['text'].split('\n')[0][:200]
+        ofs = compute_openfactscore(afg_model, afv_model, sample['text'], topic)
+        print(f"  OpenFactScore: {ofs['factscore']:.3f} ({ofs['n_supported']}/{ofs['n_facts']} facts)")
 
-    results.append({
-        'dataset': 'NewsQA',
-        'qid': newsqa['qid'],
-        'question': newsqa['question'][:100],
-        'gold_answer': newsqa['gold_answer'][:50],
-        'predicted_answer': answer_newsqa[:100],
-        'answer_f1': f1_newsqa,
-        'n_facts': ofscore_newsqa['n_facts'],
-        'n_supported': ofscore_newsqa['n_supported'],
-        'factscore': ofscore_newsqa['factscore'],
-    })
+        results.append({
+            'dataset': sample['dataset'],
+            'qid': sample['qid'],
+            'question': sample['question'][:100],
+            'gold_answer': sample['gold_answer'][:60],
+            'predicted_answer': answer[:100],
+            'answer_f1': f1,
+            'n_facts': ofs['n_facts'],
+            'n_supported': ofs['n_supported'],
+            'factscore': ofs['factscore'],
+        })
 
-    # FictionalQA
-    print("\n[*] Testing FictionalQA...")
-    fictionalqa = load_fictionalqa_sample()
-    print(f"  Question: {fictionalqa['question'][:80]}...")
-    print(f"  Gold answer: {fictionalqa['gold_answer'][:60]}...")
-
-    answer_fictionalqa = run_qa(fictionalqa['text'], fictionalqa['question'], qa_model, qa_tokenizer)
-    f1_fictionalqa = f1_score(answer_fictionalqa, fictionalqa['gold_answer'])
-    print(f"  Predicted: {answer_fictionalqa[:60]}...")
-    print(f"  Answer F1: {f1_fictionalqa:.3f}")
-
-    print(f"  Computing OpenFactScore...")
-    topic_fictionalqa = fictionalqa['text'].split('\n')[0][:200]
-    ofscore_fictionalqa = compute_openfactscore(afg_model, afv_model, fictionalqa['text'], topic_fictionalqa)
-    print(f"  OpenFactScore: {ofscore_fictionalqa['factscore']:.3f} ({ofscore_fictionalqa['n_supported']}/{ofscore_fictionalqa['n_facts']} facts)")
-
-    results.append({
-        'dataset': 'FictionalQA',
-        'qid': fictionalqa['qid'],
-        'question': fictionalqa['question'][:100],
-        'gold_answer': fictionalqa['gold_answer'][:50],
-        'predicted_answer': answer_fictionalqa[:100],
-        'answer_f1': f1_fictionalqa,
-        'n_facts': ofscore_fictionalqa['n_facts'],
-        'n_supported': ofscore_fictionalqa['n_supported'],
-        'factscore': ofscore_fictionalqa['factscore'],
-    })
-
-    # Save results
     results_df = pd.DataFrame(results)
     output_csv = OUTPUT_DIR / "test_pipeline_results.csv"
     results_df.to_csv(output_csv, index=False)
-
     print("\n" + "=" * 70)
-    print(f"[✓] Test completed! Results: {output_csv}")
+    print(f"[✓] Results: {output_csv}")
     print("=" * 70)
     print(results_df.to_string(index=False))
 
