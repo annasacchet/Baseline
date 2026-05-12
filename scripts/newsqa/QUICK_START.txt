@@ -1,0 +1,91 @@
+==============================================================================
+                     NewsQA Pipeline — Quick Start
+==============================================================================
+
+SMOKE TEST (1 story, all instructions) on Lisa:
+─────────────────────────────────────────────────
+
+1. ssh sacchet@lisa.dimi.uniud.it
+2. tmux new -s newsqa
+3. cd ~/Baseline
+4. bash scripts/newsqa/run_full_pipeline_smoke.sh
+
+Expected output:
+  ✓ results/newsqa/rewriting_chains_newsqa_smoke.csv
+  ✓ results/newsqa/rewriting_chains_newsqa_smoke_answer_f1.csv
+  ✓ results/newsqa/rewriting_chains_newsqa_smoke_openfactscore.csv (if demons.json available)
+
+Time: ~15–20 min
+
+
+FULL RUN (300 stories) on Lisa:
+──────────────────────────────
+
+python scripts/newsqa/rewriting_pipeline_newsqa.py \
+  --model allenai/OLMo-3.1-32B-Instruct \
+  --dataset /mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv \
+  --output results/newsqa/rewriting_chains_newsqa_300.csv \
+  --n-questions 300 \
+  --n-iterations 3 \
+  --use-4bit
+
+Time: ~4–6 hours
+
+
+ENV VARS (auto-set by scripts):
+───────────────────────────────
+
+export HF_HOME="/mnt/dmif-nas/mitel/sacchet/hf_cache"
+export HF_HUB_CACHE="$HF_HOME/hub"
+export TRANSFORMERS_CACHE="$HF_HOME"
+export NEWSQA_DATASET="/mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv"
+
+(These are set in run_full_pipeline_smoke.sh — no need to set manually)
+
+
+INDIVIDUAL STAGES (if you need to debug):
+──────────────────────────────────────────
+
+Stage 1 - Rewriting:
+  python scripts/newsqa/rewriting_pipeline_newsqa.py --smoke-test --use-4bit
+
+Stage 2 - Answer F1:
+  python scripts/newsqa/answer_f1_eval_newsqa.py --smoke-test --use-4bit
+
+Stage 3 - OpenFActScore:
+  python scripts/newsqa/openfactscore_eval_newsqa.py --limit 12 --use-4bit
+
+
+CONFIGURATION:
+──────────────
+
+Model rewriter:     allenai/OLMo-3.1-32B-Instruct (4-bit on Lisa, bf16 on Homer)
+QA model:           allenai/OLMo-3.1-32B-Instruct
+AFG model:          allenai/OLMo-2-1124-7B-SFT
+AFV model:          google/gemma-3-4b-it
+Max tokens (rewrite): 4096
+Max tokens (QA):      96
+Temperature:        0.7
+Batch size (QA):    4
+Iterations:         3 (E0 → E1 → E2 → E3)
+
+
+DATASET FORMAT:
+───────────────
+
+combined-newsqa-data-v1.csv (v1 = version 1, consolidated format)
+
+Columns:
+  - story_id: filesystem path (e.g., ./cnn/stories/abc123.story)
+  - question: crowdsourced question from NewsQA
+  - answer_char_ranges: initial-stage answer annotations (pipe-separated per answerer)
+  - validated_answers: post-validation answer agreement (JSON, counts per span)
+  - story_text: raw CNN article text
+
+The pipeline selects the "best" question per story (highest agreement, filters bad/null questions).
+
+
+FOR MORE DETAILS:
+─────────────────
+
+See NEWSQA_SMOKE_TEST_GUIDE.md in the Baseline root directory.

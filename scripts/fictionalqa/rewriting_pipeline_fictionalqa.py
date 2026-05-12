@@ -242,7 +242,7 @@ def append_rows(csv_path: Path, rows: list):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate FictionalQA rewriting chains on GPU.")
-    parser.add_argument("--model", default="allenai/OLMo-2-0325-32B-Instruct",
+    parser.add_argument("--model", default="allenai/OLMo-3.1-32B-Instruct",
                         help="HF model id of the rewriter.")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_CSV,
                         help=f"Output CSV path (default: {DEFAULT_OUTPUT_CSV}).")

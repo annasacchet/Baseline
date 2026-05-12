@@ -1,0 +1,140 @@
+═══════════════════════════════════════════════════════════════════════════════
+                   NewsQA + FictionalQA Pipeline — QUICK COMMANDS
+═══════════════════════════════════════════════════════════════════════════════
+
+OPTION 1: H100 Rental (Parallel, 4.5h for 300+300)
+────────────────────────────────────────────────────
+
+# Smoke test (1 + 1, ~10 min, $0.25)
+bash run_both_parallel_h100.sh 1 1
+
+# Full run (300 + 300, ~4.5h, $6.75)
+bash run_both_parallel_h100.sh 300 300
+
+
+OPTION 2: Lisa Lab (Free, Sequential, ~8h for 300+300)
+──────────────────────────────────────────────────────
+
+# Terminal 1: NewsQA Smoke Test
+ssh sacchet@lisa.dimi.uniud.it
+tmux new -s newsqa
+cd ~/Baseline && bash scripts/newsqa/run_full_pipeline_smoke.sh
+
+# Terminal 2: FictionalQA Smoke Test (same server, wait for GPU)
+ssh sacchet@lisa.dimi.uniud.it
+tmux new -s fictionalqa
+cd ~/Baseline && bash scripts/fictionalqa/launch_lisa.sh
+
+# Full run NewsQA (300 stories)
+python scripts/newsqa/rewriting_pipeline_newsqa.py \
+  --model allenai/OLMo-3.1-32B-Instruct \
+  --dataset /mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv \
+  --output results/newsqa/rewriting_chains_newsqa_300.csv \
+  --n-questions 300 --n-iterations 3 --use-4bit
+
+# Full run FictionalQA (300 fictions)
+python scripts/fictionalqa/rewriting_pipeline_fictionalqa.py \
+  --model allenai/OLMo-3.1-32B-Instruct \
+  --output results/fictionalqa/rewriting_chains_fictionalqa_300.csv \
+  --n-fictions 300 --n-iterations 3 --use-4bit
+
+
+AFTER REWRITING COMPLETES
+──────────────────────────
+
+# Answer F1 (NewsQA)
+python scripts/newsqa/answer_f1_eval_newsqa.py \
+  --input results/newsqa/rewriting_chains_newsqa_300.csv \
+  --output results/newsqa/rewriting_chains_newsqa_300_answer_f1.csv \
+  --batch-size 12 --use-4bit
+
+# Answer F1 (FictionalQA)
+python scripts/fictionalqa/answer_f1_eval_fictionalqa.py \
+  --input results/fictionalqa/rewriting_chains_fictionalqa_300.csv \
+  --output results/fictionalqa/rewriting_chains_fictionalqa_300_answer_f1.csv \
+  --batch-size 12 --use-4bit
+
+
+FULL PIPELINE OVERVIEW
+──────────────────────
+
+Model Stack:
+  Rewriting:    OLMo-3.1-32B-Instruct (4-bit, ~18 GB)
+  QA:           OLMo-3.1-32B-Instruct (4-bit, ~16 GB)
+  AFG:          OLMo-2-1124-7B-SFT (4-bit, ~5 GB)
+  AFV:          Gemma-3-4B (4-bit, ~3 GB)
+
+Outputs:
+  NewsQA:       12 chains × 4 steps × 300 stories = 14,400 rows
+  FictionalQA:  12 chains × 4 steps × 300 fictions = 14,400 rows
+  Total:        28,800 rows + metrics
+
+Timeline:
+  ├─ Smoke test: ~15–30 min (validates setup)
+  ├─ Full rewriting: ~2.5h (NewsQA) + ~1.5h (FictionalQA, parallel = 2.5h)
+  ├─ Answer F1: ~45 min (NewsQA) + ~25 min (FictionalQA, parallel = 45 min)
+  └─ OpenFActScore: ~1.5h (NewsQA) + ~1h (FictionalQA, parallel = 1.5h)
+
+  Total parallel (H100): ~4.5 hours
+  Total sequential (Lisa): ~8 hours
+
+
+CONFIGURATION DETAILS
+─────────────────────
+
+Dataset:
+  NewsQA:       12,744 CNN articles, select best Q per story → ~1-12k usable
+  FictionalQA:  1,500 fictional docs (5 styles × 300 events), select best Q per doc
+
+Hyperparameters:
+  Instructions per story: 4 groups × 2 types × 3 wordings = 12 chains
+  Iterations: 3 (E0 → E1 → E2 → E3 = 4 rows per chain)
+  Temperature: 0.7 (sampling for diversity)
+  Max tokens (rewriting): 4096 (long documents like NewsQA articles)
+  Max tokens (QA): 96 (short answers)
+
+Evaluation Metrics:
+  Answer F1: SQuAD-style (max over gold + aliases)
+  OpenFActScore: AFG → atomic facts, AFV → validation against source (E0)
+
+
+FILES & LOCATIONS
+─────────────────
+
+Main orchestrator:
+  run_both_parallel_h100.sh                 ← Use this for H100
+
+NewsQA scripts:
+  scripts/newsqa/rewriting_pipeline_newsqa.py
+  scripts/newsqa/answer_f1_eval_newsqa.py
+  scripts/newsqa/openfactscore_eval_newsqa.py
+  scripts/newsqa/run_full_pipeline_smoke.sh ← Smoke test orchestrator
+
+FictionalQA scripts:
+  scripts/fictionalqa/rewriting_pipeline_fictionalqa.py
+  scripts/fictionalqa/answer_f1_eval_fictionalqa.py
+  scripts/fictionalqa/openfactscore_eval_fictionalqa.py
+  scripts/fictionalqa/launch_lisa.sh        ← Smoke test on Lisa
+
+Guides:
+  DUAL_DATASET_GUIDE.md                     ← Detailed setup & troubleshooting
+  NEWSQA_SMOKE_TEST_GUIDE.md                ← NewsQA-specific guide
+  NEWSQA_SETUP_SUMMARY.md                   ← What was changed
+
+
+QUICK DECISION TREE
+───────────────────
+
+Q: Do you have immediate GPU access?
+  ├─ YES → Lisa (free, use Option 2)
+  └─ NO → H100 rental (fast, use Option 1)
+
+Q: How urgent is the full run?
+  ├─ NOW → H100 ($6.75 for 300+300 in 4.5h)
+  └─ CAN WAIT → Lisa (free, ~8h wait + compute time)
+
+Q: Are you comparing with other models?
+  ├─ YES → Run both datasets identically (✓ OLMo-3.1 for both)
+  └─ NO → Single dataset is fine (NewsQA or FictionalQA)
+
+═══════════════════════════════════════════════════════════════════════════════

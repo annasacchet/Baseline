@@ -40,7 +40,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "fictionalqa" / "rewriting_chains_fictionalqa.csv"
 
-QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
+QA_MODEL_ID = "allenai/OLMo-3.1-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 ALIAS_SEP = "||"
 
@@ -187,7 +187,7 @@ def main():
     parser.add_argument("--output", type=Path, default=None,
                         help="Output CSV path. Default: <input_stem>_answer_f1.csv.")
     parser.add_argument("--model", default=QA_MODEL_ID,
-                        help=f"HF model id for QA (default: {QA_MODEL_ID}).")
+                        help=f"HF model id for QA (default: {QA_MODEL_ID}). OLMo-3.1-32B-Instruct.")
     parser.add_argument("--batch-size", type=int, default=8,
                         help="Generation batch size (default: 8).")
     # NewsQA answers include long clause/verb phrases (paper Table 1 — 18.3%

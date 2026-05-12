@@ -47,7 +47,10 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DATASET_PATH = Path("/Users/annasacchet/combined-newsqa-data-v1.csv")
+DEFAULT_DATASET_PATH = Path(os.environ.get(
+    "NEWSQA_DATASET",
+    "/mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv"
+))
 DEFAULT_OUTPUT_CSV = REPO_ROOT / "results" / "newsqa" / "rewriting_chains_newsqa.csv"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
