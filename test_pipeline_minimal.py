@@ -412,7 +412,10 @@ def main():
         print(f"  Computing OpenFactScore...")
         topic = sample['text'].split('\n')[0][:200]
         ofs = compute_openfactscore(afg_model, afv_model, sample['text'], topic)
-        print(f"  OpenFactScore: {ofs['factscore']:.3f} ({ofs['n_supported']}/{ofs['n_facts']} facts)")
+        if ofs['factscore'] is None:
+            print(f"  OpenFactScore: N/A ({ofs['n_supported']}/{ofs['n_facts']} facts - NO FACTS EXTRACTED)")
+        else:
+            print(f"  OpenFactScore: {ofs['factscore']:.3f} ({ofs['n_supported']}/{ofs['n_facts']} facts)")
 
         results.append({
             'dataset': sample['dataset'],
