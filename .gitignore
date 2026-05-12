@@ -37,3 +37,4 @@ musique_ans_v1.0_dev.jsonl
 # Secrets
 .env
 .env.*
+data/newsqa/*.csv
