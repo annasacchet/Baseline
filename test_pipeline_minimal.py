@@ -152,31 +152,34 @@ def load_fictionalqa_sample():
 
     from huggingface_hub import hf_hub_download
 
-    # Download parquet file
-    joined_path = hf_hub_download(
+    # Download parquet files (correct path with 'train-00000-of-00001')
+    qa_path = hf_hub_download(
         repo_id="jwkirchenbauer/fictionalqa",
-        filename="joined_qa/data.parquet",
+        filename="joined_qa/train-00000-of-00001.parquet",
         repo_type="dataset",
-        cache_dir=os.path.expanduser("~/.cache/huggingface/hub")
     )
 
-    df = pd.read_parquet(joined_path)
+    df = pd.read_parquet(qa_path)
+    print(f"  Loaded {len(df)} rows from FictionalQA")
+    print(f"  Columns: {list(df.columns)}")
 
     # Filter to infeasible questions (grade_blind == 0, grade_informed == 1)
     df = df[(df['grade_blind'] == 0) & (df['grade_informed'] == 1)]
+    print(f"  After grade filtering: {len(df)} rows")
 
-    # Remove duplicates
-    df = df[df['duplicate_relationship'].isin([None, 'unique']) | (df['is_duplicate_root'] == True)]
+    # Drop NaN in essential fields
+    df = df.dropna(subset=['natural_answer', 'fiction', 'question'])
+    print(f"  After NaN filtering: {len(df)} rows")
 
     # Sample one
     sample = df.sample(n=1).iloc[0]
 
     return {
         'dataset': 'FictionalQA',
-        'qid': sample['fiction_id'],
-        'question': sample['question'],
-        'gold_answer': sample['natural_answer'],
-        'text': sample['document'],
+        'qid': str(sample['fiction_id']),
+        'question': str(sample['question']),
+        'gold_answer': str(sample['natural_answer']),
+        'text': str(sample['fiction']),
     }
 
 
