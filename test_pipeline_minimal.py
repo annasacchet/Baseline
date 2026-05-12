@@ -130,15 +130,19 @@ def load_newsqa_sample():
     df = pd.read_csv(NEWSQA_DATA)
     print(f"  Loaded {len(df)} rows")
 
+    # Drop rows where validated_answers or story_text is NaN
+    df = df.dropna(subset=['validated_answers', 'story_text', 'question'])
+    print(f"  After dropping NaN: {len(df)} rows")
+
     # Sample one random row
     sample = df.sample(n=1).iloc[0]
 
     return {
         'dataset': 'NewsQA',
-        'qid': sample['story_id'],
-        'question': sample['question'],
-        'gold_answer': sample['validated_answers'],
-        'text': sample['story_text'],
+        'qid': str(sample['story_id']),
+        'question': str(sample['question']),
+        'gold_answer': str(sample['validated_answers']),
+        'text': str(sample['story_text']),
     }
 
 
