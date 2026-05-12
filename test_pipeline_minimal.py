@@ -128,10 +128,20 @@ def load_newsqa_sample():
     """Load and sample one question from NewsQA."""
     print(f"[*] Loading NewsQA from {NEWSQA_DATA}...")
     df = pd.read_csv(NEWSQA_DATA)
+    print(f"  Columns: {list(df.columns)}")
+    print(f"  Shape: {df.shape}")
 
-    # Filter to answerable questions
-    df = df[df['is_answer_absent'] == False]
-    df = df[df['is_question_bad'] == False]
+    # Filter to answerable questions (handle different column names)
+    if 'is_answer_absent' in df.columns:
+        df = df[df['is_answer_absent'] == False]
+    if 'is_question_bad' in df.columns:
+        df = df[df['is_question_bad'] == False]
+
+    print(f"  After filtering: {df.shape}")
+    if len(df) == 0:
+        print("  ERROR: No rows left after filtering!")
+        print(f"  Available columns: {list(df.columns)}")
+        raise ValueError("No answerable questions found in NewsQA")
 
     # Sample one random row
     sample = df.sample(n=1).iloc[0]
