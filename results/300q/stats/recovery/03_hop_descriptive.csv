@@ -1,0 +1,4 @@
+n_hop,n_zero_start,n_recovered,pct_recovered
+2,564,161,0.285
+3,552,100,0.181
+4,684,133,0.194

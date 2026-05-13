@@ -1,0 +1,13 @@
+instruction_type,step,mean,median,std
+elaborate,1,1505.8,1488.0,331.5
+elaborate,2,1543.1,1535.0,345.8
+elaborate,3,1638.4,1685.0,367.8
+formality,1,1310.4,1294.0,317.2
+formality,2,1228.6,1269.0,252.1
+formality,3,1197.0,1220.0,220.2
+paraphrase,1,926.5,853.0,289.5
+paraphrase,2,829.6,821.0,214.4
+paraphrase,3,788.2,774.0,197.0
+shorten,1,603.0,602.0,182.5
+shorten,2,504.9,493.0,169.2
+shorten,3,463.6,468.0,161.4

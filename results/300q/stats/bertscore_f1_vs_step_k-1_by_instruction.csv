@@ -1,0 +1,5 @@
+instruction_type,mean,std,count
+elaborate,0.901,0.051,2673
+formality,0.93,0.05,2673
+paraphrase,0.91,0.057,2673
+shorten,0.917,0.059,2673

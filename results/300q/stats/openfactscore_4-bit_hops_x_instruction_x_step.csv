@@ -1,0 +1,5 @@
+n_hops,instruction_type,1,2,3
+2,elaborate,0.888,0.869,0.853
+2,formality,0.899,0.884,0.869
+2,paraphrase,0.87,0.851,0.844
+2,shorten,0.868,0.855,0.841
