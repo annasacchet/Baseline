@@ -21,7 +21,7 @@ echo "=== FictionalQA Pipeline — 100q on vast.ai 2× RTX 3090 ==="
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo ""
 
-python scripts/fictionalqa/rewriting_pipeline_fictionalqa.py \
+python3 scripts/fictionalqa/rewriting_pipeline_fictionalqa.py \
   --model allenai/OLMo-3.1-32B-Instruct \
   --output results/fictionalqa/rewriting_chains_fictionalqa_100q.csv \
   --n-fictions 100 \
