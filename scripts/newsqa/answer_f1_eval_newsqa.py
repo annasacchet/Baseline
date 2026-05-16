@@ -12,6 +12,8 @@ Differences from the MuSiQue version
   with crowdsourcer agreement >= 2). No external dataset file is needed.
 - F1 is computed as max over (gold + aliases), matching the official NewsQA /
   SQuAD evaluation, which compares each prediction to *every* human answer.
+- The QA prompt instructs OLMo to extract a verbatim span from the context,
+  matching the extractive nature of the original NewsQA evaluation.
 - Generation `max_new_tokens` is bumped to 96 because NewsQA answers are
   longer on average than MuSiQue (clause/verb phrases are common — see paper
   Table 1: clause phrases account for 18.3% of answers).
@@ -48,13 +50,15 @@ QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 ALIAS_SEP = "||"
 
-QA_USER_TEMPLATE = """Answer the question based on the context below. Give a short, direct answer — a few words at most, no explanation.
+QA_USER_TEMPLATE = """Answer the question using only words copied verbatim from the context below. \
+Your answer must be a continuous span of text that appears exactly in the context — do not paraphrase, \
+do not add words not in the context.
 
 Context:
 {context}
 
 Question: {question}
-Answer:"""
+Answer (verbatim span from context):"""
 
 
 # ---------------------------------------------------------------------------
@@ -205,7 +209,7 @@ def main():
     args = parser.parse_args()
 
     chains_csv = args.input
-    output_csv = args.output or chains_csv.with_name(chains_csv.stem + "_answer_f1.csv")
+    output_csv = args.output or chains_csv.with_name(chains_csv.stem + "_answer_f1_span.csv")
 
     if not chains_csv.exists():
         raise FileNotFoundError(f"File not found: {chains_csv}")
