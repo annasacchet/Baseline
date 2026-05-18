@@ -10227,3 +10227,4 @@ qid,group,instruction_type,run,step,instruction_used,n_facts,n_supported,n_not_s
 4hop3__601548_836463_161616_77103,style,paraphrase,2,3,Use different wording.,39,27,12,0,0.6923076923076923,0.6923076923076923
 >>>>>>> Stashed changes
 4hop3__630723_88460_30152_20999,content,elaborate,0,1,"Elaborate on the content, adding relevant details while staying faithful to the source text.",215,162,53,0,0.7534883720930232,0.7534883720930232
+4hop3__630723_88460_30152_20999,content,elaborate,0,2,"Elaborate on the content, adding relevant details while staying faithful to the source text.",140,109,31,0,0.7785714285714286,0.7785714285714286
