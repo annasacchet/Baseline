@@ -7688,7 +7688,7 @@ qid,group,instruction_type,run,step,instruction_used,n_facts,n_supported,n_not_s
 4hop1__341156_49925_13759_736921,style,formality,0,1,Make the text more formal.,157,146,11,0,0.9299363057324841,0.9299363057324841
 4hop1__341156_49925_13759_736921,style,formality,0,2,Make the text more formal.,109,104,5,0,0.9541284403669725,0.9541284403669725
 4hop1__341156_49925_13759_736921,style,formality,0,3,Make the text more formal.,110,106,4,0,0.9636363636363636,0.9636363636363636
-<<<<<<< Updated upstream
+<<<<<<< Updated git 
 =======
 4hop1__341156_49925_13759_736921,style,formality,1,1,Rephrase it to be more formal.,168,152,16,0,0.9047619047619048,0.9047619047619048
 4hop1__341156_49925_13759_736921,style,formality,1,2,Rephrase it to be more formal.,127,97,30,0,0.7637795275590551,0.7637795275590551
