@@ -37,11 +37,12 @@ python3 scripts/newsqa/answer_f1_eval_newsqa.py \
   --use-4bit
 
 # --- 2. OpenFActScore (resume from where it stopped) ---
+# Output path is derived automatically from --input (<stem>_openfactscore.csv);
+# the script has no --output flag.
 echo ""
-echo "[2/3] OpenFActScore (resuming $OFS_OUT)..."
+echo "[2/3] OpenFActScore (output derived from input stem)..."
 python3 scripts/newsqa/openfactscore_eval_newsqa.py \
   --input "$CHAINS" \
-  --output "$OFS_OUT" \
   --use-4bit
 
 # --- 3. BLEURT (resume) ---
