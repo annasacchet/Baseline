@@ -17,8 +17,8 @@ OFS_OUT="results/fictionalqa/rewriting_chains_fictionalqa_openfactscore.csv"
 BLEURT_OUT="results/fictionalqa/rewriting_chains_fictionalqa_bleurt.csv"
 
 cd ~/Baseline
-source ~/.bashrc
-conda activate baseline 2>/dev/null || conda activate base
+source ~/miniconda3/etc/profile.d/conda.sh 2>/dev/null || source ~/anaconda3/etc/profile.d/conda.sh 2>/dev/null || true
+conda activate baseline 2>/dev/null || conda activate base 2>/dev/null || true
 
 echo "=========================================="
 echo "FictionalQA full pipeline — Lisa"
