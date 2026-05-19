@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-CSV = REPO / "results/300q/rewriting_chains_300q_answer_f1_olmo31_4bit_SMOKE.csv"
+CSV = REPO / "results/300q/rewriting_chains_300q_answer_f1_olmo31_4bit.csv"
 
 OUT_HOP_PDF = REPO / "results/plots/300q/answer_f1_by_hop_olmo31_4bit.pdf"
 OUT_HOP_PNG = REPO / "results/plots/300q/png/answer_f1_by_hop_olmo31_4bit.png"
