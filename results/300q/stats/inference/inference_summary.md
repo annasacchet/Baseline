@@ -81,13 +81,23 @@ Random structure: `(1|qid)`. Step contrasts: planned, Holm-adjusted.
 
 
 
+## hop-ofs
+
+| family   | test                                    | contrast   |   n_pairs |   mean_diff |   effect_size |       p_raw |      p_holm |
+|:---------|:----------------------------------------|:-----------|----------:|------------:|--------------:|------------:|------------:|
+| hop-ofs  | Wilcoxon step_min vs step_max (per hop) | 2-hop      |       100 |     -0.0265 |           nan | 1.12814e-12 | 3.38441e-12 |
+| hop-ofs  | Wilcoxon step_min vs step_max (per hop) | 3-hop      |        97 |     -0.0206 |           nan | 6.55927e-10 | 6.55927e-10 |
+| hop-ofs  | Wilcoxon step_min vs step_max (per hop) | 4-hop      |       100 |     -0.0288 |           nan | 3.70706e-11 | 7.41413e-11 |
+
+
+
 ## metric-correlation
 
-| family             | test    | contrast                     |   n_pairs |   mean_diff |   effect_size |       p_raw |   p_holm |
-|:-------------------|:--------|:-----------------------------|----------:|------------:|--------------:|------------:|---------:|
-| metric-correlation | rm_corr | answer_f1 ~ factscore        |       nan |         nan |         0.094 | 4.25446e-05 |      nan |
-| metric-correlation | rm_corr | answer_f1 ~ bert_f1_baseline |       nan |         nan |         0.193 | 2.26993e-17 |      nan |
-| metric-correlation | rm_corr | factscore ~ bert_f1_baseline |       nan |         nan |         0.252 | 7.11401e-29 |      nan |
+| family             | test    | contrast                     |   n_pairs |   mean_diff |   effect_size |      p_raw |   p_holm |
+|:-------------------|:--------|:-----------------------------|----------:|------------:|--------------:|-----------:|---------:|
+| metric-correlation | rm_corr | answer_f1 ~ factscore        |       nan |         nan |         0.043 | 1.1133e-05 |      nan |
+| metric-correlation | rm_corr | answer_f1 ~ bert_f1_baseline |       nan |         nan |         0.102 | 2.1382e-25 |      nan |
+| metric-correlation | rm_corr | factscore ~ bert_f1_baseline |       nan |         nan |         0.197 | 3.6564e-91 |      nan |
 
 
 
@@ -95,8 +105,8 @@ Random structure: `(1|qid)`. Step contrasts: planned, Holm-adjusted.
 
 | family   | test                                    | contrast          |   n_pairs |   mean_diff |   effect_size |       p_raw |        p_holm |
 |:---------|:----------------------------------------|:------------------|----------:|------------:|--------------:|------------:|--------------:|
-| ofs      | Wilcoxon paired (planned step contrast) | step1->step2      |        55 |     -0.0166 |        0.794  | 3.06683e-07 |   6.13366e-07 |
-| ofs      | Wilcoxon paired (planned step contrast) | step2->step3      |        55 |     -0.0131 |        0.658  | 2.15761e-05 |   2.15761e-05 |
-| ofs      | Friedman over runs                      | run (within qid)  |       nan |    nan      |        0.0543 | 0.104921    | nan           |
-| ofs      | Friedman (step omnibus)                 | step in [1, 2, 3] |        55 |    nan      |      nan      | 3.75065e-12 | nan           |
+| ofs      | Wilcoxon paired (planned step contrast) | step1->step2      |       297 |     -0.0148 |        0.623  | 1.297e-20   |   2.594e-20   |
+| ofs      | Wilcoxon paired (planned step contrast) | step2->step3      |       297 |     -0.0105 |        0.556  | 9.95863e-17 |   9.95863e-17 |
+| ofs      | Friedman over runs                      | run (within qid)  |       nan |    nan      |        0.0756 | 6.08517e-05 | nan           |
+| ofs      | Friedman (step omnibus)                 | step in [1, 2, 3] |       297 |    nan      |      nan      | 1.75889e-40 | nan           |
 

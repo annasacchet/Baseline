@@ -26,15 +26,18 @@ echo "NewsQA eval pipeline — Lisa"
 echo "Chains: $CHAINS"
 echo "=========================================="
 
-# --- 1. Answer F1 (from scratch — overwrite) ---
+# --- 1. Answer F1 (resume — skip if output already exists) ---
 echo ""
-echo "[1/3] Answer F1 (overwriting $F1_OUT)..."
-rm -f "$F1_OUT"
-python3 scripts/newsqa/answer_f1_eval_newsqa.py \
-  --input "$CHAINS" \
-  --output "$F1_OUT" \
-  --batch-size 8 \
-  --use-4bit
+if [ -f "$F1_OUT" ]; then
+  echo "[1/3] Answer F1 already exists, skipping ($F1_OUT)"
+else
+  echo "[1/3] Answer F1 (output: $F1_OUT)..."
+  python3 scripts/newsqa/answer_f1_eval_newsqa.py \
+    --input "$CHAINS" \
+    --output "$F1_OUT" \
+    --batch-size 8 \
+    --use-4bit
+fi
 
 # --- 2. OpenFActScore (resume from where it stopped) ---
 # Output path is derived automatically from --input (<stem>_openfactscore.csv);

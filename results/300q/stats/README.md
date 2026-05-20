@@ -4,11 +4,11 @@ Questo documento spiega in modo divulgativo cosa è stato calcolato dallo script
 [`scripts/300q/inference_tests.py`](../../../scripts/300q/inference_tests.py) e
 come leggere i numeri.
 
-> **Nota importante:** sul run 300q **l'OpenFActScore (OFS) è stato calcolato
-> solo sulle 55 domande 2-hop** (su 297 totali). Per non veicolare conclusioni
-> non generalizzabili, **in questo README OFS è escluso**: tutte le analisi qui
-> sotto si basano su **Answer F1** e **BERTScore**, che invece sono bilanciati
-> su tutti i livelli di complessità. Vedi §6 (Limitazioni).
+> **Aggiornamento (2026-05-19):** l'OpenFActScore (OFS) è ora calcolato su
+> **tutte le 297 domande** (2/3/4-hop), non più solo sulle 55 2-hop. L'analisi
+> statistica completa dell'OFS è in un documento dedicato:
+> [`OPENFACTSCORE_ANALYSIS.md`](OPENFACTSCORE_ANALYSIS.md). Questo README copre
+> **Answer F1** e **BERTScore**; per la fattualità si rimanda al file dedicato.
 
 ---
 
@@ -242,8 +242,9 @@ Cosa si vede:
 > Sul drift testuale (BERTScore), le 4-hop si allontanano leggermente di più
 > dall'originale e convergono più velocemente al loro attrattore. **L'ipotesi
 > "domande complesse degradano di più" è supportata in modo modesto su queste
-> due metriche. La parte di RQ2b relativa alla fattualità (OFS) resta aperta
-> per i limiti sui dati (vedi §6).**
+> due metriche. La parte di RQ2b relativa alla fattualità (OFS) è ora analizzata
+> in [`OPENFACTSCORE_ANALYSIS.md`](OPENFACTSCORE_ANALYSIS.md): il numero di hop
+> modula il livello di partenza dell'OFS ma non la velocità di degradazione.**
 
 ### 4.8 La lunghezza del rewriting (n_tokens) conta? ★
 
@@ -408,27 +409,22 @@ robuste.
 Queste sono le limitazioni note delle analisi presentate qui. Vanno dichiarate
 esplicitamente nel paper.
 
-### 6.1 OpenFActScore è incompleto — escluso da questo README
+### 6.1 OpenFActScore — ora completo, analizzato a parte
 
-Il file [`rewriting_chains_300q_openfactscore.csv`](../rewriting_chains_300q_openfactscore.csv)
-contiene punteggi OFS solo per **55 qid 2-hop** (su 297 totali). Le domande
-**3-hop e 4-hop non sono state valutate** con OpenFActScore.
+**Aggiornato (2026-05-19).** Il file
+[`rewriting_chains_300q_openfactscore.csv`](../rewriting_chains_300q_openfactscore.csv)
+copre ora **tutte le 297 domande** (2/3/4-hop). La limitazione precedente (solo
+55 qid 2-hop) è risolta.
 
-Per non veicolare conclusioni non generalizzabili, **in questo README abbiamo
-escluso OFS da tutte le analisi**. I file CSV di OFS rimangono nella cartella
-[`inference/`](inference/) (ofs_step_*.csv) ma non sono interpretati qui.
+L'analisi statistica completa dell'OFS — effetto step, step×group,
+step×instruction, step×hop, correlazione con Answer F1 — è in un documento
+dedicato: [`OPENFACTSCORE_ANALYSIS.md`](OPENFACTSCORE_ANALYSIS.md).
 
-**Conseguenze:**
-- **RQ1** ("il rewriting degrada la fattualità?") non è risposta da questo
-  documento.
-- **RQ2b** ("la complessità influenza il degrado di fattualità?") *non è
-  testabile* sulla fattualità: l'OFS ha un solo livello di n-hop. RQ2b qui è
-  affrontata solo via Answer F1 e BERTScore (§4.7).
-
-**Cosa serve per chiudere il gap:** rilanciare la pipeline OFS
-(`openfactscore_eval.py`, 4-bit su Lisa) sui chains delle **3-hop e 4-hop**.
-I dati di rewriting (`rewriting_chains_300q.csv`) sono già completi per tutte
-le complessità, quindi serve solo il run di valutazione OFS.
+**Limitazioni residue dell'OFS** (dettagliate nel file dedicato):
+- *Length penalty*: `factscore` include `min(1, n_facts/10)`; poiché `n_facts`
+  cala con lo step, parte del calo è accorciamento e non perdita di fedeltà.
+- *Errori binari*: l'OFS produce solo SUPPORTED / NOT_SUPPORTED; la tipizzazione
+  fine (contraddizione / invenzione / distorsione) non è ancora stata eseguita.
 
 ### 6.2 Answer F1 con quantizzazione 4-bit, non bf16
 
@@ -467,8 +463,8 @@ piccola (ICC < 6%, §4.5), ma non per ottenere CI stretti su singoli qid.
 > prodotta è un confondente importante**: tutte le istruzioni comprimono
 > aggressivamente il testo (mediana 314–967 token contro 2340 dell'originale),
 > e una parte del degrado attribuito al rewriting o all'istruzione è in realtà
-> un effetto di compressione (§4.8). Le conclusioni sulla fattualità restano
-> aperte (OFS incompleto, vedi §6).
+> un effetto di compressione (§4.8). Le conclusioni sulla fattualità sono
+> trattate in [`OPENFACTSCORE_ANALYSIS.md`](OPENFACTSCORE_ANALYSIS.md).
 
 ---
 
@@ -476,7 +472,8 @@ piccola (ICC < 6%, §4.5), ma non per ottenere CI stretti su singoli qid.
 
 ```
 results/300q/stats/
-├── README.md                  ← questo file (no OFS, vedi §6)
+├── README.md                  ← questo file (F1 + BERTScore)
+├── OPENFACTSCORE_ANALYSIS.md   ← analisi statistica OFS completa
 ├── diagnostics/
 │   └── diagnostics.csv        ← ICC, Shapiro
 └── inference/
@@ -492,7 +489,7 @@ results/300q/stats/
     ├── run_variance_decomposition.csv ← Test 5 (run)
     ├── corr_*.csv             ← Test 6 (correlazioni)
     ├── robustness_friedman.csv ← Test 9
-    └── ofs_*                  ← OFS, NON interpretato qui (incompleto)
+    └── ofs_*                  ← OFS (vedi OPENFACTSCORE_ANALYSIS.md)
 ```
 
 Per rigenerare tutto:
