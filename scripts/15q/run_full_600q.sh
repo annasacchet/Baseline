@@ -55,6 +55,34 @@ export HF_HOME="${HF_HOME:-/mnt/dmif-nas/mitel/sacchet/hf_cache}"
 export HF_HUB_CACHE="${HF_HUB_CACHE:-$HF_HOME/hub}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$HF_HOME}"
 
+# Conda activation (fresh tmux sessions don't inherit it).
+CONDA_ENV="${CONDA_ENV:-baseline}"
+if ! command -v python >/dev/null 2>&1 || [ -z "${CONDA_DEFAULT_ENV:-}" ]; then
+    # Try the standard conda hook locations.
+    for c in "$HOME/miniconda3/etc/profile.d/conda.sh" \
+             "$HOME/anaconda3/etc/profile.d/conda.sh" \
+             "/opt/conda/etc/profile.d/conda.sh"; do
+        if [ -f "$c" ]; then
+            # shellcheck disable=SC1090
+            source "$c"
+            break
+        fi
+    done
+    conda activate "$CONDA_ENV" 2>/dev/null || conda activate base 2>/dev/null || true
+fi
+if ! command -v python >/dev/null 2>&1; then
+    echo "ERROR: 'python' not found even after attempting conda activation." >&2
+    echo "  Activate your env manually then re-run, e.g.:" >&2
+    echo "    source ~/.bashrc && conda activate baseline && bash $0" >&2
+    exit 1
+fi
+
+# HF token (optional but recommended — kills the unauthenticated-request warning).
+if [ -z "${HF_TOKEN:-}" ]; then
+    echo "WARN: HF_TOKEN not set. Public models still work; gated models will fail." >&2
+    echo "      Export HF_TOKEN before running (e.g. add it to ~/.bashrc)." >&2
+fi
+
 FORCE="${FORCE:-0}"
 SKIP_OFS="${SKIP_OFS:-0}"
 SKIP_BLEURT="${SKIP_BLEURT:-0}"
