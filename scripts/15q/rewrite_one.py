@@ -49,9 +49,7 @@ REWRITE_TEMPLATE = """You are a precise text rewriting assistant. Your task is t
 
 Instruction: {instruction}
 
-Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introduction, markdown formatting outside the text, or commentary.
-
-Rewritten text:"""
+Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introduction, markdown formatting outside the text, or commentary."""
 
 
 DEFAULT_SYSTEM_PROMPT = (
