@@ -77,9 +77,20 @@ REWRITE_TEMPLATE = """You are a precise text rewriting assistant. Your task is t
 
 Instruction: {instruction}
 
-Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introduction, markdown formatting outside the text, or commentary.
+Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introduction, markdown formatting outside the text, or commentary."""
 
-Rewritten text:"""
+
+DEFAULT_SYSTEM_PROMPT = (
+    "You are a careful text rewriting assistant. "
+    "When the user provides a text and an instruction, you must rewrite the "
+    "ENTIRE text according to the instruction. "
+    "The source text may contain multiple independent paragraphs separated by "
+    "blank lines; you MUST rewrite every single paragraph, in the same order, "
+    "without omitting, merging, or summarizing any of them. "
+    "Preserve the original number of paragraphs and the factual content of each. "
+    "Never answer questions about the text — only rewrite it. "
+    "Return only the rewritten text, with no preamble or commentary."
+)
 
 
 
@@ -164,15 +175,19 @@ def generate(
     *,
     temperature: float,
     max_new_tokens: int,
+    system_prompt: str = None,
 ):
     """Single-prompt generation via the model's chat template."""
-    messages = [{"role": "user", "content": user_prompt}]
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": user_prompt})
     if getattr(tokenizer, "chat_template", None):
         text = tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
     else:
-        text = user_prompt
+        text = (system_prompt + "\n\n" if system_prompt else "") + user_prompt
 
     inputs = tokenizer(text, return_tensors="pt").to(model.device)
     gen_kwargs = dict(
@@ -198,6 +213,7 @@ def run_chain(
     n_iterations: int,
     temperature: float,
     max_new_tokens: int,
+    system_prompt: str = None,
 ):
     """Iteratively rewrite E0 with the same instruction. Returns [E0, E1, ..., En]."""
     chain = [E0]
@@ -207,6 +223,7 @@ def run_chain(
         current = generate(
             tokenizer, model, prompt,
             temperature=temperature, max_new_tokens=max_new_tokens,
+            system_prompt=system_prompt,
         )
         chain.append(current)
     return chain
@@ -239,8 +256,8 @@ def main():
     parser = argparse.ArgumentParser(description="Generate rewriting chains on GPU.")
     parser.add_argument(
         "--model",
-        default="allenai/OLMo-2-0325-32B-Instruct",
-        help="HF model id of the rewriter (default: OLMo-2 32B Instruct).",
+        default="allenai/OLMo-3.1-32B-Instruct",
+        help="HF model id of the rewriter (default: OLMo-3.1 32B Instruct).",
     )
     parser.add_argument(
         "--dataset",
@@ -293,7 +310,14 @@ def main():
         "--use-4bit", action="store_true",
         help="Enable 4-bit NF4 quantization (for lisa/3090). Default: bfloat16.",
     )
+    parser.add_argument(
+        "--system-prompt",
+        default=DEFAULT_SYSTEM_PROMPT,
+        help="System prompt da anteporre al messaggio utente. "
+             "Passa una stringa vuota ('') per disabilitarlo.",
+    )
     args = parser.parse_args()
+    system_prompt = args.system_prompt if args.system_prompt else None
 
     # Sanity checks
     if not args.dataset.exists():
@@ -359,6 +383,7 @@ def main():
         len(questions)
         * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())  # = 4 instructions x 3 wordings = 12
     )
+    print(f"\nSystem prompt: {'ON' if system_prompt else 'OFF'}", flush=True)
     print(f"\nPlan: {len(questions)} questions x 4 instructions x 3 wordings = {total_chains} chains")
     print(f"      each chain = {args.n_iterations} steps + 1 baseline (E0) = {args.n_iterations+1} rows")
     print(f"      total rows expected: {total_chains * (args.n_iterations + 1)}")
@@ -388,6 +413,7 @@ def main():
                     n_iterations=args.n_iterations,
                     temperature=args.temperature,
                     max_new_tokens=args.max_new_tokens,
+                    system_prompt=system_prompt,
                 )
                 elapsed = time.time() - t0
 
