@@ -29,10 +29,11 @@ Ogni rewriting è **ripetuto 3 volte indipendenti** (run 0, 1, 2) per stimare la
 | **Answer F1 generativo** | il modello QA trova la risposta nel testo riscritto? | 0–1 | 0, 1, 2, 3 |
 | **Answer F1 span** | versione estrattiva della stessa metrica | 0–1 | 0, 1, 2, 3 |
 | **OpenFActScore (OFS)** | proporzione di affermazioni fattualmente supportate | 0–1 | 1, 2, 3 |
-| **BERTScore baseline** | similarità semantica vs. testo originale (step 0) | 0–1 | 1, 2, 3 |
-| **BERTScore consecutivo** | similarità semantica vs. step precedente | 0–1 | 1, 2, 3 |
+| **BLEURT baseline** | similarità semantica appresa vs. testo originale (step 0) | ~−2…1 | 1, 2, 3 |
+| **BLEURT consecutivo** | BLEURT vs. step precedente | ~−2…1 | 1, 2, 3 |
+| **BERTScore baseline / consecutivo** | similarità BERT vs. originale / step precedente | 0–1 | 1, 2, 3 |
 
-> **Nota copertura:** BERTScore calcolato su **7 qid** (pilot, limitazione tecnica); OFS su **44 qid** (sottoinsieme). Answer F1 su tutti e 100 i qid.
+> **Nota copertura:** Answer F1, OFS e BLEURT su **tutti e 100 i qid** (1 200 chain × step). BERTScore su soli **7 qid** (pilot tecnico, mantenuto per confronto qualitativo).
 
 ---
 
@@ -53,12 +54,12 @@ Ogni rewriting è **ripetuto 3 volte indipendenti** (run 0, 1, 2) per stimare la
 
 ### Test statistici
 
-**Friedman omnibus** (test non parametrico su misure ripetute, agnostico rispetto alla distribuzione):
+**Friedman omnibus** su misure ripetute paired (1 200 chain × 4 step):
 
 | Metrica | χ² | p |
 |---------|----|----|
-| F1 generativo | 50.72 | 5.6 × 10⁻¹¹ |
-| F1 span | 48.06 | 2.1 × 10⁻¹⁰ |
+| F1 generativo | 355.86 | 8.1 × 10⁻⁷⁷ |
+| F1 span | 419.35 | 1.4 × 10⁻⁹⁰ |
 
 Entrambi altamente significativi: la distribuzione di F1 differisce tra step, indipendentemente da qualsiasi assunzione parametrica.
 
@@ -66,11 +67,11 @@ Entrambi altamente significativi: la distribuzione di F1 differisce tra step, in
 
 | Contrasto | Δ gen | p_holm gen | Δ span | p_holm span |
 |-----------|-------|-----------|--------|------------|
-| step 0 → 1 | **−0.158** | **6.2 × 10⁻⁶** | **−0.148** | **1.1 × 10⁻⁴** |
-| step 1 → 2 | −0.019 | 0.029 | −0.035 | **4.9 × 10⁻⁴** |
-| step 2 → 3 | −0.010 | 0.055 (n.s.) | −0.004 | 0.177 (n.s.) |
+| step 0 → 1 | **−0.158** | **4.6 × 10⁻⁴⁰** | **−0.148** | **1.6 × 10⁻³³** |
+| step 1 → 2 | −0.019 | **1.4 × 10⁻²** | −0.035 | **3.5 × 10⁻⁷** |
+| step 2 → 3 | −0.010 | **2.2 × 10⁻²** | −0.004 | 0.226 (n.s.) |
 
-**Lettura:** quasi tutto il danno si concentra al primo rewriting. Il calo dal testo originale allo step 1 è di **~15–16 punti percentuali**. Gli step successivi producono cali molto più piccoli: significativi per F1 span (step 1→2), borderline o non significativi per F1 generativo (step 1→2 p = 0.029; step 2→3 n.s.).
+**Lettura:** quasi tutto il danno si concentra al primo rewriting. Il calo dal testo originale allo step 1 è di **~15–16 punti percentuali**. Gli step successivi producono cali molto più piccoli ma ora — con il test paired su 1 200 chain — significativi per F1 generativo a entrambi i passaggi e per F1 span a step 1→2 (step 2→3 non significativo solo per F1 span).
 
 Il pattern è coerente tra le due versioni dell'F1, confermando che il fenomeno non dipende dal tipo di valutatore.
 
@@ -120,36 +121,36 @@ Le istruzioni **style** (`formality` + `paraphrase`) mantengono un F1 sistematic
 
 ![OFS per step](fig3_ofs_by_step.png)
 
-*Calcolato su 44 qid (sottoinsieme con OFS disponibile), tutti i livelli e istruzioni.*
+*Calcolato su **tutti e 100 i qid** (1 200 chain per step).*
 
 ### Medie OFS per step
 
 | Step | OFS medio | n |
 |------|----------|---|
-| 1 | **0.9714** | 524 |
-| 2 | 0.9641 | 524 |
-| 3 | 0.9578 | 524 |
+| 1 | **0.9733** | 1 200 |
+| 2 | 0.9641 | 1 200 |
+| 3 | 0.9586 | 1 200 |
 
-**Friedman omnibus:** χ² = 23.32, p = 8.6 × 10⁻⁶ — altamente significativo.
+**Friedman omnibus:** χ² = 112.85, p = 3.1 × 10⁻²⁵ — altamente significativo.
 
 **Wilcoxon paired (Holm):**
 
 | Contrasto | Δ | p_holm |
 |-----------|---|--------|
-| step 1 → 2 | −0.0073 | **2.8 × 10⁻³** |
-| step 2 → 3 | −0.0063 | **4.8 × 10⁻³** |
+| step 1 → 2 | −0.0092 | **9.6 × 10⁻¹⁴** |
+| step 2 → 3 | −0.0055 | **5.0 × 10⁻⁵** |
 
-Ogni rewriting introduce errori fattuali in modo progressivo e statisticamente significativo. Il calo cumulativo da step 1 a step 3 è di **~1.4 punti percentuali** — contenuto in termini assoluti ma robusto e monotonico.
+Ogni rewriting introduce errori fattuali in modo progressivo e statisticamente significativo. Il calo cumulativo da step 1 a step 3 è di **~1.47 punti percentuali** — contenuto in termini assoluti ma robusto e monotonico, ora confermato sull'intero campione (non più sul sottoinsieme da 44 qid).
 
 ### Numero di fatti medi per step
 
-| Step | n_facts | n_supported | n_not_supported |
-|------|---------|-------------|-----------------|
-| 1 | 42.71 | 41.36 | 1.34 |
-| 2 | 40.64 | 39.04 | 1.60 |
-| 3 | 39.49 | 37.78 | 1.71 |
+| Step | n_facts | n_supported | n_not_supported | n_contradicted |
+|------|---------|-------------|-----------------|----------------|
+| 1 | 41.26 | 40.03 | 1.23 | 0 |
+| 2 | 40.04 | 38.45 | 1.59 | 0 |
+| 3 | 38.78 | 37.11 | 1.66 | 0 |
 
-Con ogni step il testo produce meno affermazioni totali (compressione) e la proporzione di quelle non supportate cresce lentamente. I fatti **contradetti** sono sempre 0: il modello non inventa attivamente informazioni false, ma perde gradualmente fatti supportabili.
+Con ogni step il testo produce meno affermazioni totali (compressione) e la proporzione di quelle non supportate cresce lentamente. I fatti **contraddetti** sono sempre 0: il modello non inventa attivamente informazioni false, ma perde gradualmente fatti supportabili.
 
 ---
 
@@ -189,34 +190,45 @@ Su MuSiQue `shorten` produceva il 17.7% di catene corte a step 1; su NewsQA **qu
 
 ---
 
-## 6. BERTScore — drift testuale e convergenza (7 qid)
+## 6. BLEURT — drift testuale e convergenza (100 qid)
 
-![BERTScore](fig4_bertscore.png)
+![BLEURT](fig4_bleurt.png)
 
-> **Attenzione alla generalizzabilità.** Il BERTScore è stato calcolato su soli 7 qid (pilot tecnico). I test statistici su n=7 hanno potenza molto limitata. I valori sono indicativi; per conclusioni robuste serve il calcolo completo.
+> **Aggiornamento (2026-05-21):** BLEURT calcolato sull'**intero campione** (1 200 chain × 3 step). Sostituisce di fatto il BERTScore-su-7-qid come misura primaria di drift testuale. Il pattern è identico, ma ora con potenza statistica enorme.
 
-### BERTScore baseline (vs. originale)
+### BLEURT baseline (vs. originale, step 0)
 
-| Step | F1 baseline medio |
-|------|------------------|
-| 1 | 0.8852 |
-| 2 | 0.8755 |
-| 3 | 0.8715 |
+| Step | BLEURT baseline medio |
+|------|----------------------|
+| 1 | 0.4645 |
+| 2 | 0.4375 |
+| 3 | 0.4244 |
 
-Wilcoxon step1→2: Δ = −0.010, p = 0.016; step2→3: Δ = −0.004, p = 0.016.  
+Wilcoxon (Holm): step 1→2 Δ = −0.027, p = 8.0 × 10⁻⁸⁹; step 2→3 Δ = −0.013, p = 1.3 × 10⁻³⁴.  
 Il testo si allontana dall'originale in modo monotonico a ogni step.
 
-### BERTScore consecutivo (vs. step precedente)
+### BLEURT consecutivo (vs. step precedente)
 
-| Step | F1 consecutivo medio |
-|------|---------------------|
-| 1 | 0.8852 |
-| 2 | 0.9461 |
-| 3 | 0.9562 |
+| Step | BLEURT consecutivo medio |
+|------|--------------------------|
+| 1 | 0.4645 |
+| 2 | 0.6727 |
+| 3 | 0.7094 |
 
-Wilcoxon step1→2: Δ = +0.059, p = 0.016; step2→3: Δ = +0.010, p = 0.016.
+Wilcoxon (Holm): step 1→2 Δ = +0.208, p = 1.7 × 10⁻¹⁹⁵; step 2→3 Δ = +0.037, p = 3.1 × 10⁻⁶⁶.
 
-**Lettura:** il pattern è identico a quello osservato su MuSiQue. Il sistema si allontana dall'originale (BERTScore baseline scende) ma gli step successivi diventano sempre più simili tra loro (BERTScore consecutivo sale). Il rewriting converge rapidamente verso un "attrattore" stilistico del modello — dopo il primo step il testo cambia sempre meno ad ogni iterazione.
+**Lettura:** il pattern già visto su BERTScore (7 qid) è ora confermato su tutto il campione. Il sistema si allontana dall'originale (BLEURT baseline scende monotonicamente) ma gli step successivi diventano sempre più simili tra loro (BLEURT consecutivo sale, con un salto netto tra step 1 e step 2). Il rewriting converge rapidamente verso un "attrattore" stilistico del modello — dopo il primo step il testo cambia sempre meno ad ogni iterazione.
+
+### BLEURT baseline per istruzione
+
+| Istruzione | step 1 | step 2 | step 3 |
+|-----------|--------|--------|--------|
+| elaborate | 0.460 | 0.429 | 0.412 |
+| formality | **0.511** | **0.482** | **0.465** |
+| paraphrase | 0.460 | 0.434 | 0.424 |
+| shorten | 0.427 | 0.405 | 0.397 |
+
+`formality` resta la più conservativa (più vicina all'originale), `shorten` la più aggressiva — coerente con i pattern di lunghezza già osservati in §5.
 
 ---
 
@@ -257,8 +269,8 @@ Su NewsQA `shorten` è l'istruzione con il tasso di recupero più alto — un ri
 | Token originale (mediana) | ~2 340 | ~734 |
 | % catene <200 tok (shorten, step 1) | 17.7% | **46.7%** |
 | Recovery F1=0 | 21.9% | **32.2%** |
-| OFS step 1 | 0.881 | **0.971** |
-| OFS calo cumulativo (step 1→3) | −0.029 | **−0.014** |
+| OFS step 1 | 0.881 | **0.973** |
+| OFS calo cumulativo (step 1→3) | −0.029 | **−0.015** |
 
 **Analogie:**
 - Il crollo di F1 al primo step ha un'entità quasi identica (Δ ≈ −0.16) nonostante la diversa struttura dei dataset.
@@ -278,8 +290,7 @@ Su NewsQA `shorten` è l'istruzione con il tasso di recupero più alto — un ri
 
 | Limitazione | Impatto |
 |------------|---------|
-| BERTScore su soli 7 qid | Test BERTScore con potenza molto bassa; valori indicativi |
-| OFS su 44 qid (non tutti i 100) | Risultati OFS non pienamente rappresentativi di tutti i qid |
+| BERTScore su soli 7 qid | Mantenuto per confronto qualitativo; sostituito da BLEURT su 100 qid come misura primaria di drift |
 | Nessuna dimensione n-hop | Non è possibile analizzare l'effetto della complessità della domanda |
 | Solo 3 step di rewriting | Non sappiamo se il trend si stabilizza o prosegue a step 4/5 |
 
@@ -297,7 +308,7 @@ Su NewsQA `shorten` è l'istruzione con il tasso di recupero più alto — un ri
 |------|-----------|
 | [fig1_f1_by_step.png](fig1_f1_by_step.png) | F1 generativo e span per step (media ± SE) |
 | [fig2_f1_by_instruction.png](fig2_f1_by_instruction.png) | F1 generativo per istruzione × step |
-| [fig3_ofs_by_step.png](fig3_ofs_by_step.png) | OpenFActScore per step (44 qid) |
-| [fig4_bertscore.png](fig4_bertscore.png) | BERTScore baseline e consecutivo (7 qid) |
+| [fig3_ofs_by_step.png](fig3_ofs_by_step.png) | OpenFActScore per step (100 qid) |
+| [fig4_bleurt.png](fig4_bleurt.png) | BLEURT baseline e consecutivo (100 qid) |
 | [fig5_token_lengths.png](fig5_token_lengths.png) | Lunghezza mediana token per istruzione × step |
 | [fig6_f1_content_vs_style.png](fig6_f1_content_vs_style.png) | F1 per gruppo (content vs style) |
