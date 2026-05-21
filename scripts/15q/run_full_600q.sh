@@ -55,25 +55,12 @@ export HF_HOME="${HF_HOME:-/mnt/dmif-nas/mitel/sacchet/hf_cache}"
 export HF_HUB_CACHE="${HF_HUB_CACHE:-$HF_HOME/hub}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-$HF_HOME}"
 
-# Conda activation (fresh tmux sessions don't inherit it).
-CONDA_ENV="${CONDA_ENV:-baseline}"
-if ! command -v python >/dev/null 2>&1 || [ -z "${CONDA_DEFAULT_ENV:-}" ]; then
-    # Try the standard conda hook locations.
-    for c in "$HOME/miniconda3/etc/profile.d/conda.sh" \
-             "$HOME/anaconda3/etc/profile.d/conda.sh" \
-             "/opt/conda/etc/profile.d/conda.sh"; do
-        if [ -f "$c" ]; then
-            # shellcheck disable=SC1090
-            source "$c"
-            break
-        fi
-    done
-    conda activate "$CONDA_ENV" 2>/dev/null || conda activate base 2>/dev/null || true
-fi
-if ! command -v python >/dev/null 2>&1; then
-    echo "ERROR: 'python' not found even after attempting conda activation." >&2
-    echo "  Activate your env manually then re-run, e.g.:" >&2
-    echo "    source ~/.bashrc && conda activate baseline && bash $0" >&2
+# Python binary (override with PYTHON=/path/to/python if needed).
+PYTHON="${PYTHON:-python3}"
+if ! command -v "$PYTHON" >/dev/null 2>&1; then
+    echo "ERROR: '$PYTHON' not found in PATH." >&2
+    echo "  Set PYTHON to an absolute path, e.g.:" >&2
+    echo "    PYTHON=/usr/bin/python3 bash $0" >&2
     exit 1
 fi
 
@@ -183,7 +170,7 @@ echo "=============================================================="
     stage_header "1/5" "Rewriting (600 questions, $N_ITERATIONS iterations each)" "$CHAINS_CSV"
     t0=$(date +%s)
     skip_or_run "Rewriting" "$CHAINS_CSV" \
-        python scripts/15q/rewriting_pipeline.py \
+        "$PYTHON" scripts/15q/rewriting_pipeline.py \
             --model "$MODEL" \
             --dataset "$DATASET" \
             --output "$CHAINS_CSV" \
@@ -211,7 +198,7 @@ else
     stage_header "2/5" "Answer F1 (QA model: $QA_MODEL)" "$F1_CSV"
     t0=$(date +%s)
     skip_or_run "Answer F1" "$F1_CSV" \
-        python scripts/15q/answer_f1_eval.py \
+        "$PYTHON" scripts/15q/answer_f1_eval.py \
             --input "$CHAINS_CSV" \
             --output "$F1_CSV" \
             --dataset "$DATASET" \
@@ -232,7 +219,7 @@ else
     stage_header "3/5" "BERTScore (baseline + consecutive)" "$BERTSCORE_CSV"
     t0=$(date +%s)
     skip_or_run "BERTScore" "$BERTSCORE_CSV" \
-        python scripts/15q/bertscore_eval.py \
+        "$PYTHON" scripts/15q/bertscore_eval.py \
             --input "$CHAINS_CSV" \
             --output "$BERTSCORE_CSV" \
             --batch-size 16
@@ -256,7 +243,7 @@ else
         echo "  note: no Answer F1 CSV at $F1_CSV — answer-level BLEURT will be skipped."
     fi
     skip_or_run "BLEURT" "$BLEURT_CSV" \
-        python scripts/300q/bleurt_eval_300q.py \
+        "$PYTHON" scripts/300q/bleurt_eval_300q.py \
             --input "$CHAINS_CSV" \
             --output "$BLEURT_CSV" \
             "${F1_ARG[@]}" \
@@ -278,7 +265,7 @@ else
         stage_header "5/5" "OpenFActScore (FULL — every step>0 row)" "$OFS_CSV"
         t0=$(date +%s)
         skip_or_run "OpenFActScore" "$OFS_CSV" \
-            python scripts/15q/openfactscore_eval.py \
+            "$PYTHON" scripts/15q/openfactscore_eval.py \
                 --input "$CHAINS_CSV" \
                 --demos "$DEMOS" \
                 $FOURBIT_FLAG
