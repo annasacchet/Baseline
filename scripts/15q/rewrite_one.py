@@ -132,8 +132,12 @@ def main():
 
     print(f"[+] Loading {args.model} (4-bit={use_4bit}) ...")
     tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
-    kwargs = {"device_map": "auto", "trust_remote_code": True}
+    kwargs = {
+        "trust_remote_code": True,
+        "low_cpu_mem_usage": True,
+    }
     if use_4bit:
+        kwargs["device_map"] = "auto"
         kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
@@ -141,6 +145,7 @@ def main():
             bnb_4bit_quant_type="nf4",
         )
     else:
+        kwargs["device_map"] = {"": 0}
         kwargs["torch_dtype"] = torch.bfloat16
     model = AutoModelForCausalLM.from_pretrained(args.model, **kwargs)
     if tok.pad_token is None:
