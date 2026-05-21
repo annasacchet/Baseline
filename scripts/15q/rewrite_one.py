@@ -66,7 +66,8 @@ DEFAULT_SYSTEM_PROMPT = (
 
 
 @torch.no_grad()
-def generate(tok, model, prompt, temperature, max_new_tokens, system_prompt=None):
+def generate(tok, model, prompt, temperature, max_new_tokens, system_prompt=None,
+             debug_prompt=False, debug_label=""):
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -77,6 +78,21 @@ def generate(tok, model, prompt, temperature, max_new_tokens, system_prompt=None
         )
     else:
         text = (system_prompt + "\n\n" if system_prompt else "") + prompt
+    if debug_prompt:
+        print(f"\n{'='*70}")
+        print(f"PROMPT FINALE {debug_label} (input al modello)")
+        print(f"{'='*70}")
+        print(f"--- repr() first 400 chars ---")
+        print(repr(text[:400]))
+        print(f"--- repr() last 200 chars ---")
+        print(repr(text[-200:]))
+        print(f"--- leggibile (first 600 chars) ---")
+        print(text[:600])
+        print(f"--- leggibile (last 400 chars) ---")
+        print(text[-400:])
+        n_tok_input = len(tok.encode(text, add_special_tokens=False))
+        print(f"--- stats: {len(text)} chars, {n_tok_input} tokens ---")
+        print(f"{'='*70}\n")
     inputs = tok(text, return_tensors="pt").to(model.device)
     kw = dict(max_new_tokens=max_new_tokens, pad_token_id=tok.pad_token_id)
     if temperature > 0:
@@ -112,6 +128,12 @@ def main():
         default=DEFAULT_SYSTEM_PROMPT,
         help="System prompt da anteporre al messaggio utente. "
              "Passa una stringa vuota ('') per disabilitarlo.",
+    )
+    ap.add_argument(
+        "--debug-prompt",
+        action="store_true",
+        help="Stampa il prompt finale (dopo apply_chat_template) prima di ogni "
+             "step di generazione.",
     )
     args = ap.parse_args()
     use_4bit = not args.no_4bit
@@ -189,6 +211,8 @@ def main():
                     temperature=args.temperature,
                     max_new_tokens=args.max_new_tokens,
                     system_prompt=system_prompt,
+                    debug_prompt=args.debug_prompt,
+                    debug_label=f"[{group}/{itype}/run{run}/step{step}]",
                 )
                 elapsed = time.time() - t0
                 ntok = len(tok.encode(current, add_special_tokens=False))
