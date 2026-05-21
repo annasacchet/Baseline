@@ -54,15 +54,31 @@ Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introd
 Rewritten text:"""
 
 
+DEFAULT_SYSTEM_PROMPT = (
+    "You are a careful text rewriting assistant. "
+    "When the user provides a text and an instruction, you must rewrite the "
+    "ENTIRE text according to the instruction. "
+    "The source text may contain multiple independent paragraphs separated by "
+    "blank lines; you MUST rewrite every single paragraph, in the same order, "
+    "without omitting, merging, or summarizing any of them. "
+    "Preserve the original number of paragraphs and the factual content of each. "
+    "Never answer questions about the text — only rewrite it. "
+    "Return only the rewritten text, with no preamble or commentary."
+)
+
+
 @torch.no_grad()
-def generate(tok, model, prompt, temperature, max_new_tokens):
-    messages = [{"role": "user", "content": prompt}]
+def generate(tok, model, prompt, temperature, max_new_tokens, system_prompt=None):
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
     if getattr(tok, "chat_template", None):
         text = tok.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
     else:
-        text = prompt
+        text = (system_prompt + "\n\n" if system_prompt else "") + prompt
     inputs = tok(text, return_tensors="pt").to(model.device)
     kw = dict(max_new_tokens=max_new_tokens, pad_token_id=tok.pad_token_id)
     if temperature > 0:
@@ -93,8 +109,15 @@ def main():
         action="store_true",
         help="Solo paraphrase/run0 (smoke test veloce)",
     )
+    ap.add_argument(
+        "--system-prompt",
+        default=DEFAULT_SYSTEM_PROMPT,
+        help="System prompt da anteporre al messaggio utente. "
+             "Passa una stringa vuota ('') per disabilitarlo.",
+    )
     args = ap.parse_args()
     use_4bit = not args.no_4bit
+    system_prompt = args.system_prompt if args.system_prompt else None
 
     df = pd.read_csv(args.csv)
     e0_rows = df[(df.qid == args.qid) & (df.step == 0)]
@@ -105,6 +128,7 @@ def main():
     print(f"[+] qid={args.qid}")
     print(f"[+] question: {question}")
     print(f"[+] E0 length: {len(E0)} chars")
+    print(f"[+] system prompt: {'ON' if system_prompt else 'OFF'}")
 
     print(f"[+] Loading {args.model} (4-bit={use_4bit}) ...")
     tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
@@ -161,6 +185,7 @@ def main():
                     prompt,
                     temperature=args.temperature,
                     max_new_tokens=args.max_new_tokens,
+                    system_prompt=system_prompt,
                 )
                 elapsed = time.time() - t0
                 ntok = len(tok.encode(current, add_special_tokens=False))
