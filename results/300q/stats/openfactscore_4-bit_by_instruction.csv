@@ -1,5 +1,0 @@
-instruction_type,mean,std,count
-elaborate,0.87,0.11,486
-formality,0.884,0.098,495
-paraphrase,0.855,0.15,489
-shorten,0.854,0.137,486

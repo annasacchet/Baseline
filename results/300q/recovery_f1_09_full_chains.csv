@@ -1,0 +1,841 @@
+qid,n_hop,instruction_type,group,run,first_recovery_step,step,correct,answer_f1,gold_answer,predicted_answer,prev_predicted_answer,prev_answer_f1
+2hop__14092_8311,2,elaborate,content,0,3,0,False,0.0,1216,1220,,
+2hop__14092_8311,2,elaborate,content,0,3,1,False,0.0,1216,1220,1220,0.0
+2hop__14092_8311,2,elaborate,content,0,3,2,False,0.0,1216,1220,1220,0.0
+2hop__14092_8311,2,elaborate,content,0,3,3,True,1.0,1216,1216,1220,0.0
+2hop__14095_15463,2,elaborate,content,0,3,0,False,0.0,Hewlett Packard,Compaq,,
+2hop__14095_15463,2,elaborate,content,0,3,1,False,0.0,Hewlett Packard,T-Mobile US,Compaq,0.0
+2hop__14095_15463,2,elaborate,content,0,3,2,False,0.0,Hewlett Packard,T-Mobile US,T-Mobile US,0.0
+2hop__14095_15463,2,elaborate,content,0,3,3,True,1.0,Hewlett Packard,Hewlett-Packard,T-Mobile US,0.0
+2hop__14095_15463,2,formality,style,0,1,0,False,0.0,Hewlett Packard,Compaq,,
+2hop__14095_15463,2,formality,style,0,1,1,True,1.0,Hewlett Packard,Hewlett Packard,Compaq,0.0
+2hop__14095_15463,2,formality,style,0,1,2,False,0.0,Hewlett Packard,"MetroPCS merged with T-Mobile USA, which had become the top PC manufacturer in 1994.",Hewlett Packard,1.0
+2hop__14095_15463,2,formality,style,0,1,3,False,0.0,Hewlett Packard,T-Mobile US,"MetroPCS merged with T-Mobile USA, which had become the top PC manufacturer in 1994.",0.0
+2hop__14095_15463,2,paraphrase,style,0,3,0,False,0.0,Hewlett Packard,Compaq,,
+2hop__14095_15463,2,paraphrase,style,0,3,1,False,0.6666666666666666,Hewlett Packard,Hewlett Packard and Compaq,Compaq,0.0
+2hop__14095_15463,2,paraphrase,style,0,3,2,False,0.2666666666666667,Hewlett Packard,"Hewlett Packard merged with Compaq, which had been the top PC manufacturer from 1994.",Hewlett Packard and Compaq,0.6666666666666666
+2hop__14095_15463,2,paraphrase,style,0,3,3,True,1.0,Hewlett Packard,Hewlett Packard,"Hewlett Packard merged with Compaq, which had been the top PC manufacturer from 1994.",0.2666666666666667
+2hop__141456_6455,2,elaborate,content,0,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,elaborate,content,0,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,elaborate,content,0,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,elaborate,content,0,1,3,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,elaborate,content,1,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,elaborate,content,1,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,elaborate,content,1,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,elaborate,content,1,1,3,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,elaborate,content,2,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,elaborate,content,2,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,elaborate,content,2,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,elaborate,content,2,1,3,False,0.0,Firefox,Thunderbird,Firefox,1.0
+2hop__141456_6455,2,formality,style,0,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,formality,style,0,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,formality,style,0,1,2,False,0.0,Firefox,Thunderbird,Firefox,1.0
+2hop__141456_6455,2,formality,style,0,1,3,False,0.5,Firefox,Mozilla Thunderbird,Thunderbird,0.0
+2hop__141456_6455,2,formality,style,1,2,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,formality,style,1,2,1,False,0.0,Firefox,,Thunderbird,0.0
+2hop__141456_6455,2,formality,style,1,2,2,True,1.0,Firefox,Mozilla Firefox,,0.0
+2hop__141456_6455,2,formality,style,1,2,3,False,0.5,Firefox,Mozilla Thunderbird,Mozilla Firefox,1.0
+2hop__141456_6455,2,formality,style,2,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,formality,style,2,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,formality,style,2,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,formality,style,2,1,3,False,0.0,Firefox,Thunderbird,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,0,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,paraphrase,style,0,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,paraphrase,style,0,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,0,1,3,False,0.4,Firefox,IBM Open Client Offering includes the Mozilla Firefox browser.,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,1,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,paraphrase,style,1,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,paraphrase,style,1,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,1,1,3,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,2,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,paraphrase,style,2,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,paraphrase,style,2,1,2,False,0.5,Firefox,Mozilla Thunderbird,Firefox,1.0
+2hop__141456_6455,2,paraphrase,style,2,1,3,False,0.5,Firefox,Mozilla Thunderbird,Mozilla Thunderbird,0.5
+2hop__141456_6455,2,shorten,content,0,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,shorten,content,0,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,shorten,content,0,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,shorten,content,0,1,3,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,shorten,content,1,1,0,False,0.0,Firefox,Thunderbird,,
+2hop__141456_6455,2,shorten,content,1,1,1,True,1.0,Firefox,Firefox,Thunderbird,0.0
+2hop__141456_6455,2,shorten,content,1,1,2,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__141456_6455,2,shorten,content,1,1,3,True,1.0,Firefox,Firefox,Firefox,1.0
+2hop__144658_599630,2,elaborate,content,1,1,0,False,0.0,Yongjia County,Zhejiang,,
+2hop__144658_599630,2,elaborate,content,1,1,1,True,1.0,Yongjia County,Yongjia County,Zhejiang,0.0
+2hop__144658_599630,2,elaborate,content,1,1,2,False,0.0,Yongjia County,"I'm sorry, but the context does not mention Ye Rongguang or his birthplace.",Yongjia County,1.0
+2hop__144658_599630,2,elaborate,content,1,1,3,True,1.0,Yongjia County,Yongjia County,"I'm sorry, but the context does not mention Ye Rongguang or his birthplace.",0.0
+2hop__144658_599630,2,elaborate,content,2,1,0,False,0.0,Yongjia County,Zhejiang,,
+2hop__144658_599630,2,elaborate,content,2,1,1,True,1.0,Yongjia County,Yongjia County,Zhejiang,0.0
+2hop__144658_599630,2,elaborate,content,2,1,2,True,1.0,Yongjia County,Yongjia County,Yongjia County,1.0
+2hop__144658_599630,2,elaborate,content,2,1,3,True,1.0,Yongjia County,Yongjia County,Yongjia County,1.0
+2hop__144658_599630,2,paraphrase,style,0,1,0,False,0.0,Yongjia County,Zhejiang,,
+2hop__144658_599630,2,paraphrase,style,0,1,1,True,1.0,Yongjia County,Yongjia County,Zhejiang,0.0
+2hop__144658_599630,2,paraphrase,style,0,1,2,True,1.0,Yongjia County,Yongjia County,Yongjia County,1.0
+2hop__144658_599630,2,paraphrase,style,0,1,3,True,1.0,Yongjia County,Yongjia County,Yongjia County,1.0
+2hop__144658_599630,2,paraphrase,style,1,1,0,False,0.0,Yongjia County,Zhejiang,,
+2hop__144658_599630,2,paraphrase,style,1,1,1,True,1.0,Yongjia County,Yongjia County,Zhejiang,0.0
+2hop__144658_599630,2,paraphrase,style,1,1,2,True,1.0,Yongjia County,Yongjia County,Yongjia County,1.0
+2hop__144658_599630,2,paraphrase,style,1,1,3,False,0.2,Yongjia County,The context does not mention Ye Rongguang's birth county.,Yongjia County,1.0
+2hop__159903_419949,2,formality,style,0,2,0,False,0.0,Aden,Brazzaville,,
+2hop__159903_419949,2,formality,style,0,2,1,False,0.0,Aden,"Pretoria (or alternatively, the answer may be ""Three Capitals: Pretoria (executive), Cape Town (legislative), and Bloemfontein (judicial)"" depending on the specific country being referenced. However, based on the provided context, the most recent mention of a capital is for Guyana",Brazzaville,0.0
+2hop__159903_419949,2,formality,style,0,2,2,True,1.0,Aden,Aden,"Pretoria (or alternatively, the answer may be ""Three Capitals: Pretoria (executive), Cape Town (legislative), and Bloemfontein (judicial)"" depending on the specific country being referenced. However, based on the provided context, the most recent mention of a capital is for Guyana",0.0
+2hop__159903_419949,2,formality,style,0,2,3,True,1.0,Aden,Aden,Aden,1.0
+2hop__170914_152093,2,elaborate,content,0,2,0,False,0.0,Fair Trade Services,,,
+2hop__170914_152093,2,elaborate,content,0,2,1,False,0.0,Fair Trade Services,Impulse!,,0.0
+2hop__170914_152093,2,elaborate,content,0,2,2,True,1.0,Fair Trade Services,Fair Trade Services,Impulse!,0.0
+2hop__170914_152093,2,elaborate,content,0,2,3,False,0.0,Fair Trade Services,Atlantic Records,Fair Trade Services,1.0
+2hop__242045_2684,2,elaborate,content,0,1,0,False,0.0,"""Donda West Law""",Uniform Monday Holiday Act,,
+2hop__242045_2684,2,elaborate,content,0,1,1,True,1.0,"""Donda West Law""",Donda West Law,Uniform Monday Holiday Act,0.0
+2hop__242045_2684,2,elaborate,content,0,1,2,False,0.0,"""Donda West Law""",Uniform Monday Holiday Act of 1968,Donda West Law,1.0
+2hop__242045_2684,2,elaborate,content,0,1,3,True,1.0,"""Donda West Law""",Donda West Law,Uniform Monday Holiday Act of 1968,0.0
+2hop__242045_2684,2,elaborate,content,2,1,0,False,0.0,"""Donda West Law""",Uniform Monday Holiday Act,,
+2hop__242045_2684,2,elaborate,content,2,1,1,True,1.0,"""Donda West Law""",Donda West Law,Uniform Monday Holiday Act,0.0
+2hop__242045_2684,2,elaborate,content,2,1,2,False,0.0,"""Donda West Law""",,Donda West Law,1.0
+2hop__242045_2684,2,elaborate,content,2,1,3,False,0.0,"""Donda West Law""",,,0.0
+2hop__29893_29898,2,elaborate,content,2,1,0,False,0.0,CFJC-TV in Kamloops,CHAT-TV,,
+2hop__29893_29898,2,elaborate,content,2,1,1,True,1.0,CFJC-TV in Kamloops,CFJC-TV in Kamloops,CHAT-TV,0.0
+2hop__29893_29898,2,elaborate,content,2,1,2,False,0.0,CFJC-TV in Kamloops,TSN,CFJC-TV in Kamloops,1.0
+2hop__29893_29898,2,elaborate,content,2,1,3,False,0.0,CFJC-TV in Kamloops,,TSN,0.0
+2hop__398344_85513,2,shorten,content,2,1,0,False,0.0,TBD,TBA,,
+2hop__398344_85513,2,shorten,content,2,1,1,True,1.0,TBD,TBD,TBA,0.0
+2hop__398344_85513,2,shorten,content,2,1,2,False,0.0,TBD,The show has concluded; no new episodes are scheduled.,TBD,1.0
+2hop__398344_85513,2,shorten,content,2,1,3,False,0.0,TBD,The show has concluded; there are no new episodes.,The show has concluded; no new episodes are scheduled.,0.0
+2hop__403580_37168,2,paraphrase,style,0,1,0,False,0.0,551-600,Not provided in the context.,,
+2hop__403580_37168,2,paraphrase,style,0,1,1,True,1.0,551-600,551-600,Not provided in the context.,0.0
+2hop__403580_37168,2,paraphrase,style,0,1,2,True,1.0,551-600,551-600,551-600,1.0
+2hop__403580_37168,2,paraphrase,style,0,1,3,False,0.0,551-600,Top 5 in the UK,551-600,1.0
+2hop__403580_37168,2,paraphrase,style,1,2,0,False,0.0,551-600,Not provided in the context.,,
+2hop__403580_37168,2,paraphrase,style,1,2,1,False,0.0,551-600,401-500th,Not provided in the context.,0.0
+2hop__403580_37168,2,paraphrase,style,1,2,2,True,1.0,551-600,551-600,401-500th,0.0
+2hop__403580_37168,2,paraphrase,style,1,2,3,False,0.0,551-600,401–500,551-600,1.0
+2hop__43283_86694,2,elaborate,content,0,3,0,False,0.0,New York Yankees,American League,,
+2hop__43283_86694,2,elaborate,content,0,3,1,False,0.0,New York Yankees,Los Angeles Lakers,American League,0.0
+2hop__43283_86694,2,elaborate,content,0,3,2,False,0.0,New York Yankees,Major League Baseball,Los Angeles Lakers,0.0
+2hop__43283_86694,2,elaborate,content,0,3,3,True,1.0,New York Yankees,New York Yankees,Major League Baseball,0.0
+2hop__43283_86694,2,paraphrase,style,0,2,0,False,0.0,New York Yankees,American League,,
+2hop__43283_86694,2,paraphrase,style,0,2,1,False,0.0,New York Yankees,The question cannot be answered based on the provided context.,American League,0.0
+2hop__43283_86694,2,paraphrase,style,0,2,2,True,1.0,New York Yankees,New York Yankees,The question cannot be answered based on the provided context.,0.0
+2hop__43283_86694,2,paraphrase,style,0,2,3,True,1.0,New York Yankees,New York Yankees,New York Yankees,1.0
+2hop__442516_595885,2,elaborate,content,1,1,0,False,0.0,Tanzania,Ghana,,
+2hop__442516_595885,2,elaborate,content,1,1,1,True,1.0,Tanzania,Tanzania,Ghana,0.0
+2hop__442516_595885,2,elaborate,content,1,1,2,False,0.0,Tanzania,Kenya,Tanzania,1.0
+2hop__442516_595885,2,elaborate,content,1,1,3,False,0.0,Tanzania,Kenya,Kenya,0.0
+2hop__442516_595885,2,elaborate,content,2,1,0,False,0.0,Tanzania,Ghana,,
+2hop__442516_595885,2,elaborate,content,2,1,1,True,1.0,Tanzania,Tanzania,Ghana,0.0
+2hop__442516_595885,2,elaborate,content,2,1,2,False,0.0,Tanzania,Kenya,Tanzania,1.0
+2hop__442516_595885,2,elaborate,content,2,1,3,False,0.0,Tanzania,Kenya,Kenya,0.0
+2hop__442516_595885,2,shorten,content,1,2,0,False,0.0,Tanzania,Ghana,,
+2hop__442516_595885,2,shorten,content,1,2,1,False,0.0,Tanzania,Kenya,Ghana,0.0
+2hop__442516_595885,2,shorten,content,1,2,2,True,1.0,Tanzania,Tanzania,Kenya,0.0
+2hop__442516_595885,2,shorten,content,1,2,3,True,1.0,Tanzania,Tanzania,Tanzania,1.0
+2hop__442516_595885,2,shorten,content,2,1,0,False,0.0,Tanzania,Ghana,,
+2hop__442516_595885,2,shorten,content,2,1,1,True,1.0,Tanzania,Tanzania,Ghana,0.0
+2hop__442516_595885,2,shorten,content,2,1,2,True,1.0,Tanzania,Tanzania,Tanzania,1.0
+2hop__442516_595885,2,shorten,content,2,1,3,True,1.0,Tanzania,Tanzania,Tanzania,1.0
+2hop__47712_25719,2,elaborate,content,1,1,0,False,0.0,406,409,,
+2hop__47712_25719,2,elaborate,content,1,1,1,True,1.0,406,406,409,0.0
+2hop__47712_25719,2,elaborate,content,1,1,2,True,1.0,406,406,406,1.0
+2hop__47712_25719,2,elaborate,content,1,1,3,False,0.6666666666666666,406,406 AD,406,1.0
+2hop__47712_25719,2,paraphrase,style,2,1,0,False,0.0,406,409,,
+2hop__47712_25719,2,paraphrase,style,2,1,1,True,1.0,406,406,409,0.0
+2hop__47712_25719,2,paraphrase,style,2,1,2,True,1.0,406,406,406,1.0
+2hop__47712_25719,2,paraphrase,style,2,1,3,True,1.0,406,406,406,1.0
+2hop__47712_25719,2,shorten,content,0,1,0,False,0.0,406,409,,
+2hop__47712_25719,2,shorten,content,0,1,1,True,1.0,406,406,409,0.0
+2hop__47712_25719,2,shorten,content,0,1,2,True,1.0,406,406,406,1.0
+2hop__47712_25719,2,shorten,content,0,1,3,False,0.0,406,390 BC,406,1.0
+2hop__575797_91104,2,elaborate,content,0,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,elaborate,content,0,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,elaborate,content,0,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,elaborate,content,0,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,elaborate,content,1,2,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,elaborate,content,1,2,1,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,Compass-M1,0.0
+2hop__575797_91104,2,elaborate,content,1,2,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,elaborate,content,1,2,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,elaborate,content,2,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,elaborate,content,2,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,elaborate,content,2,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,elaborate,content,2,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,0,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,formality,style,0,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,formality,style,0,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,0,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,1,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,formality,style,1,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,formality,style,1,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,1,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,2,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,formality,style,2,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,formality,style,2,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,formality,style,2,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,paraphrase,style,0,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,paraphrase,style,0,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,paraphrase,style,0,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,paraphrase,style,0,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,paraphrase,style,1,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,paraphrase,style,1,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,paraphrase,style,1,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,paraphrase,style,1,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,shorten,content,0,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,shorten,content,0,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,shorten,content,0,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,shorten,content,0,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,shorten,content,2,1,0,False,0.0,ATS - 6 (Applications Technology Satellite - 6),Compass-M1,,
+2hop__575797_91104,2,shorten,content,2,1,1,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,Compass-M1,0.0
+2hop__575797_91104,2,shorten,content,2,1,2,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__575797_91104,2,shorten,content,2,1,3,True,1.0,ATS - 6 (Applications Technology Satellite - 6),ATS-6,ATS-6,1.0
+2hop__58168_38663,2,formality,style,1,3,0,False,0.0,54.7%,22.61%,,
+2hop__58168_38663,2,formality,style,1,3,1,False,0.0,54.7%,22.61%,22.61%,0.0
+2hop__58168_38663,2,formality,style,1,3,2,False,0.0,54.7%,22.61%,22.61%,0.0
+2hop__58168_38663,2,formality,style,1,3,3,True,1.0,54.7%,54.7%,22.61%,0.0
+2hop__632870_22402,2,shorten,content,2,1,0,False,0.0,"nearly 25,000",The answer is not explicitly provided in the context.,,
+2hop__632870_22402,2,shorten,content,2,1,1,True,1.0,"nearly 25,000",University of Zurich,The answer is not explicitly provided in the context.,0.0
+2hop__632870_22402,2,shorten,content,2,1,2,False,0.1395348837209302,"nearly 25,000","The context does not specify the number of students at the University of Zurich where André S. Dreiding was a professor. 
+
+However, since the question asks for a short, direct answer and the context does not provide a number, the most accurate answer based on the given text is:
+
+Unknown",University of Zurich,1.0
+2hop__632870_22402,2,shorten,content,2,1,3,False,0.0,"nearly 25,000","57,000","The context does not specify the number of students at the University of Zurich where André S. Dreiding was a professor. 
+
+However, since the question asks for a short, direct answer and the context does not provide a number, the most accurate answer based on the given text is:
+
+Unknown",0.1395348837209302
+2hop__681463_402641,2,elaborate,content,0,1,0,False,0.0,Chiang Hsiao-wu,Hsiao-chang,,
+2hop__681463_402641,2,elaborate,content,0,1,1,True,1.0,Chiang Hsiao-wu,Chiang Hsiao-wu,Hsiao-chang,0.0
+2hop__681463_402641,2,elaborate,content,0,1,2,False,0.3333333333333333,Chiang Hsiao-wu,"Chiang Hsiao-chang, Chiang Hsiao-wu, Chiang Hsiao-yung, Winston Chang, John Chiang",Chiang Hsiao-wu,1.0
+2hop__681463_402641,2,elaborate,content,0,1,3,False,0.0,Chiang Hsiao-wu,Bo Yikao,"Chiang Hsiao-chang, Chiang Hsiao-wu, Chiang Hsiao-yung, Winston Chang, John Chiang",0.3333333333333333
+2hop__681463_402641,2,formality,style,1,2,0,False,0.0,Chiang Hsiao-wu,Hsiao-chang,,
+2hop__681463_402641,2,formality,style,1,2,1,False,0.5,Chiang Hsiao-wu,Chiang Hsiao-chang,Hsiao-chang,0.0
+2hop__681463_402641,2,formality,style,1,2,2,True,1.0,Chiang Hsiao-wu,Chiang Hsiao-wu,Chiang Hsiao-chang,0.5
+2hop__681463_402641,2,formality,style,1,2,3,False,0.3333333333333333,Chiang Hsiao-wu,"Chiang Hsiao-chang, Chiang Hsiao-wu, Chiang Hsiao-yung, Winston Chang, John Chiang",Chiang Hsiao-wu,1.0
+2hop__691455_64006,2,elaborate,content,0,1,0,False,0.0,30% to 65%,half,,
+2hop__691455_64006,2,elaborate,content,0,1,1,True,1.0,30% to 65%,30% to 65%,half,0.0
+2hop__691455_64006,2,elaborate,content,0,1,2,True,1.0,30% to 65%,30% to 65%,30% to 65%,1.0
+2hop__691455_64006,2,elaborate,content,0,1,3,False,0.8571428571428571,30% to 65%,30 to 65 percent,30% to 65%,1.0
+2hop__691455_64006,2,elaborate,content,1,1,0,False,0.0,30% to 65%,half,,
+2hop__691455_64006,2,elaborate,content,1,1,1,True,1.0,30% to 65%,30% to 65%,half,0.0
+2hop__691455_64006,2,elaborate,content,1,1,2,True,1.0,30% to 65%,30% to 65%,30% to 65%,1.0
+2hop__691455_64006,2,elaborate,content,1,1,3,True,1.0,30% to 65%,30% to 65%,30% to 65%,1.0
+2hop__691455_64006,2,elaborate,content,2,3,0,False,0.0,30% to 65%,half,,
+2hop__691455_64006,2,elaborate,content,2,3,1,False,0.0,30% to 65%,about a third,half,0.0
+2hop__691455_64006,2,elaborate,content,2,3,2,False,0.1176470588235294,30% to 65%,Dramatic declines; populations in some areas did not return to pre-plague levels for generations.,about a third,0.0
+2hop__691455_64006,2,elaborate,content,2,3,3,True,1.0,30% to 65%,30% to 65%,Dramatic declines; populations in some areas did not return to pre-plague levels for generations.,0.1176470588235294
+2hop__691455_64006,2,formality,style,0,1,0,False,0.0,30% to 65%,half,,
+2hop__691455_64006,2,formality,style,0,1,1,True,1.0,30% to 65%,30% to 65%,half,0.0
+2hop__691455_64006,2,formality,style,0,1,2,False,0.4444444444444444,30% to 65%,Between 30 percent and 65 percent,30% to 65%,1.0
+2hop__691455_64006,2,formality,style,0,1,3,False,0.8571428571428571,30% to 65%,About 30% to 65%,Between 30 percent and 65 percent,0.4444444444444444
+2hop__691455_64006,2,paraphrase,style,2,1,0,False,0.0,30% to 65%,half,,
+2hop__691455_64006,2,paraphrase,style,2,1,1,True,1.0,30% to 65%,30% to 65%,half,0.0
+2hop__691455_64006,2,paraphrase,style,2,1,2,False,0.5714285714285715,30% to 65%,Between 30% and 65%,30% to 65%,1.0
+2hop__691455_64006,2,paraphrase,style,2,1,3,True,1.0,30% to 65%,30% to 65%,Between 30% and 65%,0.5714285714285715
+2hop__711639_110949,2,elaborate,content,0,3,0,False,0.0,11 September 1962,1564,,
+2hop__711639_110949,2,elaborate,content,0,3,1,False,0.0,11 September 1962,"The context mentions multiple individuals named Sarah, including Roza Eskenazi (born sometime between 1895 and 1897), Mauro Scocco (not a performer named Sarah), and others. The most relevant ""Sarah performer"" appears to be Roza Eskenazi, who was born sometime between 1895",1564,0.0
+2hop__711639_110949,2,elaborate,content,0,3,2,False,0.0,11 September 1962,1912,"The context mentions multiple individuals named Sarah, including Roza Eskenazi (born sometime between 1895 and 1897), Mauro Scocco (not a performer named Sarah), and others. The most relevant ""Sarah performer"" appears to be Roza Eskenazi, who was born sometime between 1895",0.0
+2hop__711639_110949,2,elaborate,content,0,3,3,True,1.0,11 September 1962,11 September 1962,1912,0.0
+2hop__711639_110949,2,paraphrase,style,0,2,0,False,0.0,11 September 1962,1564,,
+2hop__711639_110949,2,paraphrase,style,0,2,1,False,0.0,11 September 1962,1935,1564,0.0
+2hop__711639_110949,2,paraphrase,style,0,2,2,True,1.0,11 September 1962,"September 11, 1962",1935,0.0
+2hop__711639_110949,2,paraphrase,style,0,2,3,True,1.0,11 September 1962,"September 11, 1962","September 11, 1962",1.0
+2hop__711639_110949,2,paraphrase,style,1,1,0,False,0.0,11 September 1962,1564,,
+2hop__711639_110949,2,paraphrase,style,1,1,1,True,1.0,11 September 1962,11 September 1962,1564,0.0
+2hop__711639_110949,2,paraphrase,style,1,1,2,True,1.0,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__711639_110949,2,paraphrase,style,1,1,3,True,1.0,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__75207_46837,2,shorten,content,0,1,0,False,0.0,June,February,,
+2hop__75207_46837,2,shorten,content,0,1,1,True,1.0,June,June,February,0.0
+2hop__75207_46837,2,shorten,content,0,1,2,False,0.0,June,Boston,June,1.0
+2hop__75207_46837,2,shorten,content,0,1,3,False,0.0,June,Boston,Boston,0.0
+2hop__82910_75184,2,elaborate,content,1,1,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,elaborate,content,1,1,1,True,1.0,Claudia Wells,Claudia Wells,Elisabeth Shue,0.0
+2hop__82910_75184,2,elaborate,content,1,1,2,True,1.0,Claudia Wells,Claudia Wells,Claudia Wells,1.0
+2hop__82910_75184,2,elaborate,content,1,1,3,False,0.0,Claudia Wells,Elisabeth Shue,Claudia Wells,1.0
+2hop__82910_75184,2,formality,style,1,3,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,formality,style,1,3,1,False,0.0,Claudia Wells,Lea Thompson,Elisabeth Shue,0.0
+2hop__82910_75184,2,formality,style,1,3,2,False,0.0,Claudia Wells,Crista Flanagan,Lea Thompson,0.0
+2hop__82910_75184,2,formality,style,1,3,3,True,1.0,Claudia Wells,Claudia Wells,Crista Flanagan,0.0
+2hop__82910_75184,2,formality,style,2,3,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,formality,style,2,3,1,False,0.0,Claudia Wells,Elisabeth Shue,Elisabeth Shue,0.0
+2hop__82910_75184,2,formality,style,2,3,2,False,0.0,Claudia Wells,Elisabeth Shue,Elisabeth Shue,0.0
+2hop__82910_75184,2,formality,style,2,3,3,True,1.0,Claudia Wells,Claudia Wells,Elisabeth Shue,0.0
+2hop__82910_75184,2,paraphrase,style,0,3,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,paraphrase,style,0,3,1,False,0.0,Claudia Wells,Lea Thompson,Elisabeth Shue,0.0
+2hop__82910_75184,2,paraphrase,style,0,3,2,False,0.0,Claudia Wells,Lea Thompson,Lea Thompson,0.0
+2hop__82910_75184,2,paraphrase,style,0,3,3,True,1.0,Claudia Wells,Claudia Wells,Lea Thompson,0.0
+2hop__82910_75184,2,paraphrase,style,1,1,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,paraphrase,style,1,1,1,True,1.0,Claudia Wells,Claudia Wells,Elisabeth Shue,0.0
+2hop__82910_75184,2,paraphrase,style,1,1,2,False,0.0,Claudia Wells,Crispin Glover,Claudia Wells,1.0
+2hop__82910_75184,2,paraphrase,style,1,1,3,False,0.0,Claudia Wells,Jean Simmons,Crispin Glover,0.0
+2hop__82910_75184,2,paraphrase,style,2,2,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,paraphrase,style,2,2,1,False,0.0,Claudia Wells,Lea Thompson,Elisabeth Shue,0.0
+2hop__82910_75184,2,paraphrase,style,2,2,2,True,1.0,Claudia Wells,Claudia Wells,Lea Thompson,0.0
+2hop__82910_75184,2,paraphrase,style,2,2,3,False,0.0,Claudia Wells,Lea Thompson,Claudia Wells,1.0
+2hop__82910_75184,2,shorten,content,0,1,0,False,0.0,Claudia Wells,Elisabeth Shue,,
+2hop__82910_75184,2,shorten,content,0,1,1,True,1.0,Claudia Wells,Claudia Wells,Elisabeth Shue,0.0
+2hop__82910_75184,2,shorten,content,0,1,2,False,0.0,Claudia Wells,Lea Thompson,Claudia Wells,1.0
+2hop__82910_75184,2,shorten,content,0,1,3,True,1.0,Claudia Wells,Claudia Wells,Lea Thompson,0.0
+2hop__87053_319330,2,elaborate,content,2,1,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,elaborate,content,2,1,1,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,elaborate,content,2,1,2,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,elaborate,content,2,1,3,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,formality,style,0,1,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,formality,style,0,1,1,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,formality,style,0,1,2,False,0.0,Jessie Woodrow Wilson,David Gardiner Tyler,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,formality,style,0,1,3,False,0.0,Jessie Woodrow Wilson,,David Gardiner Tyler,0.0
+2hop__87053_319330,2,formality,style,2,2,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,formality,style,2,2,1,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,Esther Cleveland,0.0
+2hop__87053_319330,2,formality,style,2,2,2,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,formality,style,2,2,3,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,paraphrase,style,0,1,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,paraphrase,style,0,1,1,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,paraphrase,style,0,1,2,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,paraphrase,style,0,1,3,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,paraphrase,style,1,1,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,paraphrase,style,1,1,1,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,paraphrase,style,1,1,2,False,0.0,Jessie Woodrow Wilson,David Gardiner Tyler,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,paraphrase,style,1,1,3,False,0.0,Jessie Woodrow Wilson,David Gardiner Tyler,David Gardiner Tyler,0.0
+2hop__87053_319330,2,shorten,content,2,1,0,False,0.0,Jessie Woodrow Wilson,Esther Cleveland,,
+2hop__87053_319330,2,shorten,content,2,1,1,True,1.0,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre,Esther Cleveland,0.0
+2hop__87053_319330,2,shorten,content,2,1,2,False,0.0,Jessie Woodrow Wilson,David Gardiner Tyler,Jessie Woodrow Wilson Sayre,1.0
+2hop__87053_319330,2,shorten,content,2,1,3,False,0.0,Jessie Woodrow Wilson,David Gardiner Tyler,David Gardiner Tyler,0.0
+2hop__88406_83289,2,elaborate,content,0,1,0,False,0.0,Matt Bennett,Max Landis,,
+2hop__88406_83289,2,elaborate,content,0,1,1,True,1.0,Matt Bennett,Matt Bennett,Max Landis,0.0
+2hop__88406_83289,2,elaborate,content,0,1,2,True,1.0,Matt Bennett,Matt Bennett,Matt Bennett,1.0
+2hop__88406_83289,2,elaborate,content,0,1,3,False,0.0,Matt Bennett,David Arnott,Matt Bennett,1.0
+2hop__88406_83289,2,formality,style,0,1,0,False,0.0,Matt Bennett,Max Landis,,
+2hop__88406_83289,2,formality,style,0,1,1,True,1.0,Matt Bennett,Matt Bennett,Max Landis,0.0
+2hop__88406_83289,2,formality,style,0,1,2,True,1.0,Matt Bennett,Matt Bennett,Matt Bennett,1.0
+2hop__88406_83289,2,formality,style,0,1,3,True,1.0,Matt Bennett,Matt Bennett,Matt Bennett,1.0
+2hop__88406_83289,2,paraphrase,style,0,2,0,False,0.0,Matt Bennett,Max Landis,,
+2hop__88406_83289,2,paraphrase,style,0,2,1,False,0.0,Matt Bennett,Elizabeth Gillies,Max Landis,0.0
+2hop__88406_83289,2,paraphrase,style,0,2,2,True,1.0,Matt Bennett,Matt Bennett,Elizabeth Gillies,0.0
+2hop__88406_83289,2,paraphrase,style,0,2,3,True,1.0,Matt Bennett,Matt Bennett,Matt Bennett,1.0
+3hop1__106239_650651_7262,3,formality,style,0,1,0,False,0.0,Walter Sabo,Johnny Dare,,
+3hop1__106239_650651_7262,3,formality,style,0,1,1,True,1.0,Walter Sabo,Walter Sabo,Johnny Dare,0.0
+3hop1__106239_650651_7262,3,formality,style,0,1,2,False,0.0,Walter Sabo,Tom Waits,Walter Sabo,1.0
+3hop1__106239_650651_7262,3,formality,style,0,1,3,False,0.0,Walter Sabo,,Tom Waits,0.0
+3hop1__208108_547811_41132,3,elaborate,content,0,1,0,False,0.0,22,7,,
+3hop1__208108_547811_41132,3,elaborate,content,0,1,1,True,1.0,22,22,7,0.0
+3hop1__208108_547811_41132,3,elaborate,content,0,1,2,True,1.0,22,22,22,1.0
+3hop1__208108_547811_41132,3,elaborate,content,0,1,3,False,0.0,22,Multiple times,22,1.0
+3hop1__222497_309482_89834,3,shorten,content,1,1,0,False,0.0,16th - century,1975,,
+3hop1__222497_309482_89834,3,shorten,content,1,1,1,True,1.0,16th - century,16th century,1975,0.0
+3hop1__222497_309482_89834,3,shorten,content,1,1,2,False,0.0,16th - century,"The question is unclear and does not specify which merchant or city. Based on the context, the opera takes place in Italy (Teatro alla Scala, Milan), but no specific merchant is mentioned. 
+
+However, if the question is asking about the founding of the brewery mentioned (Grans Brewery, Sandefjord),",16th century,1.0
+3hop1__222497_309482_89834,3,shorten,content,1,1,3,False,0.0,16th - century,"The question is asking for the identity of the merchant after whom the city where Luigi Nono, the composer of ""Al gran sole carico d'amore,"" is associated. However, the context does not mention a specific merchant associated with Sandefjord, the city where Grans Brewery (related to the context)","The question is unclear and does not specify which merchant or city. Based on the context, the opera takes place in Italy (Teatro alla Scala, Milan), but no specific merchant is mentioned. 
+
+However, if the question is asking about the founding of the brewery mentioned (Grans Brewery, Sandefjord),",0.0
+3hop1__305566_568433_47686,3,formality,style,0,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__305566_568433_47686,3,formality,style,0,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__305566_568433_47686,3,formality,style,0,1,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__305566_568433_47686,3,formality,style,0,1,3,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__315504_629431_124169,3,paraphrase,style,2,1,0,False,0.0,1952,22 February 2001,,
+3hop1__315504_629431_124169,3,paraphrase,style,2,1,1,True,1.0,1952,1952,22 February 2001,0.0
+3hop1__315504_629431_124169,3,paraphrase,style,2,1,2,True,1.0,1952,1952,1952,1.0
+3hop1__315504_629431_124169,3,paraphrase,style,2,1,3,False,0.0,1952,1923,1952,1.0
+3hop1__506062_792411_51423,3,elaborate,content,0,3,0,False,0.0,Casa Loma,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",,
+3hop1__506062_792411_51423,3,elaborate,content,0,3,1,False,0.0,Casa Loma,The question cannot be answered from the provided context.,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",0.0
+3hop1__506062_792411_51423,3,elaborate,content,0,3,2,False,0.0,Casa Loma,No information given about a performer's place of birth or connection to a castle.,The question cannot be answered from the provided context.,0.0
+3hop1__506062_792411_51423,3,elaborate,content,0,3,3,True,1.0,Casa Loma,Casa Loma,No information given about a performer's place of birth or connection to a castle.,0.0
+3hop1__506062_792411_51423,3,formality,style,0,1,0,False,0.0,Casa Loma,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",,
+3hop1__506062_792411_51423,3,formality,style,0,1,1,True,1.0,Casa Loma,Casa Loma,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",0.0
+3hop1__506062_792411_51423,3,formality,style,0,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__506062_792411_51423,3,formality,style,0,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__506062_792411_51423,3,paraphrase,style,2,1,0,False,0.0,Casa Loma,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",,
+3hop1__506062_792411_51423,3,paraphrase,style,2,1,1,True,1.0,Casa Loma,Casa Loma,"The answer is not provided in the context. The context does not specify the place of birth of the performer of ""When I Was a Boy"" (Jane Siberry), nor does it mention a castle there. 
+
+However, if we infer from the context that ""When I Was a Boy"" is by Jane S",0.0
+3hop1__506062_792411_51423,3,paraphrase,style,2,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__506062_792411_51423,3,paraphrase,style,2,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__540585_568433_47686,3,formality,style,0,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__540585_568433_47686,3,formality,style,0,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__540585_568433_47686,3,formality,style,0,1,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__540585_568433_47686,3,formality,style,0,1,3,False,0.0,Toronto Coach Terminal,"Bristol, England",Toronto Coach Terminal,1.0
+3hop1__540585_568433_47686,3,formality,style,1,2,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__540585_568433_47686,3,formality,style,1,2,1,False,0.0,Toronto Coach Terminal,Rodoferroviária station,Rodoferroviária,0.0
+3hop1__540585_568433_47686,3,formality,style,1,2,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária station,0.0
+3hop1__540585_568433_47686,3,formality,style,1,2,3,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__540585_568433_47686,3,paraphrase,style,2,2,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__540585_568433_47686,3,paraphrase,style,2,2,1,False,0.0,Toronto Coach Terminal,Rodoferroviária,Rodoferroviária,0.0
+3hop1__540585_568433_47686,3,paraphrase,style,2,2,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__540585_568433_47686,3,paraphrase,style,2,2,3,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__540585_568433_47686,3,shorten,content,0,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__540585_568433_47686,3,shorten,content,0,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__540585_568433_47686,3,shorten,content,0,1,2,False,0.0,Toronto Coach Terminal,610 Bay Street,Toronto Coach Terminal,1.0
+3hop1__540585_568433_47686,3,shorten,content,0,1,3,False,0.0,Toronto Coach Terminal,Philadelphia,610 Bay Street,0.0
+3hop1__572324_568433_47686,3,elaborate,content,1,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__572324_568433_47686,3,elaborate,content,1,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__572324_568433_47686,3,elaborate,content,1,1,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,elaborate,content,1,1,3,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,paraphrase,style,1,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__572324_568433_47686,3,paraphrase,style,1,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__572324_568433_47686,3,paraphrase,style,1,1,2,False,0.0,Toronto Coach Terminal,Thiruvananthapuram Central Bus Station,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,paraphrase,style,1,1,3,False,0.0,Toronto Coach Terminal,Thiruvananthapuram Central Bus Station,Thiruvananthapuram Central Bus Station,0.0
+3hop1__572324_568433_47686,3,shorten,content,0,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__572324_568433_47686,3,shorten,content,0,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__572324_568433_47686,3,shorten,content,0,1,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,shorten,content,0,1,3,False,0.0,Toronto Coach Terminal,610 Bay Street,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,shorten,content,1,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__572324_568433_47686,3,shorten,content,1,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__572324_568433_47686,3,shorten,content,1,1,2,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,shorten,content,1,1,3,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,shorten,content,2,1,0,False,0.0,Toronto Coach Terminal,Rodoferroviária,,
+3hop1__572324_568433_47686,3,shorten,content,2,1,1,True,1.0,Toronto Coach Terminal,Toronto Coach Terminal,Rodoferroviária,0.0
+3hop1__572324_568433_47686,3,shorten,content,2,1,2,False,0.0,Toronto Coach Terminal,Thiruvananthapuram Central Bus Station,Toronto Coach Terminal,1.0
+3hop1__572324_568433_47686,3,shorten,content,2,1,3,False,0.0,Toronto Coach Terminal,Thiruvananthapuram Central Bus Station,Thiruvananthapuram Central Bus Station,0.0
+3hop1__579562_629431_124169,3,paraphrase,style,0,1,0,False,0.0,1952,1963,,
+3hop1__579562_629431_124169,3,paraphrase,style,0,1,1,True,1.0,1952,1952,1963,0.0
+3hop1__579562_629431_124169,3,paraphrase,style,0,1,2,True,1.0,1952,1952,1952,1.0
+3hop1__579562_629431_124169,3,paraphrase,style,0,1,3,True,1.0,1952,1952,1952,1.0
+3hop1__579562_629431_124169,3,shorten,content,1,1,0,False,0.0,1952,1963,,
+3hop1__579562_629431_124169,3,shorten,content,1,1,1,True,1.0,1952,1952,1963,0.0
+3hop1__579562_629431_124169,3,shorten,content,1,1,2,True,1.0,1952,1952,1952,1.0
+3hop1__579562_629431_124169,3,shorten,content,1,1,3,True,1.0,1952,1952,1952,1.0
+3hop1__593288_720914_41132,3,elaborate,content,0,1,0,False,0.0,22,3,,
+3hop1__593288_720914_41132,3,elaborate,content,0,1,1,True,1.0,22,22,3,0.0
+3hop1__593288_720914_41132,3,elaborate,content,0,1,2,False,0.4,22,At least 22 times,22,1.0
+3hop1__593288_720914_41132,3,elaborate,content,0,1,3,False,0.4,22,At least 22 outbreaks,At least 22 times,0.4
+3hop1__639955_834494_33939,3,elaborate,content,2,1,0,False,0.0,"7,531",Unknown,,
+3hop1__639955_834494_33939,3,elaborate,content,2,1,1,True,1.0,"7,531","7,531",Unknown,0.0
+3hop1__639955_834494_33939,3,elaborate,content,2,1,2,True,1.0,"7,531","7,531","7,531",1.0
+3hop1__639955_834494_33939,3,elaborate,content,2,1,3,False,0.0,"7,531",Unknown,"7,531",1.0
+3hop1__639955_834494_33939,3,formality,style,0,1,0,False,0.0,"7,531",Unknown,,
+3hop1__639955_834494_33939,3,formality,style,0,1,1,True,1.0,"7,531","7,531",Unknown,0.0
+3hop1__639955_834494_33939,3,formality,style,0,1,2,True,1.0,"7,531","7,531","7,531",1.0
+3hop1__639955_834494_33939,3,formality,style,0,1,3,True,1.0,"7,531","7,531","7,531",1.0
+3hop1__639955_834494_33939,3,formality,style,1,1,0,False,0.0,"7,531",Unknown,,
+3hop1__639955_834494_33939,3,formality,style,1,1,1,True,1.0,"7,531","7,531",Unknown,0.0
+3hop1__639955_834494_33939,3,formality,style,1,1,2,True,1.0,"7,531","7,531","7,531",1.0
+3hop1__639955_834494_33939,3,formality,style,1,1,3,True,1.0,"7,531","7,531","7,531",1.0
+3hop1__715607_792411_51423,3,elaborate,content,0,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,elaborate,content,0,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,elaborate,content,0,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,elaborate,content,0,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,elaborate,content,2,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,elaborate,content,2,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,elaborate,content,2,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,elaborate,content,2,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,formality,style,0,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,formality,style,0,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,formality,style,0,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,formality,style,0,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,formality,style,1,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,formality,style,1,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,formality,style,1,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,formality,style,1,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,0,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,paraphrase,style,0,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,paraphrase,style,0,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,0,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,1,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,paraphrase,style,1,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,paraphrase,style,1,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,1,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,2,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,paraphrase,style,2,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,paraphrase,style,2,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,paraphrase,style,2,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,shorten,content,1,1,0,False,0.0,Casa Loma,Schloss Tegernsee,,
+3hop1__715607_792411_51423,3,shorten,content,1,1,1,True,1.0,Casa Loma,Casa Loma,Schloss Tegernsee,0.0
+3hop1__715607_792411_51423,3,shorten,content,1,1,2,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__715607_792411_51423,3,shorten,content,1,1,3,True,1.0,Casa Loma,Casa Loma,Casa Loma,1.0
+3hop1__742780_567566_84283,3,elaborate,content,0,1,0,False,0.0,Warner Music Group,C.L. Franklin,,
+3hop1__742780_567566_84283,3,elaborate,content,0,1,1,True,1.0,Warner Music Group,Warner Music Group,C.L. Franklin,0.0
+3hop1__742780_567566_84283,3,elaborate,content,0,1,2,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__742780_567566_84283,3,elaborate,content,0,1,3,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__742780_567566_84283,3,formality,style,0,3,0,False,0.0,Warner Music Group,C.L. Franklin,,
+3hop1__742780_567566_84283,3,formality,style,0,3,1,False,0.0,Warner Music Group,Bert Keyes,C.L. Franklin,0.0
+3hop1__742780_567566_84283,3,formality,style,0,3,2,False,0.0,Warner Music Group,"Burning Heart Records is an independent record label founded in 1993 in Fagersta, Sweden. The owner is not explicitly stated in the provided context. However, based on general knowledge and the context mentioning the label's association with Epitaph Records, the owner is likely an independent entity, but the specific owner",Bert Keyes,0.0
+3hop1__742780_567566_84283,3,formality,style,0,3,3,True,1.0,Warner Music Group,Warner Music Group,"Burning Heart Records is an independent record label founded in 1993 in Fagersta, Sweden. The owner is not explicitly stated in the provided context. However, based on general knowledge and the context mentioning the label's association with Epitaph Records, the owner is likely an independent entity, but the specific owner",0.0
+3hop1__742780_567566_84283,3,paraphrase,style,0,1,0,False,0.0,Warner Music Group,C.L. Franklin,,
+3hop1__742780_567566_84283,3,paraphrase,style,0,1,1,True,1.0,Warner Music Group,Warner Music Group,C.L. Franklin,0.0
+3hop1__742780_567566_84283,3,paraphrase,style,0,1,2,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__742780_567566_84283,3,paraphrase,style,0,1,3,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__742780_567566_84283,3,paraphrase,style,2,3,0,False,0.0,Warner Music Group,C.L. Franklin,,
+3hop1__742780_567566_84283,3,paraphrase,style,2,3,1,False,0.0,Warner Music Group,Bert Keyes,C.L. Franklin,0.0
+3hop1__742780_567566_84283,3,paraphrase,style,2,3,2,False,0.0,Warner Music Group,Bert Berns (through ABC Records),Bert Keyes,0.0
+3hop1__742780_567566_84283,3,paraphrase,style,2,3,3,True,1.0,Warner Music Group,Warner Music Group,Bert Berns (through ABC Records),0.0
+3hop1__742780_567566_84283,3,shorten,content,1,1,0,False,0.0,Warner Music Group,C.L. Franklin,,
+3hop1__742780_567566_84283,3,shorten,content,1,1,1,True,1.0,Warner Music Group,Warner Music Group,C.L. Franklin,0.0
+3hop1__742780_567566_84283,3,shorten,content,1,1,2,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__742780_567566_84283,3,shorten,content,1,1,3,True,1.0,Warner Music Group,Warner Music Group,Warner Music Group,1.0
+3hop1__844109_720914_41132,3,elaborate,content,2,1,0,False,0.0,22,"At least 4 times (in 1348–50, 1354, 1664, and 1679).",,
+3hop1__844109_720914_41132,3,elaborate,content,2,1,1,True,1.0,22,22,"At least 4 times (in 1348–50, 1354, 1664, and 1679).",0.0
+3hop1__844109_720914_41132,3,elaborate,content,2,1,2,False,0.0,22,4,22,1.0
+3hop1__844109_720914_41132,3,elaborate,content,2,1,3,False,0.0,22,At least 37 times,4,0.0
+3hop1__86965_488922_4093,3,elaborate,content,1,2,0,False,0.0,Wazir-e-Azam,5 years,,
+3hop1__86965_488922_4093,3,elaborate,content,1,2,1,False,0.0,Wazir-e-Azam,Five years,5 years,0.0
+3hop1__86965_488922_4093,3,elaborate,content,1,2,2,True,1.0,Wazir-e-Azam,Wazir-e-Azam,Five years,0.0
+3hop1__86965_488922_4093,3,elaborate,content,1,2,3,True,1.0,Wazir-e-Azam,Wazir-e-Azam,Wazir-e-Azam,1.0
+3hop2__57233_105140_56883,3,elaborate,content,0,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,elaborate,content,0,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,elaborate,content,0,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,elaborate,content,0,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,elaborate,content,1,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,elaborate,content,1,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,elaborate,content,1,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,elaborate,content,1,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,elaborate,content,2,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,elaborate,content,2,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,elaborate,content,2,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,elaborate,content,2,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,0,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,formality,style,0,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,formality,style,0,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,0,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,1,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,formality,style,1,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,formality,style,1,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,1,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,2,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,formality,style,2,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,formality,style,2,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,formality,style,2,1,3,False,0.0,1964,"The question is about the war in which ""The Things They Carried"" is set (Vietnam War) and asks when conscription was introduced by the country where the film ""Grievous Bodily Harm"" was released. However, there is no information in the provided context about the release country of the film",1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,0,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,paraphrase,style,0,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,paraphrase,style,0,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,0,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,1,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,paraphrase,style,1,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,paraphrase,style,1,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,1,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,2,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,paraphrase,style,2,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,paraphrase,style,2,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,paraphrase,style,2,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,shorten,content,1,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,shorten,content,1,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,shorten,content,1,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,shorten,content,1,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,shorten,content,2,1,0,False,0.0,1964,1941,,
+3hop2__57233_105140_56883,3,shorten,content,2,1,1,True,1.0,1964,1964,1941,0.0
+3hop2__57233_105140_56883,3,shorten,content,2,1,2,True,1.0,1964,1964,1964,1.0
+3hop2__57233_105140_56883,3,shorten,content,2,1,3,True,1.0,1964,1964,1964,1.0
+3hop2__93066_88342_90766,3,elaborate,content,0,1,0,False,0.0,1981,2017,,
+3hop2__93066_88342_90766,3,elaborate,content,0,1,1,True,1.0,1981,1981,2017,0.0
+3hop2__93066_88342_90766,3,elaborate,content,0,1,2,True,1.0,1981,1981,1981,1.0
+3hop2__93066_88342_90766,3,elaborate,content,0,1,3,False,0.0,1981,2017,1981,1.0
+4hop1__105688_17130_70784_61381,4,paraphrase,style,0,1,0,False,0.0,1932,1796,,
+4hop1__105688_17130_70784_61381,4,paraphrase,style,0,1,1,True,1.0,1932,1932,1796,0.0
+4hop1__105688_17130_70784_61381,4,paraphrase,style,0,1,2,False,0.0,1932,1922,1932,1.0
+4hop1__105688_17130_70784_61381,4,paraphrase,style,0,1,3,False,0.0,1932,1922,1922,0.0
+4hop1__105688_17130_70784_61381,4,shorten,content,0,2,0,False,0.0,1932,1796,,
+4hop1__105688_17130_70784_61381,4,shorten,content,0,2,1,False,0.0,1932,1918,1796,0.0
+4hop1__105688_17130_70784_61381,4,shorten,content,0,2,2,True,1.0,1932,1932,1918,0.0
+4hop1__105688_17130_70784_61381,4,shorten,content,0,2,3,True,1.0,1932,1932,1932,1.0
+4hop1__271272_508773_85832_745702,4,elaborate,content,2,1,0,False,0.0,Sebastian Cabot,Porto,,
+4hop1__271272_508773_85832_745702,4,elaborate,content,2,1,1,True,1.0,Sebastian Cabot,Sebastian Cabot,Porto,0.0
+4hop1__271272_508773_85832_745702,4,elaborate,content,2,1,2,False,0.0,Sebastian Cabot,Bristol,Sebastian Cabot,1.0
+4hop1__271272_508773_85832_745702,4,elaborate,content,2,1,3,False,0.0,Sebastian Cabot,Bristol,Bristol,0.0
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,1,0,False,0.0,Soviet,Ottoman Turks,,
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,1,1,True,1.0,Soviet,The Soviet Union,Ottoman Turks,0.0
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,1,2,True,1.0,Soviet,Soviet Union,The Soviet Union,1.0
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,1,3,False,0.0,Soviet,Napoleon Bonaparte,Soviet Union,1.0
+4hop1__399219_765799_282674_759393,4,shorten,content,1,3,0,False,0.0,Green Bay,Appleton,,
+4hop1__399219_765799_282674_759393,4,shorten,content,1,3,1,False,0.0,Green Bay,Oshkosh,Appleton,0.0
+4hop1__399219_765799_282674_759393,4,shorten,content,1,3,2,False,0.0,Green Bay,Oshkosh,Oshkosh,0.0
+4hop1__399219_765799_282674_759393,4,shorten,content,1,3,3,True,1.0,Green Bay,Green Bay,Oshkosh,0.0
+4hop1__436202_378185_282674_759393,4,formality,style,1,2,0,False,0.0,Green Bay,Olsztyn,,
+4hop1__436202_378185_282674_759393,4,formality,style,1,2,1,False,0.0,Green Bay,,Olsztyn,0.0
+4hop1__436202_378185_282674_759393,4,formality,style,1,2,2,True,1.0,Green Bay,Green Bay,,0.0
+4hop1__436202_378185_282674_759393,4,formality,style,1,2,3,False,0.0,Green Bay,Pécs,Green Bay,1.0
+4hop1__436202_378185_282674_759393,4,shorten,content,2,1,0,False,0.0,Green Bay,Olsztyn,,
+4hop1__436202_378185_282674_759393,4,shorten,content,2,1,1,True,1.0,Green Bay,Green Bay,Olsztyn,0.0
+4hop1__436202_378185_282674_759393,4,shorten,content,2,1,2,False,0.0,Green Bay,Pécs,Green Bay,1.0
+4hop1__436202_378185_282674_759393,4,shorten,content,2,1,3,False,0.0,Green Bay,Madison,Pécs,0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,2,0,False,0.0,1932,1971,,
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,2,1,False,0.0,1932,"The question is unclear and does not specify a region or event related to ""Aluf"" or the establishment of the Persian Gulf.",1971,0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,2,2,True,1.0,1932,1932,"The question is unclear and does not specify a region or event related to ""Aluf"" or the establishment of the Persian Gulf.",0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,2,3,True,1.0,1932,1932,1932,1.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,1,3,0,False,0.0,1932,1971,,
+4hop1__638988_17130_70784_61381,4,elaborate,content,1,3,1,False,0.0,1932,"The question is unclear and does not specify a historical event or time period related to the Persian Gulf and a region north of it. However, based on the context provided, the relevant country is Bahrain. If the question is asking when Bahrain (or its region) and the Persian Gulf were established as a geopolitical entity, the",1971,0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,1,3,2,False,0.0,1932,1971,"The question is unclear and does not specify a historical event or time period related to the Persian Gulf and a region north of it. However, based on the context provided, the relevant country is Bahrain. If the question is asking when Bahrain (or its region) and the Persian Gulf were established as a geopolitical entity, the",0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,1,3,3,True,1.0,1932,1932,1971,0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,2,3,0,False,0.0,1932,1971,,
+4hop1__638988_17130_70784_61381,4,elaborate,content,2,3,1,False,0.0,1932,"The question is unclear and does not specify a region or event related to ""Aluf"" or the establishment of the Persian Gulf.",1971,0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,2,3,2,False,0.0,1932,1946,"The question is unclear and does not specify a region or event related to ""Aluf"" or the establishment of the Persian Gulf.",0.0
+4hop1__638988_17130_70784_61381,4,elaborate,content,2,3,3,True,1.0,1932,1932,1946,0.0
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,1,2,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,1,3,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,formality,style,0,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,formality,style,0,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,formality,style,0,1,2,False,0.0,Pristina,Barcelona,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,formality,style,0,1,3,False,0.0,Pristina,Barcelona,Barcelona,0.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,1,2,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,1,3,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,1,2,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,1,3,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,1,2,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,1,3,True,1.0,Pristina,Pristina,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,shorten,content,0,1,0,False,0.0,Pristina,Belgrade,,
+4hop1__749065_698949_157828_239539,4,shorten,content,0,1,1,True,1.0,Pristina,Pristina,Belgrade,0.0
+4hop1__749065_698949_157828_239539,4,shorten,content,0,1,2,False,0.0,Pristina,Belgrade,Pristina,1.0
+4hop1__749065_698949_157828_239539,4,shorten,content,0,1,3,False,0.0,Pristina,Belgrade,Belgrade,0.0
+4hop1__802394_153080_159767_81096,4,formality,style,2,2,0,False,0.0,Mario Andretti,Not provided,,
+4hop1__802394_153080_159767_81096,4,formality,style,2,2,1,False,0.0,Mario Andretti,The question does not provide information about the winner of the race.,Not provided,0.0
+4hop1__802394_153080_159767_81096,4,formality,style,2,2,2,True,1.0,Mario Andretti,Mario Andretti,The question does not provide information about the winner of the race.,0.0
+4hop1__802394_153080_159767_81096,4,formality,style,2,2,3,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,1,0,False,0.0,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",,
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,1,1,True,1.0,Mario Andretti,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",0.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,1,2,False,0.0,Mario Andretti,Dario Franchitti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,1,3,True,1.0,Mario Andretti,Mario Andretti,Dario Franchitti,0.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,1,0,False,0.0,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",,
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,1,1,True,1.0,Mario Andretti,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",0.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,1,2,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,1,3,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,formality,style,2,1,0,False,0.0,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",,
+4hop1__813171_153080_33897_81096,4,formality,style,2,1,1,True,1.0,Mario Andretti,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",0.0
+4hop1__813171_153080_33897_81096,4,formality,style,2,1,2,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,formality,style,2,1,3,False,0.0,Mario Andretti,Dario Franchitti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,shorten,content,0,2,0,False,0.0,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",,
+4hop1__813171_153080_33897_81096,4,shorten,content,0,2,1,False,0.0,Mario Andretti,Dario Franchitti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",0.0
+4hop1__813171_153080_33897_81096,4,shorten,content,0,2,2,True,1.0,Mario Andretti,Mario Andretti,Dario Franchitti,0.0
+4hop1__813171_153080_33897_81096,4,shorten,content,0,2,3,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,shorten,content,2,1,0,False,0.0,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",,
+4hop1__813171_153080_33897_81096,4,shorten,content,2,1,1,True,1.0,Mario Andretti,Mario Andretti,"The question is asking for the winner of the IndyCar race in the largest populated city in the state that Charles Mingus is from. Charles Mingus is from the state of Arizona. The largest city in Arizona by population is Phoenix. However, the context does not mention an IndyCar race winner in Phoenix. It mentions",0.0
+4hop1__813171_153080_33897_81096,4,shorten,content,2,1,2,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__813171_153080_33897_81096,4,shorten,content,2,1,3,True,1.0,Mario Andretti,Mario Andretti,Mario Andretti,1.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,0,1,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,elaborate,content,0,1,1,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,0,1,2,False,0.0,Bill Bergen,"The question is ambiguous and does not provide enough information to determine which team has the lowest batting average among their players. However, if we interpret it as ""Which team with the most World Series titles has a player with the lowest batting average among all players in the league?"" then the answer would be:
+
+The question does not",Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,0,1,3,False,0.0,Bill Bergen,Aroldis Chapman,"The question is ambiguous and does not provide enough information to determine which team has the lowest batting average among their players. However, if we interpret it as ""Which team with the most World Series titles has a player with the lowest batting average among all players in the league?"" then the answer would be:
+
+The question does not",0.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,2,3,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,elaborate,content,2,3,1,False,0.0,Bill Bergen,New York Yankees,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,2,3,2,False,0.0,Bill Bergen,Rob Deer,New York Yankees,0.0
+4hop1__88342_49853_128008_46894,4,elaborate,content,2,3,3,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,formality,style,1,1,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,formality,style,1,1,1,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,formality,style,1,1,2,False,0.0,Bill Bergen,,Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,formality,style,1,1,3,False,0.0,Bill Bergen,The question is ambiguous and cannot be answered directly from the provided context.,,0.0
+4hop1__88342_49853_128008_46894,4,formality,style,2,1,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,formality,style,2,1,1,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,formality,style,2,1,2,True,1.0,Bill Bergen,Bill Bergen,Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,formality,style,2,1,3,True,1.0,Bill Bergen,Bill Bergen,Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,2,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,2,1,False,0.0,Bill Bergen,Rob Deer,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,2,2,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,2,3,True,1.0,Bill Bergen,Bill Bergen,Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,shorten,content,0,1,0,False,0.0,Bill Bergen,Rob Deer,,
+4hop1__88342_49853_128008_46894,4,shorten,content,0,1,1,True,1.0,Bill Bergen,Bill Bergen,Rob Deer,0.0
+4hop1__88342_49853_128008_46894,4,shorten,content,0,1,2,False,0.0,Bill Bergen,New York Yankees,Bill Bergen,1.0
+4hop1__88342_49853_128008_46894,4,shorten,content,0,1,3,False,0.0,Bill Bergen,.159,New York Yankees,0.0
+4hop2__161602_474028_88460_21062,4,elaborate,content,1,1,0,False,0.0,It is not possible for foreigners to go to/from Myanmar by sea or river.,No,,
+4hop2__161602_474028_88460_21062,4,elaborate,content,1,1,1,True,1.0,It is not possible for foreigners to go to/from Myanmar by sea or river.,Myanmar,No,0.0
+4hop2__161602_474028_88460_21062,4,elaborate,content,1,1,2,False,0.0,It is not possible for foreigners to go to/from Myanmar by sea or river.,No,Myanmar,1.0
+4hop2__161602_474028_88460_21062,4,elaborate,content,1,1,3,False,0.0,It is not possible for foreigners to go to/from Myanmar by sea or river.,No,No,0.0
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,2,0,False,0.0,1943–1992,1939–1945,,
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,2,1,False,0.0,1943–1992,1943 to 1992,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,2,2,True,1.0,1943–1992,1943–1992,1943 to 1992,0.0
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,2,3,True,1.0,1943–1992,1943–1992,1943–1992,1.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,0,3,0,False,0.0,1943–1992,1939–1945,,
+4hop2__5206_14670_8987_8529,4,paraphrase,style,0,3,1,False,0.0,1943–1992,1939–1945,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,0,3,2,False,0.0,1943–1992,1939–1945,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,0,3,3,True,1.0,1943–1992,1943–1992,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,2,1,0,False,0.0,1943–1992,1939–1945,,
+4hop2__5206_14670_8987_8529,4,paraphrase,style,2,1,1,True,1.0,1943–1992,1943–1992,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,2,1,2,False,0.0,1943–1992,1943 to 1992,1943–1992,1.0
+4hop2__5206_14670_8987_8529,4,paraphrase,style,2,1,3,False,0.0,1943–1992,1943 to 1992,1943 to 1992,0.0
+4hop2__5206_14670_8987_8529,4,shorten,content,1,1,0,False,0.0,1943–1992,1939–1945,,
+4hop2__5206_14670_8987_8529,4,shorten,content,1,1,1,True,1.0,1943–1992,1943–1992,1939–1945,0.0
+4hop2__5206_14670_8987_8529,4,shorten,content,1,1,2,False,0.0,1943–1992,1939–1945,1943–1992,1.0
+4hop2__5206_14670_8987_8529,4,shorten,content,1,1,3,False,0.0,1943–1992,1962,1939–1945,0.0
+4hop2__71753_158279_70784_61381,4,elaborate,content,2,2,0,False,0.0,1932,1994,,
+4hop2__71753_158279_70784_61381,4,elaborate,content,2,2,1,False,0.0,1932,1930,1994,0.0
+4hop2__71753_158279_70784_61381,4,elaborate,content,2,2,2,True,1.0,1932,1932,1930,0.0
+4hop2__71753_158279_70784_61381,4,elaborate,content,2,2,3,False,0.0,1932,1994,1932,1.0
+4hop2__71753_158985_70784_61381,4,formality,style,1,3,0,False,0.0,1932,The context does not provide the establishment date of the region immediately north of Israel.,,
+4hop2__71753_158985_70784_61381,4,formality,style,1,3,1,False,0.0,1932,"The question is unclear and does not specify a region or a date to look up. Based on the provided context, there is no information about the establishment date of a region immediately north of Israel or about desalination for agricultural use. 
+
+However, the closest relevant context is about Hevel Eilot Regional Council in Israel",The context does not provide the establishment date of the region immediately north of Israel.,0.0
+4hop2__71753_158985_70784_61381,4,formality,style,1,3,2,False,0.0,1932,1948,"The question is unclear and does not specify a region or a date to look up. Based on the provided context, there is no information about the establishment date of a region immediately north of Israel or about desalination for agricultural use. 
+
+However, the closest relevant context is about Hevel Eilot Regional Council in Israel",0.0
+4hop2__71753_158985_70784_61381,4,formality,style,1,3,3,True,1.0,1932,1932,1948,0.0
+4hop2__71753_158985_70784_61381,4,shorten,content,0,1,0,False,0.0,1932,The context does not provide the establishment date of the region immediately north of Israel.,,
+4hop2__71753_158985_70784_61381,4,shorten,content,0,1,1,True,1.0,1932,1932,The context does not provide the establishment date of the region immediately north of Israel.,0.0
+4hop2__71753_158985_70784_61381,4,shorten,content,0,1,2,True,1.0,1932,1932,1932,1.0
+4hop2__71753_158985_70784_61381,4,shorten,content,0,1,3,True,1.0,1932,1932,1932,1.0
+4hop2__71753_158985_70784_61381,4,shorten,content,1,1,0,False,0.0,1932,The context does not provide the establishment date of the region immediately north of Israel.,,
+4hop2__71753_158985_70784_61381,4,shorten,content,1,1,1,True,1.0,1932,1932,The context does not provide the establishment date of the region immediately north of Israel.,0.0
+4hop2__71753_158985_70784_61381,4,shorten,content,1,1,2,True,1.0,1932,1932,1932,1.0
+4hop2__71753_158985_70784_61381,4,shorten,content,1,1,3,True,1.0,1932,1932,1932,1.0
+4hop2__71753_623626_70784_61381,4,elaborate,content,1,3,0,False,0.0,1932,The question cannot be answered directly from the provided context. The context does not mention when the region north of Israel or the body of water where Kharg Island is located was established.,,
+4hop2__71753_623626_70784_61381,4,elaborate,content,1,3,1,False,0.0,1932,Nunavut was established as a territory in 1999.,The question cannot be answered directly from the provided context. The context does not mention when the region north of Israel or the body of water where Kharg Island is located was established.,0.0
+4hop2__71753_623626_70784_61381,4,elaborate,content,1,3,2,False,0.0,1932,Nunavut was established as a territory in 1999.,Nunavut was established as a territory in 1999.,0.0
+4hop2__71753_623626_70784_61381,4,elaborate,content,1,3,3,True,1.0,1932,1932,Nunavut was established as a territory in 1999.,0.0
+4hop2__9988_158279_70784_79935,4,formality,style,0,3,0,False,0.0,1930,1869,,
+4hop2__9988_158279_70784_79935,4,formality,style,0,3,1,False,0.0,1930,"The question is ambiguous and does not provide a clear context for identifying the specific region or the creation date. However, based on the mention of ""the region that lies to the north of what used to be known as the 'Near East'"" and the reference to exported crops, the likely intended region is the Middle East.",1869,0.0
+4hop2__9988_158279_70784_79935,4,formality,style,0,3,2,False,0.0,1930,1932,"The question is ambiguous and does not provide a clear context for identifying the specific region or the creation date. However, based on the mention of ""the region that lies to the north of what used to be known as the 'Near East'"" and the reference to exported crops, the likely intended region is the Middle East.",0.0
+4hop2__9988_158279_70784_79935,4,formality,style,0,3,3,True,1.0,1930,1930,1932,0.0
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,1,0,False,0.0,1930,1869,,
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,1,1,True,1.0,1930,1930,1869,0.0
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,1,2,True,1.0,1930,1930,1930,1.0
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,1,3,True,1.0,1930,1930,1930,1.0
+4hop3__193820_466199_128875_72134,4,shorten,content,0,3,0,False,0.0,1839,1819,,
+4hop3__193820_466199_128875_72134,4,shorten,content,0,3,1,False,0.0,1839,1819,1819,0.0
+4hop3__193820_466199_128875_72134,4,shorten,content,0,3,2,False,0.0,1839,1819,1819,0.0
+4hop3__193820_466199_128875_72134,4,shorten,content,0,3,3,True,1.0,1839,1839,1819,0.0
+4hop3__193820_466199_128875_72134,4,shorten,content,1,2,0,False,0.0,1839,1819,,
+4hop3__193820_466199_128875_72134,4,shorten,content,1,2,1,False,0.2857142857142857,1839,Springfield became the state capital in 1839.,1819,0.0
+4hop3__193820_466199_128875_72134,4,shorten,content,1,2,2,True,1.0,1839,1839,Springfield became the state capital in 1839.,0.2857142857142857
+4hop3__193820_466199_128875_72134,4,shorten,content,1,2,3,True,1.0,1839,1839,1839,1.0
+4hop3__193820_466199_695123_72134,4,elaborate,content,0,1,0,False,0.0,1839,1796,,
+4hop3__193820_466199_695123_72134,4,elaborate,content,0,1,1,True,1.0,1839,1839,1796,0.0
+4hop3__193820_466199_695123_72134,4,elaborate,content,0,1,2,False,0.0,1839,1796,1839,1.0
+4hop3__193820_466199_695123_72134,4,elaborate,content,0,1,3,False,0.0,1839,1796,1796,0.0
+4hop3__312119_132409_146285_35031,4,elaborate,content,2,1,0,False,0.0,third-largest,San Diego is the second-largest city in California.,,
+4hop3__312119_132409_146285_35031,4,elaborate,content,2,1,1,True,1.0,third-largest,third-largest,San Diego is the second-largest city in California.,0.0
+4hop3__312119_132409_146285_35031,4,elaborate,content,2,1,2,False,0.0,third-largest,"San Diego is the second-largest city in California, after Los Angeles.",third-largest,1.0
+4hop3__312119_132409_146285_35031,4,elaborate,content,2,1,3,False,0.0,third-largest,"San Diego is the second-largest city in California after Los Angeles. However, the question asks for the rank among the top five largest urban areas in the state where Papa Roach (the band associated with ""Getting Away with Murder"") was formed. Papa Roach was formed in San Diego, California. The top five largest","San Diego is the second-largest city in California, after Los Angeles.",0.0
+4hop3__601548_836463_161616_77103,4,formality,style,1,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,formality,style,1,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,formality,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,formality,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,formality,style,2,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,formality,style,2,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,formality,style,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,formality,style,2,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,2,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,2,1,False,0.0,1839,1946,1850,0.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,2,2,True,1.0,1839,1839,1946,0.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,2,3,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,2,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,paraphrase,style,2,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,2,1,2,False,0.0,1839,Not provided in the context,1839,1.0
+4hop3__601548_836463_161616_77103,4,paraphrase,style,2,1,3,False,0.0,1839,1857,Not provided in the context,0.0
+4hop3__601548_836463_161616_77103,4,shorten,content,0,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,shorten,content,0,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,shorten,content,0,1,2,False,0.0,1839,1800,1839,1.0
+4hop3__601548_836463_161616_77103,4,shorten,content,0,1,3,False,0.0,1839,1800,1800,0.0
+4hop3__601548_836463_161616_77103,4,shorten,content,1,1,0,False,0.0,1839,1850,,
+4hop3__601548_836463_161616_77103,4,shorten,content,1,1,1,True,1.0,1839,1839,1850,0.0
+4hop3__601548_836463_161616_77103,4,shorten,content,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__601548_836463_161616_77103,4,shorten,content,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,0,3,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,elaborate,content,0,3,1,False,0.0,1839,1819,No,0.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,0,3,2,False,0.0,1839,1819,1819,0.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,0,3,3,True,1.0,1839,1839,1819,0.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,1,3,False,0.0,1839,1816,1839,1.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,shorten,content,0,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,shorten,content,0,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,shorten,content,0,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,shorten,content,0,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,shorten,content,1,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,shorten,content,1,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,shorten,content,1,1,2,False,0.0,1839,1819,1839,1.0
+4hop3__678814_466199_695123_72134,4,shorten,content,1,1,3,False,0.0,1839,1819,1819,0.0
+4hop3__678814_466199_695123_72134,4,shorten,content,2,1,0,False,0.0,1839,No,,
+4hop3__678814_466199_695123_72134,4,shorten,content,2,1,1,True,1.0,1839,1839,No,0.0
+4hop3__678814_466199_695123_72134,4,shorten,content,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__678814_466199_695123_72134,4,shorten,content,2,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__719125_132409_223216_35031,4,formality,style,1,1,0,False,0.0,third-largest,4th largest,,
+4hop3__719125_132409_223216_35031,4,formality,style,1,1,1,True,1.0,third-largest,third-largest,4th largest,0.0
+4hop3__719125_132409_223216_35031,4,formality,style,1,1,2,True,1.0,third-largest,third-largest,third-largest,1.0
+4hop3__719125_132409_223216_35031,4,formality,style,1,1,3,False,0.0,third-largest,I don't know,third-largest,1.0
+4hop3__771862_466199_695123_72134,4,elaborate,content,0,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,elaborate,content,0,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,elaborate,content,0,1,2,False,0.0,1839,1816,1839,1.0
+4hop3__771862_466199_695123_72134,4,elaborate,content,0,1,3,False,0.0,1839,No,1816,0.0
+4hop3__771862_466199_695123_72134,4,formality,style,1,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,formality,style,1,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,formality,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__771862_466199_695123_72134,4,formality,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__771862_466199_695123_72134,4,formality,style,2,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,formality,style,2,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,formality,style,2,1,2,False,0.0,1839,1857,1839,1.0
+4hop3__771862_466199_695123_72134,4,formality,style,2,1,3,False,0.0,1839,No information provided about a town named WIZE or its licensing date.,1857,0.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,1,3,False,0.0,1839,1857,1839,1.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,2,1,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,paraphrase,style,2,1,1,True,1.0,1839,1839,No,0.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,2,1,2,False,0.0,1839,1819,1839,1.0
+4hop3__771862_466199_695123_72134,4,paraphrase,style,2,1,3,False,0.0,1839,1816,1819,0.0
+4hop3__771862_466199_695123_72134,4,shorten,content,0,2,0,False,0.0,1839,No,,
+4hop3__771862_466199_695123_72134,4,shorten,content,0,2,1,False,0.0,1839,1816,No,0.0
+4hop3__771862_466199_695123_72134,4,shorten,content,0,2,2,True,1.0,1839,1839,1816,0.0
+4hop3__771862_466199_695123_72134,4,shorten,content,0,2,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,0,2,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,elaborate,content,0,2,1,False,0.0,1839,1818,1894,0.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,0,2,2,True,1.0,1839,1839,1818,0.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,0,2,3,False,0.0,1839,1803,1839,1.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,2,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,2,1,False,0.0,1839,1832,1894,0.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,2,2,True,1.0,1839,1839,1832,0.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,2,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,formality,style,0,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,formality,style,0,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,formality,style,0,1,2,False,0.0,1839,No information given about WIZE or the state's capital date,1839,1.0
+4hop3__794915_466199_695123_72134,4,formality,style,0,1,3,False,0.0,1839,1868,No information given about WIZE or the state's capital date,0.0
+4hop3__794915_466199_695123_72134,4,formality,style,1,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,formality,style,1,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,formality,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,formality,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,formality,style,2,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,formality,style,2,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,formality,style,2,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,formality,style,2,1,3,False,0.0,1839,No answer.,1839,1.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,2,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,paraphrase,style,2,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,2,1,2,False,0.0,1839,1869,1839,1.0
+4hop3__794915_466199_695123_72134,4,paraphrase,style,2,1,3,False,0.0,1839,1869,1869,0.0
+4hop3__794915_466199_695123_72134,4,shorten,content,0,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,shorten,content,0,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,shorten,content,0,1,2,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,shorten,content,0,1,3,True,1.0,1839,1839,1839,1.0
+4hop3__794915_466199_695123_72134,4,shorten,content,1,1,0,False,0.0,1839,1894,,
+4hop3__794915_466199_695123_72134,4,shorten,content,1,1,1,True,1.0,1839,1839,1894,0.0
+4hop3__794915_466199_695123_72134,4,shorten,content,1,1,2,False,0.0,1839,1808,1839,1.0
+4hop3__794915_466199_695123_72134,4,shorten,content,1,1,3,False,0.0,1839,1808,1808,0.0

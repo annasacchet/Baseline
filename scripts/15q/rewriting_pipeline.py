@@ -69,15 +69,18 @@ ALL_INSTRUCTIONS = {
     ],
 }
 
-REWRITE_TEMPLATE = """You will rewrite the text below according to the instruction.
-Return ONLY the rewritten text, with no preamble or commentary.
+REWRITE_TEMPLATE = """You are a precise text rewriting assistant. Your task is to rewrite the text provided inside the XML tags according to the specific instruction.
+
+<source_text>
+{text}
+</source_text>
 
 Instruction: {instruction}
 
-Text:
-{text}
+Strict Rule: Return ONLY the rewritten text. Do not include any preamble, introduction, markdown formatting outside the text, or commentary.
 
 Rewritten text:"""
+
 
 
 # ---------------------------------------------------------------------------

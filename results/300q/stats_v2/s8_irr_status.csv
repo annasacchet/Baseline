@@ -1,0 +1,2 @@
+status,n_candidates,instructions
+AWAITING_LABELS,120,"Apri s8_irr_candidates.csv, riempi human_label con 0/1 (corretto=1), poi rilancia con --kappa per ottenere Cohen's kappa contro auto_label_f1 (sempre 0)."

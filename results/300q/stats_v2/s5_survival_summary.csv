@@ -1,0 +1,2 @@
+n_episodes,median_duration_steps,pct_event_observed,pct_lost_after_1_step,pct_stable_full_window
+202,2.0,0.400990099009901,0.400990099009901,0.38613861386138615

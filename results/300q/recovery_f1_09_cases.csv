@@ -1,0 +1,407 @@
+qid,n_hop,instruction_type,group,run,step,answer_f1,max_f1_in_chain,question,gold_answer,predicted_answer
+2hop__14092_8311,2,elaborate,content,0,3,1.0,1.0,When was John's eldest son crowned?,1216,1216
+2hop__14095_15463,2,elaborate,content,0,3,1.0,1.0,"In 2002, what company merged with the top PC manufacturer from 1994?",Hewlett Packard,Hewlett-Packard
+2hop__14095_15463,2,formality,style,0,1,1.0,1.0,"In 2002, what company merged with the top PC manufacturer from 1994?",Hewlett Packard,Hewlett Packard
+2hop__14095_15463,2,paraphrase,style,0,3,1.0,1.0,"In 2002, what company merged with the top PC manufacturer from 1994?",Hewlett Packard,Hewlett Packard
+2hop__141456_6455,2,elaborate,content,0,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,0,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,0,3,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,1,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,1,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,1,3,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,2,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,elaborate,content,2,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,formality,style,0,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,formality,style,1,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Mozilla Firefox
+2hop__141456_6455,2,formality,style,2,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,formality,style,2,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,0,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,0,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,1,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,1,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,1,3,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,paraphrase,style,2,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,0,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,0,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,0,3,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,1,1,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,1,2,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__141456_6455,2,shorten,content,1,3,1.0,1.0,What was the resulting browser for the company Mozilla Messaging is a part of?,Firefox,Firefox
+2hop__144658_599630,2,elaborate,content,1,1,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,elaborate,content,1,3,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,elaborate,content,2,1,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,elaborate,content,2,2,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,elaborate,content,2,3,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,paraphrase,style,0,1,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,paraphrase,style,0,2,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,paraphrase,style,0,3,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,paraphrase,style,1,1,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__144658_599630,2,paraphrase,style,1,2,1.0,1.0,What county was Ye Rongguang born in?,Yongjia County,Yongjia County
+2hop__159903_419949,2,formality,style,0,2,1.0,1.0,What is the capital of the country it is about?,Aden,Aden
+2hop__159903_419949,2,formality,style,0,3,1.0,1.0,What is the capital of the country it is about?,Aden,Aden
+2hop__170914_152093,2,elaborate,content,0,2,1.0,1.0,"What label is responsible for the performer of ""Friend Like That""?",Fair Trade Services,Fair Trade Services
+2hop__242045_2684,2,elaborate,content,0,1,1.0,1.0,What law was passed by Maria Shriver's husband?,"""Donda West Law""",Donda West Law
+2hop__242045_2684,2,elaborate,content,0,3,1.0,1.0,What law was passed by Maria Shriver's husband?,"""Donda West Law""",Donda West Law
+2hop__242045_2684,2,elaborate,content,2,1,1.0,1.0,What law was passed by Maria Shriver's husband?,"""Donda West Law""",Donda West Law
+2hop__29893_29898,2,elaborate,content,2,1,1.0,1.0,Which affiliate left the company that owns and operates most of the CBC television stations due to an agreement with CHBC?,CFJC-TV in Kamloops,CFJC-TV in Kamloops
+2hop__398344_85513,2,shorten,content,2,1,1.0,1.0,When is the next episode of the series that Steven the Sword Fighter is a part of being released?,TBD,TBD
+2hop__403580_37168,2,paraphrase,style,0,1,1.0,1.0,"According to QS World University Rankings, what is the ranking of the place that employed Said Ashour?",551-600,551-600
+2hop__403580_37168,2,paraphrase,style,0,2,1.0,1.0,"According to QS World University Rankings, what is the ranking of the place that employed Said Ashour?",551-600,551-600
+2hop__403580_37168,2,paraphrase,style,1,2,1.0,1.0,"According to QS World University Rankings, what is the ranking of the place that employed Said Ashour?",551-600,551-600
+2hop__43283_86694,2,elaborate,content,0,3,1.0,1.0,Who has the most wins in the league that wins the All Star Game more often?,New York Yankees,New York Yankees
+2hop__43283_86694,2,paraphrase,style,0,2,1.0,1.0,Who has the most wins in the league that wins the All Star Game more often?,New York Yankees,New York Yankees
+2hop__43283_86694,2,paraphrase,style,0,3,1.0,1.0,Who has the most wins in the league that wins the All Star Game more often?,New York Yankees,New York Yankees
+2hop__442516_595885,2,elaborate,content,1,1,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,elaborate,content,2,1,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,shorten,content,1,2,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,shorten,content,1,3,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,shorten,content,2,1,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,shorten,content,2,2,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__442516_595885,2,shorten,content,2,3,1.0,1.0,Which country has a body of water that was inspiration for the name of the Mara Region?,Tanzania,Tanzania
+2hop__47712_25719,2,elaborate,content,1,1,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,elaborate,content,1,2,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,paraphrase,style,2,1,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,paraphrase,style,2,2,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,paraphrase,style,2,3,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,shorten,content,0,1,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__47712_25719,2,shorten,content,0,2,1.0,1.0,At the end of which year did tribes from the place where the Celts are said to have migrated from invade the Roman empire?,406,406
+2hop__575797_91104,2,elaborate,content,0,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,0,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,0,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,1,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,1,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,2,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,2,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,elaborate,content,2,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,0,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,0,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,0,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,1,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,1,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,1,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,2,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,2,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,formality,style,2,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,0,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,0,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,0,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,1,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,1,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,paraphrase,style,1,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,0,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,0,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,0,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,2,1,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,2,2,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__575797_91104,2,shorten,content,2,3,1.0,1.0,What is the experimental satellite that was the forerunner to communication satellite of the operator of INSAT-4CR called?,ATS - 6 (Applications Technology Satellite - 6),ATS-6
+2hop__58168_38663,2,formality,style,1,3,1.0,1.0,What was the percentage that the Dow Jones fell when the US had the highest unemployment rate?,54.7%,54.7%
+2hop__632870_22402,2,shorten,content,2,1,1.0,1.0,How many students attend where Andre Dreiding is employed?,"nearly 25,000",University of Zurich
+2hop__681463_402641,2,elaborate,content,0,1,1.0,1.0,Who is the sibling of Chiang Hsiao-wen?,Chiang Hsiao-wu,Chiang Hsiao-wu
+2hop__681463_402641,2,formality,style,1,2,1.0,1.0,Who is the sibling of Chiang Hsiao-wen?,Chiang Hsiao-wu,Chiang Hsiao-wu
+2hop__691455_64006,2,elaborate,content,0,1,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,elaborate,content,0,2,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,elaborate,content,1,1,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,elaborate,content,1,2,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,elaborate,content,1,3,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,elaborate,content,2,3,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,formality,style,0,1,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,paraphrase,style,2,1,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__691455_64006,2,paraphrase,style,2,3,1.0,1.0,By how much of the population of the region where Baton a feu originated reduced by the black death?,30% to 65%,30% to 65%
+2hop__711639_110949,2,elaborate,content,0,3,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,11 September 1962
+2hop__711639_110949,2,paraphrase,style,0,2,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,"September 11, 1962"
+2hop__711639_110949,2,paraphrase,style,0,3,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,"September 11, 1962"
+2hop__711639_110949,2,paraphrase,style,1,1,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,11 September 1962
+2hop__711639_110949,2,paraphrase,style,1,2,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,11 September 1962
+2hop__711639_110949,2,paraphrase,style,1,3,1.0,1.0,What is the Sarah performer's birth date?,11 September 1962,11 September 1962
+2hop__75207_46837,2,shorten,content,0,1,1.0,1.0,When does the winter season begin in the place where fuser and alberto meet the indigenous couple who were traveling for work?,June,June
+2hop__82910_75184,2,elaborate,content,1,1,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,elaborate,content,1,2,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,formality,style,1,3,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,formality,style,2,3,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,paraphrase,style,0,3,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,paraphrase,style,1,1,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,paraphrase,style,2,2,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,shorten,content,0,1,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__82910_75184,2,shorten,content,0,3,1.0,1.0,Who played the girlfriend of Alex P. Keaton's actor on Family Ties in Back to the Future?,Claudia Wells,Claudia Wells
+2hop__87053_319330,2,elaborate,content,2,1,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,elaborate,content,2,2,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,elaborate,content,2,3,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,formality,style,0,1,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,formality,style,2,2,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,formality,style,2,3,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,paraphrase,style,0,1,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,paraphrase,style,0,2,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,paraphrase,style,0,3,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,paraphrase,style,1,1,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__87053_319330,2,shorten,content,2,1,1.0,1.0,Who was the child of the 28th U.S. president?,Jessie Woodrow Wilson,Jessie Woodrow Wilson Sayre
+2hop__88406_83289,2,elaborate,content,0,1,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,elaborate,content,0,2,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,formality,style,0,1,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,formality,style,0,2,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,formality,style,0,3,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,paraphrase,style,0,2,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+2hop__88406_83289,2,paraphrase,style,0,3,1.0,1.0,"Who stars alongside the songwriter of ""No Tears Left to Cry"" in the music video for ""one last time""?",Matt Bennett,Matt Bennett
+3hop1__106239_650651_7262,3,formality,style,0,1,1.0,1.0,Who was a prominent figure at the radio division of the broadcast company that created the version of The Biggest Loser set in the country where Kelupis originated?,Walter Sabo,Walter Sabo
+3hop1__208108_547811_41132,3,elaborate,content,0,1,1.0,1.0,How many times did plague occur in the birthplace of La Silvia's composer?,22,22
+3hop1__208108_547811_41132,3,elaborate,content,0,2,1.0,1.0,How many times did plague occur in the birthplace of La Silvia's composer?,22,22
+3hop1__222497_309482_89834,3,shorten,content,1,1,1.0,1.0,When did the merchant of the city where the composer of Al gran sole carico d'amore takes place?,16th - century,16th century
+3hop1__305566_568433_47686,3,formality,style,0,1,1.0,1.0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__305566_568433_47686,3,formality,style,0,2,1.0,1.0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__305566_568433_47686,3,formality,style,0,3,1.0,1.0,Where do greyhound buses leave from the in the city where the headquarters of the production company which produced A Cosmic Christmas is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__315504_629431_124169,3,paraphrase,style,2,1,1.0,1.0,When was the end date for the position of Governor of the place where the author of Mater et Magistra died?,1952,1952
+3hop1__315504_629431_124169,3,paraphrase,style,2,2,1.0,1.0,When was the end date for the position of Governor of the place where the author of Mater et Magistra died?,1952,1952
+3hop1__506062_792411_51423,3,elaborate,content,0,3,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,formality,style,0,1,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,formality,style,0,2,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,formality,style,0,3,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,paraphrase,style,2,1,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,paraphrase,style,2,2,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__506062_792411_51423,3,paraphrase,style,2,3,1.0,1.0,What is the name of the castle in the place of birth of the performer of When I Was a Boy?,Casa Loma,Casa Loma
+3hop1__540585_568433_47686,3,formality,style,0,1,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,formality,style,0,2,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,formality,style,1,2,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,formality,style,1,3,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,paraphrase,style,2,2,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,paraphrase,style,2,3,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__540585_568433_47686,3,shorten,content,0,1,1.0,1.0,Where do greyhound buses leave from in the location of the headquarters of the production company of Miss Spider's Sunny Patch Kids?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,elaborate,content,1,1,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,elaborate,content,1,2,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,elaborate,content,1,3,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,paraphrase,style,1,1,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,0,1,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,0,2,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,1,1,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,1,2,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,1,3,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__572324_568433_47686,3,shorten,content,2,1,1.0,1.0,Where do greyhound buses leave from in the city where the headquarters of Care Bears: Journey to Joke-a-lot's production company is located?,Toronto Coach Terminal,Toronto Coach Terminal
+3hop1__579562_629431_124169,3,paraphrase,style,0,1,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__579562_629431_124169,3,paraphrase,style,0,2,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__579562_629431_124169,3,paraphrase,style,0,3,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__579562_629431_124169,3,shorten,content,1,1,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__579562_629431_124169,3,shorten,content,1,2,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__579562_629431_124169,3,shorten,content,1,3,1.0,1.0,What year did the Governor of the city where Pacem in Terris' author died end?,1952,1952
+3hop1__593288_720914_41132,3,elaborate,content,0,1,1.0,1.0,How many times did plague occur in the place of death of the creator of Violante?,22,22
+3hop1__639955_834494_33939,3,elaborate,content,2,1,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,elaborate,content,2,2,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,0,1,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,0,2,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,0,3,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,1,1,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,1,2,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__639955_834494_33939,3,formality,style,1,3,1.0,1.0,What was the 1900 population of the city located within the county that also contains Helvetia?,"7,531","7,531"
+3hop1__715607_792411_51423,3,elaborate,content,0,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,elaborate,content,0,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,elaborate,content,0,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,elaborate,content,2,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,elaborate,content,2,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,elaborate,content,2,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,0,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,0,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,0,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,1,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,1,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,formality,style,1,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,0,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,0,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,0,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,1,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,1,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,1,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,2,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,2,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,paraphrase,style,2,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,shorten,content,1,1,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,shorten,content,1,2,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__715607_792411_51423,3,shorten,content,1,3,1.0,1.0,What is the name of the castle in the city where the performer of A Collection 1984–1989 was born?,Casa Loma,Casa Loma
+3hop1__742780_567566_84283,3,elaborate,content,0,1,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,elaborate,content,0,2,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,elaborate,content,0,3,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,formality,style,0,3,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,paraphrase,style,0,1,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,paraphrase,style,0,2,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,paraphrase,style,0,3,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,paraphrase,style,2,3,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,shorten,content,1,1,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,shorten,content,1,2,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__742780_567566_84283,3,shorten,content,1,3,1.0,1.0,Who owns the record label where the singer of All Right records?,Warner Music Group,Warner Music Group
+3hop1__844109_720914_41132,3,elaborate,content,2,1,1.0,1.0,How many times did the plague occur where the creator of The Entombment died?,22,22
+3hop1__86965_488922_4093,3,elaborate,content,1,2,1.0,1.0,What is the term for the prime minister in the country where legislators are elected for six year terms?,Wazir-e-Azam,Wazir-e-Azam
+3hop1__86965_488922_4093,3,elaborate,content,1,3,1.0,1.0,What is the term for the prime minister in the country where legislators are elected for six year terms?,Wazir-e-Azam,Wazir-e-Azam
+3hop2__57233_105140_56883,3,elaborate,content,0,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,0,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,0,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,1,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,1,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,1,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,2,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,2,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,elaborate,content,2,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,0,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,0,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,0,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,1,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,1,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,1,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,2,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,formality,style,2,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,0,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,0,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,0,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,1,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,1,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,1,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,2,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,2,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,paraphrase,style,2,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,1,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,1,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,1,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,2,1,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,2,2,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__57233_105140_56883,3,shorten,content,2,3,1.0,1.0,"During the war in which The Things They Carried is set, when was conscription introduced by the country where the film Grievous Bodily Harm was later released?",1964,1964
+3hop2__93066_88342_90766,3,elaborate,content,0,1,1.0,1.0,When was the last time the winner of the American League East in 2017 met the Dodgers in the event after which the MLB MVP award is given out?,1981,1981
+3hop2__93066_88342_90766,3,elaborate,content,0,2,1.0,1.0,When was the last time the winner of the American League East in 2017 met the Dodgers in the event after which the MLB MVP award is given out?,1981,1981
+4hop1__105688_17130_70784_61381,4,paraphrase,style,0,1,1.0,1.0,The country that Eyal Golan is from lies within a certain region. When was the area that lies immediately to the north of that region established?,1932,1932
+4hop1__105688_17130_70784_61381,4,shorten,content,0,2,1.0,1.0,The country that Eyal Golan is from lies within a certain region. When was the area that lies immediately to the north of that region established?,1932,1932
+4hop1__105688_17130_70784_61381,4,shorten,content,0,3,1.0,1.0,The country that Eyal Golan is from lies within a certain region. When was the area that lies immediately to the north of that region established?,1932,1932
+4hop1__271272_508773_85832_745702,4,elaborate,content,2,1,1.0,1.0,What is the name of the child of the Italian navigator who sailed for England and explored the east coast of the continent Francisco Vázquez' birthplace is located?,Sebastian Cabot,Sebastian Cabot
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,1,1.0,1.0,"The People's Socialist Republic of Albania was a member of an organization which was dissolved in Country A. Who invaded the country where many expelled French Jews relocated, other than Country A?",Soviet,The Soviet Union
+4hop1__373866_5186_10659_23296,4,elaborate,content,2,2,1.0,1.0,"The People's Socialist Republic of Albania was a member of an organization which was dissolved in Country A. Who invaded the country where many expelled French Jews relocated, other than Country A?",Soviet,Soviet Union
+4hop1__399219_765799_282674_759393,4,shorten,content,1,3,1.0,1.0,What is the seat of the county sharing a border with the county in which Valley New School is located?,Green Bay,Green Bay
+4hop1__436202_378185_282674_759393,4,formality,style,1,2,1.0,1.0,What is the seat of the county sharing a border with the county in which J.P. Hayes was born?,Green Bay,Green Bay
+4hop1__436202_378185_282674_759393,4,shorten,content,2,1,1.0,1.0,What is the seat of the county sharing a border with the county in which J.P. Hayes was born?,Green Bay,Green Bay
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,2,1.0,1.0,When was the region immediately north of the region where the country in which Aluf can be found is located and the Persian Gulf established?,1932,1932
+4hop1__638988_17130_70784_61381,4,elaborate,content,0,3,1.0,1.0,When was the region immediately north of the region where the country in which Aluf can be found is located and the Persian Gulf established?,1932,1932
+4hop1__638988_17130_70784_61381,4,elaborate,content,1,3,1.0,1.0,When was the region immediately north of the region where the country in which Aluf can be found is located and the Persian Gulf established?,1932,1932
+4hop1__638988_17130_70784_61381,4,elaborate,content,2,3,1.0,1.0,When was the region immediately north of the region where the country in which Aluf can be found is located and the Persian Gulf established?,1932,1932
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,2,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,elaborate,content,1,3,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,formality,style,0,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,2,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,0,3,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,2,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,1,3,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,2,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,paraphrase,style,2,3,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__749065_698949_157828_239539,4,shorten,content,0,1,1.0,1.0,"Where are the headquarters of the Radio Television, of the country whose co-official language was used in the film named after the city where Slavko Šurdonja?",Pristina,Pristina
+4hop1__802394_153080_159767_81096,4,formality,style,2,2,1.0,1.0,An Indy car race was held in the capital of the state where the performer of Mingus Plays Piano was born. Who won the race?,Mario Andretti,Mario Andretti
+4hop1__802394_153080_159767_81096,4,formality,style,2,3,1.0,1.0,An Indy car race was held in the capital of the state where the performer of Mingus Plays Piano was born. Who won the race?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,1,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,elaborate,content,0,3,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,1,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,2,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,elaborate,content,2,3,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,formality,style,2,1,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,formality,style,2,2,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,shorten,content,0,2,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,shorten,content,0,3,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,shorten,content,2,1,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,shorten,content,2,2,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__813171_153080_33897_81096,4,shorten,content,2,3,1.0,1.0,Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?,Mario Andretti,Mario Andretti
+4hop1__88342_49853_128008_46894,4,elaborate,content,0,1,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,elaborate,content,2,3,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,formality,style,1,1,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,formality,style,2,1,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,formality,style,2,2,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,formality,style,2,3,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,2,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,paraphrase,style,1,3,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop1__88342_49853_128008_46894,4,shorten,content,0,1,1.0,1.0,Who has the lowest batting average in the league that the team that has won the most titles from the competition they give out MVP awards plays for?,Bill Bergen,Bill Bergen
+4hop2__161602_474028_88460_21062,4,elaborate,content,1,1,1.0,1.0,Can foreign tourists cruise to the country between the nation that hosted 2020 AFC U-23 Championship qualification and the one that contains A Don.?,It is not possible for foreigners to go to/from Myanmar by sea or river.,Myanmar
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,2,1.0,1.0,"When was ""Slavs"" used in the national anthem of the country whose military having the Air Defense Artillery was unprepared for the invasion of the country conquered by the Pact?",1943–1992,1943–1992
+4hop2__5206_14670_8987_8529,4,elaborate,content,0,3,1.0,1.0,"When was ""Slavs"" used in the national anthem of the country whose military having the Air Defense Artillery was unprepared for the invasion of the country conquered by the Pact?",1943–1992,1943–1992
+4hop2__5206_14670_8987_8529,4,paraphrase,style,0,3,1.0,1.0,"When was ""Slavs"" used in the national anthem of the country whose military having the Air Defense Artillery was unprepared for the invasion of the country conquered by the Pact?",1943–1992,1943–1992
+4hop2__5206_14670_8987_8529,4,paraphrase,style,2,1,1.0,1.0,"When was ""Slavs"" used in the national anthem of the country whose military having the Air Defense Artillery was unprepared for the invasion of the country conquered by the Pact?",1943–1992,1943–1992
+4hop2__5206_14670_8987_8529,4,shorten,content,1,1,1.0,1.0,"When was ""Slavs"" used in the national anthem of the country whose military having the Air Defense Artillery was unprepared for the invasion of the country conquered by the Pact?",1943–1992,1943–1992
+4hop2__71753_158279_70784_61381,4,elaborate,content,2,2,1.0,1.0,When was the region immediately north of the region where Israel is located and the final destination for the export crops established?,1932,1932
+4hop2__71753_158985_70784_61381,4,formality,style,1,3,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,0,1,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,0,2,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,0,3,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,1,1,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,1,2,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_158985_70784_61381,4,shorten,content,1,3,1.0,1.0,When was the region immediately north of the region where Israel is located and the site of the most growth in desalination for agricultural use established?,1932,1932
+4hop2__71753_623626_70784_61381,4,elaborate,content,1,3,1.0,1.0,When was the region that lies to the north of where israel is located and the body of water where Kharg Island is located established?,1932,1932
+4hop2__9988_158279_70784_79935,4,formality,style,0,3,1.0,1.0,"When was the region that lies to the north of what used to be known as the ""Near East"" and the location of the final destination of exported crops created?",1930,1930
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,1,1.0,1.0,"When was the region that lies to the north of what used to be known as the ""Near East"" and the location of the final destination of exported crops created?",1930,1930
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,2,1.0,1.0,"When was the region that lies to the north of what used to be known as the ""Near East"" and the location of the final destination of exported crops created?",1930,1930
+4hop2__9988_158279_70784_79935,4,paraphrase,style,1,3,1.0,1.0,"When was the region that lies to the north of what used to be known as the ""Near East"" and the location of the final destination of exported crops created?",1930,1930
+4hop3__193820_466199_128875_72134,4,shorten,content,0,3,1.0,1.0,When did the town WLUJ is licensed in become capitol of the state where Brantley York was born?,1839,1839
+4hop3__193820_466199_128875_72134,4,shorten,content,1,2,1.0,1.0,When did the town WLUJ is licensed in become capitol of the state where Brantley York was born?,1839,1839
+4hop3__193820_466199_128875_72134,4,shorten,content,1,3,1.0,1.0,When did the town WLUJ is licensed in become capitol of the state where Brantley York was born?,1839,1839
+4hop3__193820_466199_695123_72134,4,elaborate,content,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Brantley York was born?,1839,1839
+4hop3__312119_132409_146285_35031,4,elaborate,content,2,1,1.0,1.0,"Among the top five largest urban areas in the state where Getting Away with Murder's performer was formed, where does city in which Alexander Golitzen died rank?",third-largest,third-largest
+4hop3__601548_836463_161616_77103,4,formality,style,1,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,formality,style,1,2,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,formality,style,1,3,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,formality,style,2,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,formality,style,2,2,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,formality,style,2,3,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,2,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,0,3,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,2,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,1,3,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,paraphrase,style,2,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,shorten,content,0,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,shorten,content,1,1,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,shorten,content,1,2,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__601548_836463_161616_77103,4,shorten,content,1,3,1.0,1.0,When did the birthplace of the Live and Beyond performer become the capitol of the state Knowles was from?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,0,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,elaborate,content,2,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,paraphrase,style,2,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,0,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,0,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,2,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__678814_466199_695123_72134,4,shorten,content,2,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Stoney Creek Township is located?,1839,1839
+4hop3__719125_132409_223216_35031,4,formality,style,1,1,1.0,1.0,"In the top five largest urban areas in the US state in which the band performing Scars was formed, where does the city having Pathology rank?",third-largest,third-largest
+4hop3__719125_132409_223216_35031,4,formality,style,1,2,1.0,1.0,"In the top five largest urban areas in the US state in which the band performing Scars was formed, where does the city having Pathology rank?",third-largest,third-largest
+4hop3__771862_466199_695123_72134,4,elaborate,content,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,formality,style,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,formality,style,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,formality,style,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,formality,style,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,0,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,paraphrase,style,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,shorten,content,0,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__771862_466199_695123_72134,4,shorten,content,0,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Jackson Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,0,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,elaborate,content,2,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,formality,style,2,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,paraphrase,style,1,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,paraphrase,style,2,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,shorten,content,0,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,shorten,content,0,2,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,shorten,content,0,3,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839
+4hop3__794915_466199_695123_72134,4,shorten,content,1,1,1.0,1.0,When did the town WIZE is licensed in become capitol of the state where Ward Township is located?,1839,1839

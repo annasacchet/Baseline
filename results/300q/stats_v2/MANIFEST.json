@@ -1,0 +1,23 @@
+{
+  "B": 10000,
+  "files": [
+    "s0_descriptive_by_hop_step.csv",
+    "s0_descriptive_by_instruction_step.csv",
+    "s0_descriptive_by_step.csv",
+    "s1_friedman_omnibus.csv",
+    "s1_wilcoxon_step_contrasts.csv",
+    "s2_icc_qid.csv",
+    "s2_mixed_models_coefficients.csv",
+    "s3_bootstrap_cis.csv",
+    "s4_mediation.csv",
+    "s5_km_table.csv",
+    "s5_logrank_instruction.csv",
+    "s5_recovery_episodes.csv",
+    "s5_survival_summary.csv",
+    "s6_tost_equivalence.csv",
+    "s7_recovery_sensitivity.csv",
+    "s8_irr_candidates.csv",
+    "s8_irr_status.csv",
+    "s9_rq_summary.csv"
+  ]
+}

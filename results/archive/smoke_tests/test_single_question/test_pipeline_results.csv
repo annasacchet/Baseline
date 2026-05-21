@@ -1,3 +1,0 @@
-dataset,qid,question,gold_answer,predicted_answer,answer_f1,n_facts,n_supported,factscore
-NewsQA,./cnn/stories/08b1319d7a00848a21f3f90f8e2ee5e35d0b83cb.story,What happened to the ice jam?,Explosives are set off in the Missouri River,Authorities set off explosives to break up the ice jam in the Missouri River south of Bismarck.,0.5454545454545455,6,6,0.6
-FictionalQA,event_080_style_blog_num_000,Who introduced the game 'Hunting Grounds'?,Max Vernon,Max Vernon,1.0,4,4,0.4

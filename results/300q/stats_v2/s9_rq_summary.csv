@@ -1,0 +1,7 @@
+RQ,headline,estimate,test,source
+RQ1: does the first rewriting step cause an F1 collapse?,Yes; the collapse is concentrated step 0->1.,"Delta_F1 = -0.147  [95% CI -0.190, -0.103]",Wilcoxon p_holm = 7.5e-08; rank-biserial = -0.431,s1_wilcoxon_step_contrasts + s3_bootstrap_cis
+RQ1b: are later steps statistically equivalent to no change?,Partially / no,"diff1->2=+0.0248, diff2->3=+0.0137",TOST(+/-0.02) p=0.852 / 0.050,s6_tost_equivalence
+RQ2: does fact-level quality decay progressively?,Yes; each step costs ~1pp OFS with very large effect size.,"Delta_OFS_1->3 = -0.0253  [95% CI -0.0289, -0.0218]",Wilcoxon 1->2 r_b=-0.623 (p=2.6e-20); 2->3 r_b=-0.556 (p=1.0e-16),s1 + s3
+RQ3: is length the causal mediator of the F1 collapse?,Yes; ~48% of the step effect on F1 is mediated by log(n_tokens).,"indirect=-0.0280 [-0.0388, -0.0169]; direct=-0.0300 [-0.0428, -0.0173]","prop_mediated=+0.482 [+0.309, +0.660]",s4_mediation
+RQ4: how stable is the apparent recovery?,Recovery is rare and transient: 40% lose the correct answer after 1 step.,"recovery_rate@F1>=0.9 = 11.2%  [8.2%, 14.5%]",KM median duration = 2 step; % still alive at step 3 = 39%,s3 + s5
+RQ4b: how sensitive is recovery to the F1 threshold?,Strongly: from ~22% at any-overlap to ~11% at F1>=0.9. Choice of threshold drives the conclusion.,"@thr>0: 21.9%  [17.7, 26.3]  ;  @thr>=0.9: 11.2%  [8.2, 14.6]",Cluster bootstrap on qid,s7_recovery_sensitivity

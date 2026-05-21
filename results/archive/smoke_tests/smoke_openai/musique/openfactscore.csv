@@ -1,6 +1,0 @@
-qid,group,instruction_type,run,step,n_facts_et,n_supported_et,n_not_supported_et,init_score,n_facts_e0,n_supported_e0_in_et,recall_score
-2hop__85713_72187,style,formality,0,1,301,127,174,0.422,306,171,0.559
-2hop__85713_72187,style,formality,0,2,298,131,167,0.44,306,188,0.614
-2hop__85713_72187,style,formality,0,3,296,126,170,0.426,306,187,0.611
-2hop__85713_72187,style,paraphrase,0,1,242,121,121,0.5,306,175,0.572
-2hop__85713_72187,style,paraphrase,0,2,239,107,132,0.448,306,172,0.562
