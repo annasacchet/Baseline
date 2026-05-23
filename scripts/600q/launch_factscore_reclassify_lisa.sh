@@ -1,5 +1,6 @@
 #!/bin/bash
-# Reclassify NOT_SUPPORTED facts from the 600q OFS run with Gemma-2-27B-it (4-bit).
+# Reclassify NOT_SUPPORTED facts from the 600q OFS run with Gemma-3-4B-it (4-bit).
+# Same AFV model used for the OFS precision + recall evaluation.
 # Default target: the single qid currently available with OFS+recall+F1 (2hop__14092_8311).
 #
 # Usage:
@@ -28,7 +29,7 @@ fi
 
 echo "=========================================="
 echo "600q — reclassify NOT_SUPPORTED facts"
-echo "  Model: google/gemma-2-27b-it (4-bit NF4)"
+echo "  Model: google/gemma-3-4b-it (4-bit NF4) — same AFV used for OFS+recall"
 echo "  QID:   2hop__14092_8311 (default)"
 echo "=========================================="
 

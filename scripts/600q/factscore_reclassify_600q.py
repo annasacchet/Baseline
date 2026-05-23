@@ -37,7 +37,7 @@ DEFAULT_DETAILS = REPO_ROOT / "results" / "600q" / "rewriting_chains_musique_600
 DEFAULT_CHAINS  = REPO_ROOT / "results" / "600q" / "rewriting_chains_musique_600q.csv"
 DEFAULT_QID     = "2hop__14092_8311"
 
-MODEL_ID = "google/gemma-2-27b-it"
+MODEL_ID = "google/gemma-3-4b-it"
 MAX_NEW_TOKENS = 256
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
