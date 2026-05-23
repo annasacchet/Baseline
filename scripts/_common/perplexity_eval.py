@@ -60,6 +60,11 @@ DATASETS = {
         "output": RESULTS_DIR / "newsqa" / "rewriting_chains_newsqa_100q_perplexity.csv",
         "smoke_qid": None,  # set to the first qid in the CSV at runtime
     },
+    "fictionalqa": {
+        "input": RESULTS_DIR / "fictionalqa" / "rewriting_chains_fictionalqa.csv",
+        "output": RESULTS_DIR / "fictionalqa" / "rewriting_chains_fictionalqa_perplexity.csv",
+        "smoke_qid": None,
+    },
 }
 
 
