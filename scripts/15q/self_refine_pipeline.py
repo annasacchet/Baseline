@@ -541,13 +541,15 @@ def main():
 
     n_done = 0
     n_to_do = total_chains - len(done)
+    # t_start is taken *after* load_model so the model-loading time (minutes)
+    # does not pollute the per-chain average used for the ETA.
     t_start = time.time()
 
     for qid in qids_to_run:
         question_text, E0 = e0_lookup[qid]
 
         for (group, instruction_type), pool in ALL_INSTRUCTIONS.items():
-            for run, instruction in enumerate(pool[: args.n_runs]):
+            for run, instruction in enumerate(pool[:n_runs_effective]):
                 key = (qid, group, instruction_type, run)
                 if key in done:
                     continue
@@ -589,11 +591,12 @@ def main():
                 append_rows(args.output, rows)
                 n_done += 1
 
-                avg = (time.time() - t_start) / max(n_done, 1)
+                avg = (time.time() - t_start) / n_done
                 remaining = (n_to_do - n_done) * avg
+                eta_str = f"ETA {remaining/60:.1f} min" if n_done >= 2 else "ETA --"
                 print(
                     f"[{n_done}/{n_to_do}] {qid} | {group}/{instruction_type}/run{run} "
-                    f"| {elapsed:.1f}s | ETA {remaining/60:.1f} min",
+                    f"| {elapsed:.1f}s | {eta_str}",
                     flush=True,
                 )
 

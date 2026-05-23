@@ -38,3 +38,9 @@ musique_ans_v1.0_dev.jsonl
 .env
 .env.*
 data/newsqa/*.csv
+
+# 600q intermediate metric CSVs (server-generated, do not commit)
+results/600q/rewriting_chains_musique_600q_bertscore.csv
+results/600q/rewriting_chains_musique_600q_bleurt.csv
+results/600q/rewriting_chains_musique_600q_openfactscore.csv
+results/600q/rewriting_chains_musique_600q_openfactscore_details.csv
