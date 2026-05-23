@@ -512,7 +512,107 @@ correttamente.
 - I due dataset non sono pienamente comparabili sul piano assoluto di OFS
   senza una correzione per questo bias di estrazione.
 
-### 7.4 Cosa dichiarare nelle "Limitazioni" della tesi
+### 7.4 Reclassify esterno con GPT-4o-mini — quantificare il bias dell'AFV
+
+> Esperimento aggiunto **2026-05-23** sulla qid pilota `2hop__14092_8311` (600q,
+> nuovo prompt). Tutti i 797 claim etichettati `NOT_SUPPORTED` dall'AFV Gemma
+> sono stati ri-classificati con `gpt-4o-mini` (temperature=0) su un prompt a
+> 5 categorie: **SUPPORTED, CONTRADICTION, DISTORTED, INVENTED, UNVERIFIABLE**.
+> Output: [`results/600q/rewriting_chains_musique_600q_reclassified_openai.csv`](../results/600q/rewriting_chains_musique_600q_reclassified_openai.csv);
+> statistica completa in [`results/600q/stats_reclassify_openai/README.md`](../results/600q/stats_reclassify_openai/README.md).
+
+L'obiettivo non è "OpenAI come gold standard" ma **separare il segnale dal
+rumore**: il "0.2 di OFS che manca" è davvero hallucination del rewrite, o
+in parte rumore dell'AFV?
+
+**Distribuzione del judge esterno su 797 NOT_SUPPORTED:**
+
+| Categoria | n | % |
+|---|---|---|
+| **SUPPORTED** (AFV ha sbagliato) | 296 | **37.1%** |
+| DISTORTED | 208 | 26.1% |
+| CONTRADICTION | 130 | 16.3% |
+| UNVERIFIABLE | 91 | 11.4% |
+| INVENTED | 72 | 9.0% |
+
+**Risultato 1 — OFS sottostimato di ~9 pp su questa qid.** Bootstrap 95% CI
+(B=10 000) sul tasso di falsi positivi dell'AFV: **37.1% [33.8%, 40.5%]**.
+Tradotto in OFS calibrato sui 3 286 claim totali della qid:
+
+- OFS raw (AFV Gemma) = **0.757**
+- OFS calibrato (rimuovendo i SUPPORTED) = **0.848** [0.839, 0.856]
+- **Δ = +9.0 pp** di underestimation sistematica
+
+Coerente in ordine di grandezza con la Tab. 2 del paper OFS (cumulative ER
+di Gemma = 12.2 pp).
+
+**Risultato 2 — il bias dell'AFV non è uniforme tra istruzioni** (χ² = 31.2,
+dof = 3, **p = 7.8×10⁻⁷**).
+
+| Istruzione | P(falso positivo AFV) |
+|---|---|
+| **paraphrase** | **52.2%** |
+| shorten | 39.1% |
+| elaborate | 29.9% |
+| formality | 28.7% |
+
+L'AFV Gemma fallisce **più della metà** delle volte sulle parafrasi
+(cambi lessicali con senso preservato). Conseguenza: i confronti OFS
+*tra istruzioni* nei report 300q sono **distorti contro le istruzioni
+di stile** (paraphrase, formality), che subiscono più falsi negativi
+dell'AFV. La gerarchia *qualitativa* tra istruzioni resta, ma i numeri
+assoluti vanno letti con questa cautela.
+
+**Risultato 3 — la struttura degli errori cambia con gli step**
+(χ² = 32.5, dof = 8, **p = 7.6×10⁻⁵**). In particolare, le hallucination
+vere (INVENTED) crescono monotonicamente:
+
+| step | n totale | INVENTED | P(INVENTED) |
+|---|---|---|---|
+| 1 | 308 | 19 | 6.2% |
+| 2 | 255 | 16 | 6.3% |
+| 3 | 234 | 37 | **15.8%** |
+
+Cochran-Armitage trend test: **z = 3.72, p = 0.0002**. Il rewriting
+iterativo *non* accumula errori in modo uniforme: a step 3 il modello
+inizia attivamente a inventare. Interpretazione coerente con il narrativo
+delle 300q ("erosione fattuale progressiva") ma più precisa: l'erosione è
+guidata da INVENTED, non da DISTORTED (che resta stabile).
+
+**Risultato 4 — `elaborate` allucina ~3× più delle altre istruzioni**
+(Fisher exact, **p = 1.8×10⁻⁵**, odds ratio = 2.98).
+
+- P(INVENTED | elaborate) = 15.5% (41/264)
+- P(INVENTED | non-elaborate) = 5.8% (31/533)
+
+Questo va letto insieme al risultato del 300q ("elaborate non elabora,
+comprime"). Quando *non* comprime, `elaborate` **inventa**: è la patologia
+prevedibile di un'istruzione che invita il modello ad aggiungere
+informazione su una fonte limitata.
+
+> **Caveat metodologico.** Questi quattro risultati hanno il **claim** come
+> unità di analisi su **una sola qid** (797 claim NOT_SUPPORTED). I p-value
+> sono validi descrittivamente sulla qid, ma **non sono confermativi** a
+> livello di popolazione MuSiQue: tutti i claim provengono dallo stesso
+> paragrafo originale. La replica su più qid (in corso col completamento
+> del 600q) è necessaria per generalizzare. Il confronto judge-to-judge
+> con il reclassify Gemma (5 categorie, stesso prompt) è pianificato non
+> appena il run su Lisa termina.
+
+**Implicazione pratica per la tesi.** Quando riportiamo OFS:
+
+1. Dichiarare apertamente il bias di **~9 pp di sottostima** dell'AFV Gemma
+   come limite documentato (sia dal paper, sia dal nostro test diretto).
+2. Tenere il bias **costante tra step e tra istruzioni quando possibile**:
+   la nostra evidenza dice che *non* è uniforme (è peggio su paraphrase),
+   quindi i confronti tra istruzioni sull'OFS *raw* sono inaffidabili.
+3. Trends step-by-step *sono* robusti al bias (il bias è ~costante per
+   qid×istruzione tra step diversi).
+4. Per le slides: riportare OFS calibrato accanto a OFS raw, con CI
+   bootstrap. La cifra "OFS = 0.85 (calibrato) vs 0.76 (raw)" è
+   intelligibile e onesta.
+
+### 7.5 Cosa dichiarare nelle "Limitazioni" della tesi
 
 Riassumendo: cosa NON è una limitazione (è il metodo che funziona così) e
 cosa lo è davvero.
@@ -580,6 +680,8 @@ results/
 ├── newsqa/
 │   └── ANALISI_NEWSQA_100q.md                ← replica strutturale
 ├── 600q/                                     ← run in corso (11/600)
+│   ├── rewriting_chains_musique_600q_reclassified_openai.csv  ← reclassify GPT (§7.4)
+│   └── stats_reclassify_openai/README.md     ← tests χ²/Fisher/bootstrap su reclassify (§7.4)
 ├── plots/300q/bleurt_answerf1_analysis.md    ← diagnostica falsi negativi
 └── plots/anaphoric_claims_newsqa_vs_300q.png ← qualità claim OFS (§7)
 slides/
@@ -587,3 +689,37 @@ slides/
 ├── exploratory_and_next_steps.md             ← elaborate + quantization (9 maggio)
 └── experiment_may.md                         ← questo file
 ```
+
+---
+
+## 10. Riepilogo finale — dove siamo arrivati a fine maggio
+
+A fine maggio il progetto è in una condizione **strutturalmente più solida**
+rispetto a inizio mese. I cinque fenomeni del 300q (crollo F1 al primo step,
+erosione fattuale, drift+attrattore, mediazione via lunghezza, recovery come
+artefatto della soglia) sono **statisticamente blindati** con CI bootstrap,
+mediazione causale e TOST equivalence. La replica strutturale su NewsQA 100q
+conferma che il fenomeno non dipende dalla complessità multi-hop di MuSiQue:
+Δ F1 step 0→3 = −0.186 su NewsQA contro −0.185 su MuSiQue, praticamente
+identici nonostante i task siano molto diversi. Il bug nel prompt di
+rewriting (fusione cross-paragrafo, short-circuit su elaborate) è stato
+individuato e corretto; il pilota 600q con il nuovo prompt mostra testi 3–4×
+più lunghi, OFS più alto (0.85 vs 0.78), drift fattuale ridotto al ~60% del
+vecchio prompt. **BLEURT** è entrato come metrica di routine: replica
+BERTScore con segnale 3× più forte ed è cruciale come diagnostica dei falsi
+negativi di Answer F1 (i 27 casi certi a BLEURT≥0.7 pesano +0.003 sul F1
+medio, non spostano le conclusioni). Il limite più rilevante emerso a maggio
+è il **rumore dell'AFV Gemma-3-4B nell'OFS**: il reclassify esterno con
+GPT-4o-mini sulla qid pilota del 600q ha quantificato un **bias di ~9 pp di
+sottostima** (37% dei NOT_SUPPORTED sono in realtà supportati), non uniforme
+tra istruzioni (peggio su paraphrase: 52%), con un effetto step-dipendente
+che mostra come a step 3 il modello inizi *attivamente* a inventare
+(INVENTED 6%→16%, Cochran-Armitage z=3.72, p=2×10⁻⁴) e come `elaborate`
+allucini 3× le altre istruzioni (Fisher OR=2.98, p=2×10⁻⁵). I trend
+step-by-step e instruction-by-instruction restano validi nel quadro
+*relativo*, ma i numeri assoluti di OFS andranno **dichiarati con la
+calibrazione** in tesi. Il piano di giugno è chiudere il 600q completo
+(Answer F1 + OFS su tutte le qid), confermare il reclassify con il judge
+Gemma da Lisa (agreement κ con OpenAI), ed estendere il quadro a FictionalQA
+per chiudere il leak di parametric memory.
+

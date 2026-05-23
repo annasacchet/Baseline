@@ -27,7 +27,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DETAILS = REPO_ROOT / "results" / "300q" / "rewriting_chains_300q_openfactscore_details.csv"
 DEFAULT_CHAINS  = REPO_ROOT / "results" / "300q" / "rewriting_chains_300q.csv"
 
-MODEL_ID = "google/gemma-2-27b-it"
+MODEL_ID = "google/gemma-3-4b-it"
 MAX_NEW_TOKENS = 256
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
@@ -52,23 +52,32 @@ ATOMIC CLAIM:
 TASK
 ────────────────────────────────────────
 
-This claim has already been judged as NOT supported by the ground truth.
-Your job is to classify WHY it is not supported, into EXACTLY ONE label:
+This claim was previously judged as NOT supported by a smaller verifier model,
+but that verifier is known to make mistakes. Your job is to issue an
+independent verdict.
 
-1. CONTRADICTION
+Classify the claim into EXACTLY ONE of the following labels:
+
+1. SUPPORTED
+The claim is in fact supported by the ground truth — either stated explicitly
+or derivable via a single trivial inference (e.g. "X is the daughter of Y;
+Y is the daughter of Z" → "X is the granddaughter of Z"). Use this label when
+the previous verifier was wrong.
+
+2. CONTRADICTION
 The claim directly contradicts the ground truth. Both cannot be true simultaneously.
 
-2. INVENTED
+3. INVENTED
 The claim introduces information not present in the ground truth and cannot be mapped to any fact in it.
 
-3. DISTORTED
+4. DISTORTED
 The claim is partially related to the ground truth but modifies meaning, such as:
 - wrong entity
 - wrong number/date
 - changed relationship
 - altered factual meaning
 
-4. UNVERIFIABLE
+5. UNVERIFIABLE
 The claim cannot be verified or rejected using only the ground truth.
 
 ────────────────────────────────────────
@@ -77,13 +86,16 @@ DECISION RULES (VERY IMPORTANT)
 
 Follow these priority rules strictly:
 
-1. If the claim conflicts with ground truth → CONTRADICTION (highest priority over INVENTED)
+1. If the claim is in fact supported (or a trivial inference of) the ground
+   truth → SUPPORTED.
 
-2. If the claim partially overlaps but changes details → DISTORTED (preferred over INVENTED)
+2. If the claim conflicts with ground truth → CONTRADICTION (highest priority over INVENTED)
 
-3. If the claim has no overlap with ground truth → INVENTED
+3. If the claim partially overlaps but changes details → DISTORTED (preferred over INVENTED)
 
-4. If ground truth does not contain enough information to decide → UNVERIFIABLE
+4. If the claim has no overlap with ground truth → INVENTED
+
+5. If ground truth does not contain enough information to decide → UNVERIFIABLE
 
 ────────────────────────────────────────
 DEFINITION OF ATOMICITY
@@ -100,7 +112,7 @@ OUTPUT FORMAT (STRICT JSON)
 Return ONLY a valid JSON object:
 
 {{
-  "label": "CONTRADICTION | INVENTED | DISTORTED | UNVERIFIABLE",
+  "label": "SUPPORTED | CONTRADICTION | INVENTED | DISTORTED | UNVERIFIABLE",
   "reason": "short explanation grounded in the text",
   "evidence_match": "brief mention of relevant part of ground truth or 'none'"
 }}
@@ -113,10 +125,11 @@ STRICT CONSTRAINTS
 - Do NOT guess missing facts.
 - Be conservative: prefer DISTORTED over INVENTED when overlap exists.
 - Prefer CONTRADICTION over INVENTED when conflict exists.
+- Prefer SUPPORTED when the claim is genuinely entailed.
 - Keep reasoning short and evidence-based.\
 """
 
-VALID_LABELS = {"CONTRADICTION", "INVENTED", "DISTORTED", "UNVERIFIABLE"}
+VALID_LABELS = {"SUPPORTED", "CONTRADICTION", "INVENTED", "DISTORTED", "UNVERIFIABLE"}
 
 
 def parse_response(text):
@@ -146,7 +159,7 @@ def parse_response(text):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Reclassify NOT_SUPPORTED facts with Gemma-2-27B.")
+    parser = argparse.ArgumentParser(description="Reclassify NOT_SUPPORTED facts (300q) with Gemma-3-4B (5-cat).")
     parser.add_argument("--details", type=Path, default=DEFAULT_DETAILS)
     parser.add_argument("--chains",  type=Path, default=DEFAULT_CHAINS)
     parser.add_argument("--model",   default=MODEL_ID)
