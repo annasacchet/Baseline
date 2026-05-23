@@ -1,43 +1,46 @@
 """
-Fine-grained reclassification of NOT_SUPPORTED facts for the 600q run.
+Reclassify NOT_SUPPORTED facts using an OpenAI model as judge.
 
-Adapted from scripts/300q/factscore_reclassify_300q.py.
+Counterpart to factscore_reclassify_300q.py (which uses Gemma-2-27B locally).
+The point of this script is to *cross-check* the Gemma judge with an external
+model on the same claims — so we can separate:
 
-Inputs (per --qid, repeatable; defaults to the single qid already OFS-evaluated):
-  - results/600q/rewriting_chains_musique_600q_openfactscore_details.csv
-  - results/600q/rewriting_chains_musique_600q.csv (for E_0 source text)
+  - genuine rewriting errors,
+  - false positives of the AFV (Gemma-3-4B) that mislabelled supported claims,
+  - errors of the local judge itself.
 
-Every fact labelled NOT_SUPPORTED is reclassified into one of:
-  CONTRADICTION | INVENTED | DISTORTED | UNVERIFIABLE
+Key differences vs the Gemma reclassify script:
 
-Output:
-  results/600q/rewriting_chains_musique_600q_reclassified.csv
-    qid, group, instruction_type, run, step, fact, original_label, label, reason, evidence_match
+  - Uses OpenAIChat (scripts/smoke_openai/openai_chat.py) — needs OPENAI_API_KEY.
+  - Adds a 5th SUPPORTED category: lets the OpenAI judge reroute claims that
+    the AFV originally mis-labelled as NOT_SUPPORTED but are actually fine.
+  - Defaults to gpt-4o-mini (cheap, deterministic at temperature=0).
+  - Single-qid friendly: pass --qid; otherwise restrict with --limit.
 
-Notes
------
-- The script is resumable: it appends row-by-row, and on restart skips facts
-  already present in the output CSV.
-- Use --use-4bit on Lisa to fit in VRAM. Remember to point HF caches at the
-  NAS (HF_HOME, HF_HUB_CACHE, TRANSFORMERS_CACHE) before launching.
+Output: <details>.with_suffix replaced → _reclassified_openai.csv
+Columns: qid, group, instruction_type, run, step, fact, original_label,
+         label, reason, evidence_match
 """
+
+from __future__ import annotations
 
 import argparse
 import json
 import re
+import sys
 import time
 from pathlib import Path
 
 import pandas as pd
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DETAILS = REPO_ROOT / "results" / "600q" / "rewriting_chains_musique_600q_openfactscore_details.csv"
-DEFAULT_CHAINS  = REPO_ROOT / "results" / "600q" / "rewriting_chains_musique_600q.csv"
-DEFAULT_QID     = "2hop__14092_8311"
+sys.path.insert(0, str(REPO_ROOT / "scripts" / "smoke_openai"))
+from openai_chat import OpenAIChat  # noqa: E402
 
-MODEL_ID = "google/gemma-3-4b-it"
+DEFAULT_DETAILS = REPO_ROOT / "results" / "300q" / "rewriting_chains_300q_openfactscore_details.csv"
+DEFAULT_CHAINS  = REPO_ROOT / "results" / "300q" / "rewriting_chains_300q.csv"
+
+DEFAULT_MODEL = "gpt-4o-mini"
 MAX_NEW_TOKENS = 256
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
@@ -75,17 +78,17 @@ Y is the daughter of Z" → "X is the granddaughter of Z"). Use this label when
 the previous verifier was wrong.
 
 2. CONTRADICTION
-The claim directly contradicts the ground truth. Both cannot be true simultaneously.
+The claim directly contradicts the ground truth. Both cannot be true
+simultaneously.
 
 3. INVENTED
-The claim introduces information not present in the ground truth and cannot be mapped to any fact in it.
+The claim introduces information not present in the ground truth and cannot
+be mapped to any fact in it.
 
 4. DISTORTED
-The claim is partially related to the ground truth but modifies meaning, such as:
-- wrong entity
-- wrong number/date
-- changed relationship
-- altered factual meaning
+The claim is partially related to the ground truth but modifies meaning, such
+as: wrong entity, wrong number/date, changed relationship, altered factual
+meaning.
 
 5. UNVERIFIABLE
 The claim cannot be verified or rejected using only the ground truth.
@@ -94,26 +97,21 @@ The claim cannot be verified or rejected using only the ground truth.
 DECISION RULES (VERY IMPORTANT)
 ────────────────────────────────────────
 
-Follow these priority rules strictly:
+Priority order:
 
 1. If the claim is in fact supported (or a trivial inference of) the ground
    truth → SUPPORTED.
 
-2. If the claim conflicts with ground truth → CONTRADICTION (highest priority over INVENTED)
+2. If the claim conflicts with ground truth → CONTRADICTION (highest priority
+   over INVENTED).
 
-3. If the claim partially overlaps but changes details → DISTORTED (preferred over INVENTED)
+3. If the claim partially overlaps but changes details → DISTORTED (preferred
+   over INVENTED).
 
-4. If the claim has no overlap with ground truth → INVENTED
+4. If the claim has no overlap with ground truth → INVENTED.
 
-5. If ground truth does not contain enough information to decide → UNVERIFIABLE
-
-────────────────────────────────────────
-DEFINITION OF ATOMICITY
-────────────────────────────────────────
-
-- Each claim should represent a single fact.
-- Do not split or merge claims.
-- Evaluate only the given claim as-is.
+5. If ground truth does not contain enough information to decide →
+   UNVERIFIABLE.
 
 ────────────────────────────────────────
 OUTPUT FORMAT (STRICT JSON)
@@ -142,8 +140,7 @@ STRICT CONSTRAINTS
 VALID_LABELS = {"SUPPORTED", "CONTRADICTION", "INVENTED", "DISTORTED", "UNVERIFIABLE"}
 
 
-def parse_response(text):
-    """Extract JSON from model output; return dict or None."""
+def parse_response(text: str):
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         return None
@@ -151,7 +148,7 @@ def parse_response(text):
         obj = json.loads(match.group())
     except json.JSONDecodeError:
         return None
-    label = obj.get("label", "").strip().upper()
+    label = str(obj.get("label", "")).strip().upper()
     if label not in VALID_LABELS:
         for v in VALID_LABELS:
             if v in label:
@@ -167,31 +164,27 @@ def parse_response(text):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Reclassify NOT_SUPPORTED facts (600q) with Gemma-2-27B.")
+    parser = argparse.ArgumentParser(description="Reclassify NOT_SUPPORTED facts with an OpenAI judge.")
     parser.add_argument("--details", type=Path, default=DEFAULT_DETAILS)
     parser.add_argument("--chains",  type=Path, default=DEFAULT_CHAINS)
-    parser.add_argument("--model",   default=MODEL_ID)
-    parser.add_argument("--use-4bit", action="store_true")
-    parser.add_argument("--limit",   type=int, default=None, help="Smoke-test: only process first N facts.")
+    parser.add_argument("--model",   default=DEFAULT_MODEL)
+    parser.add_argument("--limit",   type=int, default=None, help="Only process first N facts.")
     parser.add_argument("--qid",     action="append", default=None,
-                        help=f"Restrict to a qid (repeatable). Default: --qid {DEFAULT_QID}")
+                        help="Restrict to qid (repeatable).")
     parser.add_argument("--out",     type=Path, default=None,
-                        help="Output CSV. Default: <details>_reclassified.csv")
+                        help="Output CSV. Default: <details>_reclassified_openai.csv")
     args = parser.parse_args()
-
-    qids = args.qid or [DEFAULT_QID]
 
     for p in (args.details, args.chains):
         if not p.exists():
             raise FileNotFoundError(f"Not found: {p}")
 
     print("=" * 70)
-    print("Fine-grained reclassification — NOT_SUPPORTED facts (600q)")
-    print(f"  Model: {args.model}  4-bit={args.use_4bit}")
-    print(f"  QIDs:  {qids}")
+    print("Fine-grained reclassification — NOT_SUPPORTED facts (OpenAI judge)")
+    print(f"  Model: {args.model}")
+    print(f"  QIDs:  {args.qid or 'ALL'}")
     print("=" * 70)
 
-    # E_0 source texts
     chains = pd.read_csv(args.chains, low_memory=False)
     e0_texts = (
         chains[chains["step"] == 0][["qid", "text"]]
@@ -201,17 +194,18 @@ def main():
     )
     print(f"Loaded {len(e0_texts)} E_0 source texts")
 
-    # NOT_SUPPORTED facts for selected qids
     details = pd.read_csv(args.details, low_memory=False)
-    to_classify = details[(details["label"] == "NOT_SUPPORTED") & (details["qid"].isin(qids))].copy()
+    to_classify = details[details["label"] == "NOT_SUPPORTED"].copy()
+    if args.qid:
+        to_classify = to_classify[to_classify["qid"].isin(args.qid)]
     to_classify = to_classify.reset_index(drop=True)
     if args.limit:
         to_classify = to_classify.head(args.limit)
-        print(f"*** SMOKE TEST: first {args.limit} facts ***")
+        print(f"*** SMOKE: first {args.limit} facts ***")
     print(f"Facts to reclassify: {len(to_classify)}")
 
     out_path = args.out or args.details.with_name(
-        args.details.stem.replace("_openfactscore_details", "") + "_reclassified.csv"
+        args.details.stem.replace("_openfactscore_details", "") + "_reclassified_openai.csv"
     )
     print(f"Output: {out_path}")
 
@@ -225,27 +219,11 @@ def main():
         }
         print(f"Resume: {len(done_keys)} facts already classified.")
 
-    # Load model
-    print(f"\nLoading {args.model} ...")
-    t0 = time.time()
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
-    load_kwargs = {"device_map": "auto"}
-    if args.use_4bit:
-        load_kwargs["quantization_config"] = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_quant_type="nf4",
-        )
-    else:
-        load_kwargs["torch_dtype"] = torch.bfloat16
-    model = AutoModelForCausalLM.from_pretrained(args.model, **load_kwargs)
-    model.eval()
-    print(f"Model loaded in {time.time()-t0:.1f}s\n")
+    judge = OpenAIChat(model=args.model, role_label="reclassify-judge", temperature=0.0)
 
-    total = len(to_classify)
     t_start = time.time()
     n_done = 0
+    total = len(to_classify)
 
     for _, row in to_classify.iterrows():
         key = (row["qid"], row["group"], row["instruction_type"], row["run"], row["step"], row["fact"])
@@ -255,25 +233,13 @@ def main():
         e0 = e0_texts.get(row["qid"], "")
         prompt = PROMPT_TEMPLATE.format(ground_truth=e0, atomic_claim=row["fact"])
 
-        messages = [{"role": "user", "content": prompt}]
-        text_in = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = tokenizer(text_in, return_tensors="pt").to(model.device)
-
         t_row = time.time()
-        with torch.no_grad():
-            out = model.generate(
-                **inputs,
-                max_new_tokens=MAX_NEW_TOKENS,
-                do_sample=False,
-                pad_token_id=tokenizer.eos_token_id,
-            )
-        new_tokens = out[0, inputs["input_ids"].shape[1]:]
-        generated = tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+        generated = judge.complete(prompt, max_tokens=MAX_NEW_TOKENS)
         elapsed = time.time() - t_row
 
         parsed = parse_response(generated)
         if parsed is None:
-            label, reason, evidence_match = "PARSE_ERROR", generated[:120], ""
+            label, reason, evidence_match = "PARSE_ERROR", generated[:200], ""
         else:
             label, reason, evidence_match = parsed["label"], parsed["reason"], parsed["evidence_match"]
 
@@ -289,14 +255,10 @@ def main():
         result_row.to_csv(out_path, mode="a", header=not out_path.exists(), index=False, encoding="utf-8")
 
         n_done += 1
-        print(f"[{n_done}/{total}] {row['qid']} step{int(row['step'])} → {label}  [{elapsed:.1f}s]", flush=True)
-
-        if n_done % 50 == 0:
-            avg = (time.time() - t_start) / n_done
-            print(f"   ETA: {(total - n_done) * avg / 3600:.1f}h  (avg {avg:.1f}s/fact)", flush=True)
+        print(f"[{n_done}/{total}] {row['qid']} step{int(row['step'])} {row['instruction_type'][:5]} → {label}  [{elapsed:.1f}s]", flush=True)
 
     elapsed_total = time.time() - t_start
-    print(f"\nDone. {n_done} facts in {elapsed_total/3600:.1f}h")
+    print(f"\nDone. {n_done} facts in {elapsed_total/60:.1f} min")
     print(f"Saved: {out_path}")
 
     print("\n" + "=" * 70)
@@ -304,11 +266,9 @@ def main():
     print("=" * 70)
     out = pd.read_csv(out_path)
     print(out["label"].value_counts())
-    print()
-    print("By step:")
+    print("\nBy step:")
     print(out.groupby("step")["label"].value_counts().unstack(fill_value=0))
-    print()
-    print("By instruction:")
+    print("\nBy instruction:")
     print(out.groupby("instruction_type")["label"].value_counts().unstack(fill_value=0))
 
 
