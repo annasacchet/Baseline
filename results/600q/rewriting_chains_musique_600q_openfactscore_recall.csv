@@ -1,0 +1,37 @@
+qid,group,instruction_type,run,step,instruction_used,n_e0_facts,n_recalled,n_not_recalled,recall_init,recall
+2hop__14092_8311,content,elaborate,0,1,"Elaborate on the content, adding relevant details while staying faithful to the source text.",217,144,73,0.663594470046083,0.663594470046083
+2hop__14092_8311,content,elaborate,0,2,"Elaborate on the content, adding relevant details while staying faithful to the source text.",217,123,94,0.5668202764976958,0.5668202764976958
+2hop__14092_8311,content,elaborate,0,3,"Elaborate on the content, adding relevant details while staying faithful to the source text.",217,48,169,0.22119815668202766,0.22119815668202766
+2hop__14092_8311,content,elaborate,1,1,"Expand the text with more context, without introducing information that is not supported by the original.",217,116,101,0.5345622119815668,0.5345622119815668
+2hop__14092_8311,content,elaborate,1,2,"Expand the text with more context, without introducing information that is not supported by the original.",217,65,152,0.2995391705069124,0.2995391705069124
+2hop__14092_8311,content,elaborate,1,3,"Expand the text with more context, without introducing information that is not supported by the original.",217,65,152,0.2995391705069124,0.2995391705069124
+2hop__14092_8311,content,elaborate,2,1,"Add more detail, keeping every fact grounded in the source material.",217,122,95,0.5622119815668203,0.5622119815668203
+2hop__14092_8311,content,elaborate,2,2,"Add more detail, keeping every fact grounded in the source material.",217,98,119,0.45161290322580644,0.45161290322580644
+2hop__14092_8311,content,elaborate,2,3,"Add more detail, keeping every fact grounded in the source material.",217,95,122,0.4377880184331797,0.4377880184331797
+2hop__14092_8311,content,shorten,0,1,Make wording more concise.,217,83,134,0.3824884792626728,0.3824884792626728
+2hop__14092_8311,content,shorten,0,2,Make wording more concise.,217,84,133,0.3870967741935484,0.3870967741935484
+2hop__14092_8311,content,shorten,0,3,Make wording more concise.,217,60,157,0.2764976958525346,0.2764976958525346
+2hop__14092_8311,content,shorten,1,1,Rephrase for clarity and conciseness.,217,59,158,0.271889400921659,0.271889400921659
+2hop__14092_8311,content,shorten,1,2,Rephrase for clarity and conciseness.,217,54,163,0.2488479262672811,0.2488479262672811
+2hop__14092_8311,content,shorten,1,3,Rephrase for clarity and conciseness.,217,50,167,0.2304147465437788,0.2304147465437788
+2hop__14092_8311,content,shorten,2,1,"Improve accuracy, clarity, and conciseness of language.",217,136,81,0.6267281105990783,0.6267281105990783
+2hop__14092_8311,content,shorten,2,2,"Improve accuracy, clarity, and conciseness of language.",217,70,147,0.3225806451612903,0.3225806451612903
+2hop__14092_8311,content,shorten,2,3,"Improve accuracy, clarity, and conciseness of language.",217,65,152,0.2995391705069124,0.2995391705069124
+2hop__14092_8311,style,formality,0,1,Make the text more formal.,217,150,67,0.6912442396313364,0.6912442396313364
+2hop__14092_8311,style,formality,0,2,Make the text more formal.,217,127,90,0.5852534562211982,0.5852534562211982
+2hop__14092_8311,style,formality,0,3,Make the text more formal.,217,78,139,0.35944700460829493,0.35944700460829493
+2hop__14092_8311,style,formality,1,1,Rephrase it to be more formal.,217,138,79,0.6359447004608295,0.6359447004608295
+2hop__14092_8311,style,formality,1,2,Rephrase it to be more formal.,217,59,158,0.271889400921659,0.271889400921659
+2hop__14092_8311,style,formality,1,3,Rephrase it to be more formal.,217,38,179,0.17511520737327188,0.17511520737327188
+2hop__14092_8311,style,formality,2,1,"Too conversational, rephrase it to be more formal.",217,131,86,0.6036866359447005,0.6036866359447005
+2hop__14092_8311,style,formality,2,2,"Too conversational, rephrase it to be more formal.",217,112,105,0.5161290322580645,0.5161290322580645
+2hop__14092_8311,style,formality,2,3,"Too conversational, rephrase it to be more formal.",217,33,184,0.15207373271889402,0.15207373271889402
+2hop__14092_8311,style,paraphrase,0,1,Paraphrase this.,217,116,101,0.5345622119815668,0.5345622119815668
+2hop__14092_8311,style,paraphrase,0,2,Paraphrase this.,217,55,162,0.2534562211981567,0.2534562211981567
+2hop__14092_8311,style,paraphrase,0,3,Paraphrase this.,217,34,183,0.15668202764976957,0.15668202764976957
+2hop__14092_8311,style,paraphrase,1,1,Reword this text.,217,113,104,0.5207373271889401,0.5207373271889401
+2hop__14092_8311,style,paraphrase,1,2,Reword this text.,217,101,116,0.46543778801843316,0.46543778801843316
+2hop__14092_8311,style,paraphrase,1,3,Reword this text.,217,79,138,0.3640552995391705,0.3640552995391705
+2hop__14092_8311,style,paraphrase,2,1,Use different wording.,217,118,99,0.543778801843318,0.543778801843318
+2hop__14092_8311,style,paraphrase,2,2,Use different wording.,217,130,87,0.5990783410138248,0.5990783410138248
+2hop__14092_8311,style,paraphrase,2,3,Use different wording.,217,117,100,0.5391705069124424,0.5391705069124424
