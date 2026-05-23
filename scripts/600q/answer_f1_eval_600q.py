@@ -33,7 +33,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "600q" / "rewriting_chains_musique_600q.csv"
 DEFAULT_MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
 
-QA_MODEL_ID = "allenai/OLMo-2-1124-32B-Instruct"
+QA_MODEL_ID = "allenai/OLMo-3.1-32B-Instruct"
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
 
 
