@@ -78,9 +78,9 @@ zeros = df[df["answer_f1"] == 0]["bleurt_answer"].dropna()
 
 fig, ax = plt.subplots(figsize=(8, 4.5))
 ax.hist(zeros, bins=60, color="#d62728", alpha=0.75, edgecolor="white", lw=0.3)
-ax.axvline(0.1, color="#333", lw=1.5, ls=":", label="0.1 — errore certo (<)")
-ax.axvline(0.3, color="#333", lw=1.5, ls="--", label="0.3 — soglia falsi negativi (mid)")
-ax.axvline(0.5, color="#333", lw=1.5, ls="-",  label="0.5 — soglia falsi negativi (high)")
+ax.axvline(0.1, color="#333", lw=1.5, ls=":", label="0.1 — certain error (<)")
+ax.axvline(0.3, color="#333", lw=1.5, ls="--", label="0.3 — false-negative threshold (mid)")
+ax.axvline(0.5, color="#333", lw=1.5, ls="-",  label="0.5 — false-negative threshold (high)")
 
 # zone colorate
 ax.axvspan(ax.get_xlim()[0] if ax.get_xlim()[0] > -0.1 else -0.05,
@@ -93,15 +93,15 @@ n_mid      = zeros.between(0.3, 0.5).sum()
 n_high     = (zeros >= 0.5).sum()
 
 ax.text(0.05,  ax.get_ylim()[1]*0.85 if ax.get_ylim()[1] > 0 else 100,
-        f"errore certo\n{n_certain:,}", ha="center", fontsize=8, color="#333")
+        f"certain error\n{n_certain:,}", ha="center", fontsize=8, color="#333")
 ax.text(0.40,  ax.get_ylim()[1]*0.5  if ax.get_ylim()[1] > 0 else 60,
         f"mid\n{n_mid:,}", ha="center", fontsize=8, color="darkorange")
 ax.text(0.65,  ax.get_ylim()[1]*0.5  if ax.get_ylim()[1] > 0 else 60,
         f"high\n{n_high:,}", ha="center", fontsize=8, color="darkgreen")
 
 ax.set_xlabel("BLEURT (gold vs predicted)")
-ax.set_ylabel("Conteggio")
-ax.set_title(f"Distribuzione BLEURT dove Answer F1 = 0 — 300q  (n={len(zeros):,})")
+ax.set_ylabel("Count")
+ax.set_title(f"BLEURT distribution where Answer F1 = 0 — 300q  (n={len(zeros):,})")
 ax.legend(fontsize=8, frameon=False)
 ax.set_xlim(-0.05, 1.1)
 fig.tight_layout()

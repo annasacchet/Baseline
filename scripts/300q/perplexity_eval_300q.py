@@ -214,16 +214,19 @@ def main() -> None:
     print(pivot.round(2))
 
     if args.save_stats:
-        stats_dir = RESULTS_DIR / "stats"
+        # Derive stats dir + filename prefix from --output, so the same script
+        # produces non-clashing stats CSVs for 300q, newsqa, etc.
+        stats_dir = args.output.parent / "stats"
         stats_dir.mkdir(parents=True, exist_ok=True)
-        pivot.round(4).to_csv(stats_dir / "perplexity_by_instruction_step.csv")
+        prefix = args.output.stem  # e.g. "rewriting_chains_newsqa_100q_perplexity"
+        pivot.round(4).to_csv(stats_dir / f"{prefix}_by_instruction_step.csv")
         results_df.groupby(["step"])["perplexity"].agg(["mean","std","count"]).round(4).to_csv(
-            stats_dir / "perplexity_by_step.csv"
+            stats_dir / f"{prefix}_by_step.csv"
         )
         results_df.groupby(["instruction_type"])["perplexity"].agg(["mean","std","count"]).round(4).to_csv(
-            stats_dir / "perplexity_by_instruction.csv"
+            stats_dir / f"{prefix}_by_instruction.csv"
         )
-        print(f"[saved] {stats_dir}/perplexity_*.csv")
+        print(f"[saved] {stats_dir}/{prefix}_*.csv")
 
 
 if __name__ == "__main__":

@@ -412,6 +412,155 @@ Dettagli completi in [`results/plots/300q/bleurt_answerf1_analysis.md`](../resul
 
 ---
 
+## 6bis. Perplexity 300q — la fluency non è la fattualità
+
+### 6bis.1 Cos'è la perplexity e perché l'abbiamo aggiunta
+
+La perplexity è un numero che dice quanto un testo "suona naturale" a un
+LLM. Si calcola facendogli leggere il testo parola per parola e
+chiedendogli, ad ogni parola, "quanto te lo aspettavi?". Se le parole
+sono comuni e ben combinate il modello non si sorprende → perplexity
+bassa. Se il testo ha costruzioni rare o sgrammaticate il modello si
+sorprende → perplexity alta.
+
+In pratica:
+- **perplexity bassa = testo fluido**, scritto bene, "scorre".
+- **perplexity alta = testo strano**, costruzioni innaturali, magari
+  ripetitivo o sgrammaticato.
+
+Attenzione: la perplexity dice *come è scritto* il testo, **non se è
+vero**. Un testo perfettamente fluido può essere completamente inventato;
+un testo un po' goffo può essere fattualmente perfetto. Questo è il
+punto centrale di questa sezione.
+
+L'abbiamo aggiunta come **quinta metrica** del pacchetto 300q insieme a
+F1, OFS, BERTScore, BLEURT. Il giudice è
+`OLMo-3.1-32B-Instruct` in 4-bit (lo stesso modello che fa il rewriting,
+ma usato solo per "leggere"). CSV:
+[`results/300q/stats/rewriting_chains_300q_perplexity_by_instruction_step.csv`](../results/300q/stats/rewriting_chains_300q_perplexity_by_instruction_step.csv).
+
+### 6bis.2 I numeri
+
+Perplexity media per istruzione e step:
+
+| istruzione | step 0 | step 1 | step 2 | step 3 |
+|---|---|---|---|---|
+| elaborate  | 4.98 | 7.82 | 6.97 | **6.67** |
+| formality  | 4.98 | 7.29 | 7.73 | 7.73 |
+| paraphrase | 4.98 | 10.37 | 11.61 | 11.89 |
+| shorten    | 4.98 | 10.75 | 12.63 | **13.28** |
+
+Lo step 0 è uguale per tutti (4.98) perché è il testo MuSiQue originale.
+Le riscritture portano la perplexity verso l'alto: il testo diventa meno
+fluido. Come leggere questa tabella:
+
+1. **La prima riscrittura fa quasi tutto il danno.** Tutte le istruzioni
+   passano da 4.98 a 7-10 al primo step (perplexity quasi raddoppiata).
+   Dopo, la curva sale piano. Non è una degradazione costante: c'è uno
+   "shock" iniziale e poi un assestamento.
+
+2. **Le quattro istruzioni si dividono in due gruppi netti:**
+   - **`elaborate` e `formality`** restano sotto 8 anche a step 3. Sono
+     riscritture "morbide": il testo cambia di stile o si allunga, ma
+     rimane in territorio linguistico naturale.
+   - **`paraphrase` e `shorten`** sfondano quota 11 già a step 1 e
+     continuano a peggiorare. Sono riscritture "aggressive": riformulare
+     o comprimere costringe il modello a usare giri di parole sempre
+     meno comuni.
+
+3. **`elaborate` ha un comportamento curioso:** dopo il salto iniziale
+   (4.98 → 7.82) la perplexity **scende** (7.82 → 6.67). Più si elabora,
+   più il testo torna fluido. Nessuna delle altre istruzioni mostra
+   questa "regressione". Sembra una buona notizia. Lo è? Vedi §6bis.4.
+
+### 6bis.3 Come si comporta rispetto alle altre 4 metriche?
+
+Qui sta il punto della sezione: la perplexity *somiglia* a qualcuna delle
+metriche già in uso, e si discosta da qualcun'altra. Sapere a quale
+somiglia e a quale no ci dice **cosa misura davvero**.
+
+Per confrontarle metto in fila le 4 istruzioni ordinate da "migliore" a
+"peggiore" secondo ciascuna metrica a step 1 (n=4, quindi è un
+ordinamento di rank, non una correlazione su tante osservazioni — ma il
+segnale è netto).
+
+| coppia di metriche | rank delle 4 istruzioni coincide? | Spearman ρ |
+|---|---|---|
+| Perplexity ↔ BERTScore (vs E₀) | **identico** | **−1.000** |
+| Perplexity ↔ BLEURT (vs E₀)    | **identico** | **−1.000** |
+| Perplexity ↔ Answer F1          | quasi (1 swap) | −0.800 |
+| Perplexity ↔ OFS init           | praticamente scorrelato | −0.200 |
+
+Tradotto a parole:
+
+- **Perplexity, BERTScore e BLEURT misurano lo stesso fenomeno.** Le
+  istruzioni che producono testi più "fuori distribuzione" (perplexity
+  alta) sono **esattamente** quelle che producono testi più lontani da
+  E₀ (BERTScore e BLEURT bassi). Non è un caso: tutte e tre catturano
+  **drift superficiale**, cioè quanto il testo si è allontanato dal modo
+  naturale di scrivere o dal testo originale.
+- **Perplexity non dice nulla di affidabile sulla fattualità.**
+  L'esempio più netto: `paraphrase` ha OFS 0.902 e `formality` 0.893
+  (praticamente uguali), eppure `paraphrase` ha perplexity 42% più alta.
+  La fluency e la fattualità si separano: ordinarle per fluency non ti
+  dice come si comportano sui fatti.
+
+### 6bis.4 Il caso `elaborate`: perché la fluency può ingannare
+
+`elaborate` è l'istruzione che secondo la perplexity migliora di più: il
+testo diventa più fluido man mano che si elabora (perplexity scende da
+7.82 a 6.67 tra step 1 e step 3). Se usassi solo la perplexity per
+giudicare le riscritture diresti: "`elaborate` è la migliore, le sue
+catene sono le più naturali".
+
+Ma se guardo l'OFS sulle **stesse identiche catene**:
+
+| istruzione | OFS step 1 | OFS step 3 | Δ |
+|---|---|---|---|
+| elaborate  | 0.898 | **0.842** | **−0.056** ← peggior calo |
+| formality  | 0.893 | 0.884 | −0.009 |
+| paraphrase | 0.902 | 0.885 | −0.017 |
+| shorten    | 0.888 | 0.875 | −0.012 |
+
+**`elaborate` è l'istruzione che peggiora di più sulla fattualità.** Il
+calo è ~5× quello delle altre. E questo dato è confermato in modo
+indipendente dal reclassify GPT-4o-mini di §7.4: `elaborate` allucina
+~3× le altre istruzioni (Fisher OR=2.98, p=2×10⁻⁵).
+
+In altre parole: i testi `elaborate` diventano **sempre più scorrevoli**
+ad ogni iterazione, e nello stesso tempo **sempre più pieni di fatti
+inventati**. Più suonano bene, più mentono. La perplexity non ha modo di
+vederlo perché non sa nulla di E₀ — vede solo che le frasi "filano".
+
+### 6bis.5 Cosa portarsi a casa
+
+1. **Lo step 0→1 è il momento critico.** Tutte le metriche (perplexity,
+   F1, OFS, BERTScore, BLEURT) mostrano il salto più grande tra il testo
+   originale e la prima riscrittura. La degradazione successiva è più
+   lenta. Una sola riscrittura basta a innescare il fenomeno.
+2. **La perplexity da sola non serve.** È ridondante con BERTScore e
+   BLEURT (misurano la stessa cosa) e cieca rispetto a OFS (non vede la
+   fattualità). Tenerla nei plot va bene come conferma di drift
+   superficiale, ma non sostituisce niente.
+3. **Fluency e fattualità si decorrelano.** Il caso `elaborate` è
+   l'esempio canonico: testo più fluido + più allucinato. Per la tesi è
+   un argomento forte per **mai** usare proxy di fluency (perplexity,
+   BLEURT, BERTScore) come surrogato di metriche fattuali (F1, OFS) —
+   vanno riportate **insieme**, perché raccontano due cose diverse che a
+   volte vanno in direzioni opposte.
+
+> **Frase citabile per la tesi:** *"La perplexity di un LLM giudice
+> replica il pattern di drift superficiale delle riscritture (Spearman
+> ρ=−1 con BERTScore e BLEURT sul rank delle 4 istruzioni a step 1) ma
+> non quello di drift fattuale (ρ=−0.2 con OFS). L'istruzione
+> `elaborate` lo mostra in modo esemplare: i testi diventano più fluidi
+> ad ogni iterazione (perplexity 7.82 → 6.67) e contemporaneamente meno
+> supportati dall'evidenza originale (OFS init 0.898 → 0.842, ~3× il
+> tasso di allucinazioni delle altre istruzioni). Fluency e fattualità
+> non sono intercambiabili: misurarle entrambe è necessario."*
+
+---
+
 ## 7. Limitazioni di OpenFActScore — cosa misuriamo davvero
 
 Il factscore è uno strumento centrale di queste analisi (sia 300q che 100q) e
@@ -512,105 +661,114 @@ correttamente.
 - I due dataset non sono pienamente comparabili sul piano assoluto di OFS
   senza una correzione per questo bias di estrazione.
 
-### 7.4 Reclassify esterno con GPT-4o-mini — quantificare il bias dell'AFV
+### 7.4 Reclassify dei NOT_SUPPORTED con Gemma — l'errore residuo dell'AFV è atteso dal paper
 
 > Esperimento aggiunto **2026-05-23** sulla qid pilota `2hop__14092_8311` (600q,
-> nuovo prompt). Tutti i 797 claim etichettati `NOT_SUPPORTED` dall'AFV Gemma
-> sono stati ri-classificati con `gpt-4o-mini` (temperature=0) su un prompt a
-> 5 categorie: **SUPPORTED, CONTRADICTION, DISTORTED, INVENTED, UNVERIFIABLE**.
-> Output: [`results/600q/rewriting_chains_musique_600q_reclassified_openai.csv`](../results/600q/rewriting_chains_musique_600q_reclassified_openai.csv);
-> statistica completa in [`results/600q/stats_reclassify_openai/README.md`](../results/600q/stats_reclassify_openai/README.md).
+> nuovo prompt). Tutti i 795 claim etichettati `NOT_SUPPORTED` dall'AFV Gemma
+> (`gemma-3-4b-it`) sono stati ri-classificati **dallo stesso modello Gemma**
+> su un prompt a 4 categorie:
+> **SUPPORTED, DISTORTED, INVENTED, UNVERIFIABLE**.
+> Output: [`results/600q/rewriting_chains_musique_600q_reclassified.csv`](../results/600q/rewriting_chains_musique_600q_reclassified.csv).
 
-L'obiettivo non è "OpenAI come gold standard" ma **separare il segnale dal
-rumore**: il "0.2 di OFS che manca" è davvero hallucination del rewrite, o
-in parte rumore dell'AFV?
+**Perché Gemma giudica Gemma.** La scelta di non introdurre un terzo modello
+(es. GPT-4o-mini) come "giudice esterno" è metodologica: ciò che vogliamo
+quantificare è il **bias dell'AFV usato in OFS**, non la distanza tra
+modelli diversi. Se cambiamo modello introduciamo due fattori confusi
+(capability + tassonomia diversa). Tenendo lo stesso AFV ma cambiando il
+**task** (binario → 4-classi) misuriamo direttamente quanto del segnale
+"NOT_SUPPORTED" è in realtà eterogeneo: una parte è errore vero (DISTORTED,
+INVENTED), una parte è il bias documentato dal paper.
 
-**Distribuzione del judge esterno su 797 NOT_SUPPORTED:**
+**Cosa dice il paper OFS (Lage & Ostermann, 2025) di Gemma come AFV.**
+È esattamente questo il limite che dobbiamo dichiarare:
+
+- **Tab. 2 del paper** — `gemma-3-4b-it` ha un **cumulative Error Rate del
+  12.2%** come AFV: è il *migliore* della comparativa, ma non è zero. Questo
+  significa che ~12 claim su 100 vengono etichettati male anche nelle
+  condizioni validate dal paper (biografie + Wikipedia).
+- **Sez. 4.2 del paper** — Gemma "tends to over-classify atomic facts as
+  *not supported* when the wording diverges from the source". È un **bias
+  di precision sul lato negativo**: paraphrase / formality-style rewrites
+  sono i casi più colpiti.
+- **Sez. 4.3** — il paper raccomanda comunque la coppia `OLMo-2-1124-7B-SFT`
+  (AFG) + `gemma-3-4b-it` (AFV) perché è la combinazione con il minor
+  errore complessivo *misurato sulle biografie Wikipedia*. **Sul nostro
+  setup (E0 di MuSiQue / NewsQA come knowledge source) il bias può solo
+  essere ≥** di quello del paper, perché i testi sono più rumorosi e più
+  fuori distribuzione.
+
+**Risultato 1 — distribuzione dei NOT_SUPPORTED secondo il reclassify Gemma:**
 
 | Categoria | n | % |
 |---|---|---|
-| **SUPPORTED** (AFV ha sbagliato) | 296 | **37.1%** |
-| DISTORTED | 208 | 26.1% |
-| CONTRADICTION | 130 | 16.3% |
-| UNVERIFIABLE | 91 | 11.4% |
-| INVENTED | 72 | 9.0% |
+| DISTORTED (alterato ma riferibile alla fonte) | 375 | 47.2% |
+| **SUPPORTED (AFV si era sbagliato)** | 190 | **23.9%** |
+| INVENTED (hallucination vera) | 182 | 22.9% |
+| UNVERIFIABLE (giudizio impossibile) | 48 | 6.0% |
 
-**Risultato 1 — OFS sottostimato di ~9 pp su questa qid.** Bootstrap 95% CI
-(B=10 000) sul tasso di falsi positivi dell'AFV: **37.1% [33.8%, 40.5%]**.
-Tradotto in OFS calibrato sui 3 286 claim totali della qid:
+Quasi **un quarto** dei NOT_SUPPORTED sono in realtà supportati dalla fonte
+secondo lo stesso Gemma, **se interrogato su un prompt più ricco**. Numero
+coerente con il 12% di ER del paper, **inflato** dall'andare fuori dominio.
 
-- OFS raw (AFV Gemma) = **0.757**
-- OFS calibrato (rimuovendo i SUPPORTED) = **0.848** [0.839, 0.856]
-- **Δ = +9.0 pp** di underestimation sistematica
+**Risultato 2 — OFS calibrato su Gemma (qid pilota).**
 
-Coerente in ordine di grandezza con la Tab. 2 del paper OFS (cumulative ER
-di Gemma = 12.2 pp).
+- 3 286 claim totali sulla qid
+- 2 489 originariamente SUPPORTED dall'AFV → **OFS raw = 0.757**
+- + 190 "salvati" dal reclassify Gemma → **OFS calibrato = 0.815**
+- **Δ = +5.8 pp** di underestimation sistematica
 
-**Risultato 2 — il bias dell'AFV non è uniforme tra istruzioni** (χ² = 31.2,
-dof = 3, **p = 7.8×10⁻⁷**).
+Il numero **non è** il "vero OFS": è il limite inferiore della correzione
+che si ottiene **lasciando lo stesso giudice ma cambiando task**. Ed è
+sotto il 12% di ER del paper (atteso: Gemma è severo in entrambi i task).
 
-| Istruzione | P(falso positivo AFV) |
+**Risultato 3 — il bias non è uniforme tra istruzioni** (χ² = 9.80,
+dof = 3, **p = 0.020**).
+
+| Istruzione | P(falso positivo AFV su NOT_SUPPORTED) |
 |---|---|
-| **paraphrase** | **52.2%** |
-| shorten | 39.1% |
-| elaborate | 29.9% |
-| formality | 28.7% |
+| formality | 29.3% |
+| paraphrase | 26.2% |
+| shorten | 25.8% |
+| elaborate | 17.4% |
 
-L'AFV Gemma fallisce **più della metà** delle volte sulle parafrasi
-(cambi lessicali con senso preservato). Conseguenza: i confronti OFS
-*tra istruzioni* nei report 300q sono **distorti contro le istruzioni
-di stile** (paraphrase, formality), che subiscono più falsi negativi
-dell'AFV. La gerarchia *qualitativa* tra istruzioni resta, ma i numeri
-assoluti vanno letti con questa cautela.
+Coerente con la nota del paper (Sez. 4.2): paraphrase e formality
+producono i rewrite **più lessicalmente distanti dalla fonte ma
+semanticamente preservati**, ed è proprio dove Gemma sbaglia di più. I
+confronti OFS **tra istruzioni** sui numeri raw sono quindi distorti
+**contro** paraphrase/formality. La gerarchia *qualitativa* tra istruzioni
+resta, ma la magnitudine assoluta non è confrontabile direttamente.
 
-**Risultato 3 — la struttura degli errori cambia con gli step**
-(χ² = 32.5, dof = 8, **p = 7.6×10⁻⁵**). In particolare, le hallucination
-vere (INVENTED) crescono monotonicamente:
+**Risultato 4 — la SUPPORTED rate è ~costante tra step.**
 
-| step | n totale | INVENTED | P(INVENTED) |
+| step | n totale | SUPPORTED | P(SUPPORTED) |
 |---|---|---|---|
-| 1 | 308 | 19 | 6.2% |
-| 2 | 255 | 16 | 6.3% |
-| 3 | 234 | 37 | **15.8%** |
+| 1 | 308 | 69 | 22.4% |
+| 2 | 254 | 69 | 27.2% |
+| 3 | 233 | 52 | 22.3% |
 
-Cochran-Armitage trend test: **z = 3.72, p = 0.0002**. Il rewriting
-iterativo *non* accumula errori in modo uniforme: a step 3 il modello
-inizia attivamente a inventare. Interpretazione coerente con il narrativo
-delle 300q ("erosione fattuale progressiva") ma più precisa: l'erosione è
-guidata da INVENTED, non da DISTORTED (che resta stabile).
+Non c'è un trend significativo. **È esattamente il fatto che il bias
+sia ~costante tra step** che rende i confronti *step-by-step* (la nostra
+metrica chiave per misurare degradazione) **robusti**: il bias si
+sottrae quando si guarda la pendenza.
 
-**Risultato 4 — `elaborate` allucina ~3× più delle altre istruzioni**
-(Fisher exact, **p = 1.8×10⁻⁵**, odds ratio = 2.98).
-
-- P(INVENTED | elaborate) = 15.5% (41/264)
-- P(INVENTED | non-elaborate) = 5.8% (31/533)
-
-Questo va letto insieme al risultato del 300q ("elaborate non elabora,
-comprime"). Quando *non* comprime, `elaborate` **inventa**: è la patologia
-prevedibile di un'istruzione che invita il modello ad aggiungere
-informazione su una fonte limitata.
-
-> **Caveat metodologico.** Questi quattro risultati hanno il **claim** come
-> unità di analisi su **una sola qid** (797 claim NOT_SUPPORTED). I p-value
-> sono validi descrittivamente sulla qid, ma **non sono confermativi** a
-> livello di popolazione MuSiQue: tutti i claim provengono dallo stesso
-> paragrafo originale. La replica su più qid (in corso col completamento
-> del 600q) è necessaria per generalizzare. Il confronto judge-to-judge
-> con il reclassify Gemma (5 categorie, stesso prompt) è pianificato non
-> appena il run su Lisa termina.
+> **Caveat metodologico.** Tutti i risultati hanno il **claim** come unità
+> di analisi su **una sola qid** (795 claim NOT_SUPPORTED, tutti dalla
+> stessa paragrafata sorgente). I p-value descrivono la qid; non sono
+> confermativi a livello di popolazione MuSiQue. La replica su tutte le
+> qid del 600q è prevista non appena il run termina.
 
 **Implicazione pratica per la tesi.** Quando riportiamo OFS:
 
-1. Dichiarare apertamente il bias di **~9 pp di sottostima** dell'AFV Gemma
-   come limite documentato (sia dal paper, sia dal nostro test diretto).
-2. Tenere il bias **costante tra step e tra istruzioni quando possibile**:
-   la nostra evidenza dice che *non* è uniforme (è peggio su paraphrase),
-   quindi i confronti tra istruzioni sull'OFS *raw* sono inaffidabili.
-3. Trends step-by-step *sono* robusti al bias (il bias è ~costante per
-   qid×istruzione tra step diversi).
-4. Per le slides: riportare OFS calibrato accanto a OFS raw, con CI
-   bootstrap. La cifra "OFS = 0.85 (calibrato) vs 0.76 (raw)" è
-   intelligibile e onesta.
+1. Dichiarare il bias **come limite documentato dal paper OFS stesso**
+   (cumulative ER ~12% per Gemma, peggiore fuori dominio). Il reclassify
+   Gemma quantifica questo limite sul nostro setup: ~6 pp di
+   underestimation misurati sulla qid pilota.
+2. I **trend step-by-step** sono robusti al bias (bias ~costante tra step).
+3. I **confronti tra istruzioni** sui numeri OFS raw sono distorti contro
+   paraphrase/formality. Va dichiarato esplicitamente.
+4. Per le slides: riportare OFS raw e OFS calibrato Gemma affiancati
+   (es. "OFS = 0.76 raw / 0.82 calibrato"), con la nota che il calibrato
+   è un limite inferiore della correzione.
 
 ### 7.5 Cosa dichiarare nelle "Limitazioni" della tesi
 

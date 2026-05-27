@@ -1,0 +1,198 @@
+"""Answer F1 on MuSiQue rewriting chains — QA model = Llama-3.1-70B (4-bit).
+
+Replaces OLMo-3.1-32B with Llama-3.1-70B. Same prompt and aliases lookup as
+scripts/600q/answer_f1_eval_600q.py.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import pandas as pd
+import torch
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO_ROOT / "scripts" / "llama70b"))
+from _common.f1_utils import best_f1  # noqa: E402
+from _common.llama_constants import CHAIN_KEYS, LLAMA_MODEL_ID  # noqa: E402
+from _common.llama_model import hf_login_if_token, load_llama  # noqa: E402
+
+DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "llama70b" / "musique" / "rewriting_chains_musique.csv"
+DEFAULT_MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
+
+QA_USER_TEMPLATE = """Answer the question based on the context below. Give a short, direct answer — a few words at most, no explanation.
+
+Context:
+{context}
+
+Question: {question}
+Answer:"""
+
+
+def load_musique_index(path: Path) -> dict:
+    index = {}
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            rec = json.loads(line)
+            index[rec["id"]] = {
+                "question": rec["question"],
+                "answer": rec["answer"],
+                "aliases": rec.get("answer_aliases") or [],
+            }
+    return index
+
+
+def build_prompts(tokenizer, rows, musique):
+    prompts = []
+    for row in rows:
+        ref = musique[row["qid"]]
+        user = QA_USER_TEMPLATE.format(
+            context=str(row["text"]).strip(),
+            question=ref["question"].strip(),
+        )
+        prompts.append(tokenizer.apply_chat_template(
+            [{"role": "user", "content": user}],
+            tokenize=False, add_generation_prompt=True,
+        ))
+    return prompts
+
+
+@torch.no_grad()
+def generate_batch(tokenizer, model, prompts, max_new_tokens=64):
+    enc = tokenizer(prompts, return_tensors="pt", padding=True, truncation=False).to(model.device)
+    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
+                         pad_token_id=tokenizer.pad_token_id)
+    gen = out[:, enc["input_ids"].shape[1]:]
+    return [t.strip() for t in tokenizer.batch_decode(gen, skip_special_tokens=True)]
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Answer F1 on MuSiQue chains, Llama-3.1-70B QA.")
+    ap.add_argument("--input", type=Path, default=DEFAULT_CHAINS_CSV)
+    ap.add_argument("--output", type=Path, default=None)
+    ap.add_argument("--dataset", type=Path, default=DEFAULT_MUSIQUE_PATH)
+    ap.add_argument("--model", default=LLAMA_MODEL_ID)
+    ap.add_argument("--batch-size", type=int, default=2,
+                    help="Generation batch size (default 2 for 70B; raise on bigger GPUs).")
+    ap.add_argument("--use-4bit", action="store_true", default=True)
+    ap.add_argument("--no-4bit", dest="use_4bit", action="store_false")
+    ap.add_argument("--qid", action="append", default=None)
+    ap.add_argument("--runs", type=int, nargs="+", default=None)
+    ap.add_argument("--steps", type=int, nargs="+", default=None)
+    ap.add_argument("--resume", action="store_true")
+    args = ap.parse_args()
+
+    chains_csv = args.input
+    output_csv = args.output or chains_csv.with_name(chains_csv.stem + "_answer_f1.csv")
+
+    if not chains_csv.exists():
+        raise FileNotFoundError(chains_csv)
+    if not args.dataset.exists():
+        raise FileNotFoundError(args.dataset)
+
+    hf_login_if_token()
+    print("Loading MuSiQue index ...")
+    musique = load_musique_index(args.dataset)
+    print(f"  {len(musique)} questions indexed")
+
+    df = pd.read_csv(chains_csv).sort_values(CHAIN_KEYS + ["step"]).reset_index(drop=True)
+    if args.qid:
+        df = df[df["qid"].isin(args.qid)]
+    if args.runs is not None:
+        df = df[df["run"].isin(args.runs)]
+    if args.steps is not None:
+        df = df[df["step"].isin(args.steps)]
+
+    missing = set(df["qid"].unique()) - set(musique.keys())
+    if missing:
+        raise RuntimeError(f"qid in CSV but missing in MuSiQue: {missing}")
+    if df.empty:
+        raise RuntimeError("No rows match the filters.")
+
+    e0 = df[df["step"] == 0].drop_duplicates(subset=["qid", "run"], keep="first")
+    to_eval = pd.concat([e0, df[df["step"] > 0]], ignore_index=True)
+    to_eval = to_eval.sort_values(CHAIN_KEYS + ["step"]).reset_index(drop=True)
+
+    if args.resume and output_csv.exists():
+        prev = pd.read_csv(output_csv)
+        done_keys = {tuple(r[k] for k in CHAIN_KEYS + ["step"]) for _, r in prev.iterrows()}
+        before = len(to_eval)
+        def is_done(row):
+            if row["step"] == 0:
+                return any(k[0] == row["qid"] and k[3] == row["run"] and k[4] == 0 for k in done_keys)
+            return tuple(row[k] for k in CHAIN_KEYS + ["step"]) in done_keys
+        to_eval = to_eval[~to_eval.apply(is_done, axis=1)].reset_index(drop=True)
+        print(f"Resume: {before - len(to_eval)} rows already in {output_csv.name}, {len(to_eval)} to go.")
+
+    total = len(to_eval)
+    if total == 0:
+        print("Nothing left to evaluate.")
+        return
+
+    print(f"Answer F1 on {total} rows — model={args.model}, batch={args.batch_size}")
+    tokenizer, model = load_llama(args.model, use_4bit=args.use_4bit)
+
+    rows = to_eval.to_dict(orient="records")
+    results = []; t_start = time.time()
+
+    for i in range(0, len(rows), args.batch_size):
+        batch = rows[i:i + args.batch_size]
+        prompts = build_prompts(tokenizer, batch, musique)
+        preds = generate_batch(tokenizer, model, prompts, max_new_tokens=64)
+        for row, pred in zip(batch, preds):
+            ref = musique[row["qid"]]
+            golds = [ref["answer"]] + [a for a in ref["aliases"] if a]
+            f1, matched_ref = best_f1(pred, golds)
+            results.append({
+                **{k: row[k] for k in CHAIN_KEYS},
+                "step": int(row["step"]),
+                "question": ref["question"], "gold_answer": ref["answer"],
+                "predicted_answer": pred, "matched_reference": matched_ref,
+                "answer_f1": f1,
+            })
+            n_done = len(results)
+            avg = (time.time() - t_start) / max(n_done, 1)
+            eta = (total - n_done) * avg
+            label = f"{row['qid']}/{row['group']}/{row['instruction_type']}/run{row['run']}/step{row['step']}"
+            print(f"[{n_done}/{total}] {label}  F1={f1:.3f}  ETA {eta/60:.1f} min")
+
+    results_df = pd.DataFrame(results)
+
+    # Broadcast E_0 to all (group, instruction_type) of the same (qid, run)
+    if not results_df.empty:
+        step0 = results_df[results_df["step"] == 0]
+        step_gt0 = results_df[results_df["step"] > 0]
+        if not step0.empty:
+            all_chains = df[CHAIN_KEYS].drop_duplicates()
+            step0_broadcast = all_chains.merge(
+                step0.drop(columns=["group", "instruction_type"]),
+                on=["qid", "run"], how="inner",
+            )
+            results_df = pd.concat([step0_broadcast, step_gt0], ignore_index=True)
+            results_df = results_df.sort_values(CHAIN_KEYS + ["step"]).reset_index(drop=True)
+
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    if output_csv.exists() and args.resume:
+        prev = pd.read_csv(output_csv)
+        merged = pd.concat([prev, results_df], ignore_index=True)
+        merged = merged.drop_duplicates(subset=CHAIN_KEYS + ["step"], keep="last")
+        merged.to_csv(output_csv, index=False)
+    else:
+        results_df.to_csv(output_csv, index=False)
+
+    print(f"\nSaved: {output_csv}")
+    pivot = results_df.pivot_table(
+        index=["group", "instruction_type"], columns="step", values="answer_f1", aggfunc="mean",
+    )
+    print(pivot.round(3))
+
+
+if __name__ == "__main__":
+    main()

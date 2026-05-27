@@ -1,0 +1,15 @@
+test,group,n,pct,stat,dof,p,p_elaborate,p_other,estimate,ci_lo,ci_hi
+marginal,SUPPORTED,296.0,37.1,,,,,,,,
+marginal,DISTORTED,208.0,26.1,,,,,,,,
+marginal,CONTRADICTION,130.0,16.3,,,,,,,,
+marginal,UNVERIFIABLE,91.0,11.4,,,,,,,,
+marginal,INVENTED,72.0,9.0,,,,,,,,
+chi2_label_step,all,,,32.5049680932889,8.0,7.560704887363639e-05,,,,,
+chi2_label_instr,all,,,95.57783067434747,12.0,4.072499012503359e-15,,,,,
+fisher_elaborate_invented,,,,2.9772891653406623,,1.8131114566293687e-05,0.1553030303030303,0.058161350844277676,,,
+cochran_armitage_invented_step,,,,3.7224431752460236,,0.00019730432214881688,,,,,
+chi2_supported_instr,,,,31.174651921486912,3.0,7.810277377080788e-07,,,,,
+bootstrap_real_error_rate_within_NS,,,,,,,,,0.5144291091593476,0.479297365119197,0.5483375156838138
+bootstrap_afv_fp_rate_within_NS,,,,,,,,,0.3713927227101631,0.33751568381430364,0.40526976160602257
+raw_ofs_qid,,,,,,,,,0.7574558734023128,,
+calibrated_ofs_qid,,,,,,,,,0.8475349969567864,0.8393183201460742,0.8557516737674985
