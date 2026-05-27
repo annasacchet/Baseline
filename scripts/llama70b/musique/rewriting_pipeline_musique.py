@@ -1,14 +1,16 @@
-"""MuSiQue rewriting chain pipeline — Llama-3.1-70B-Instruct (4-bit NF4).
+"""MuSiQue rewriting chain pipeline — Llama-3.1-70B-Instruct-AWQ-INT4 via vLLM.
 
 Mirrors scripts/15q/rewriting_pipeline_optimized.py (XML prompt + system prompt
-fix validated by project_rewriting_prompt_fix), retargeted to Llama-3.1-70B.
+fix validated by project_rewriting_prompt_fix), retargeted to Llama-3.1-70B AWQ
+served by vLLM with tensor parallelism across the two GPUs on Homer.
 
-Reads MuSiQue dev JSONL, balances by hop count, builds E_0 by concatenating
-"<title>. <paragraph_text>" for all supporting+distractor paragraphs of each
-question, then advances the 12 chains per question in lockstep with batched
-generation.
+Why vLLM instead of HF transformers + bnb 4-bit:
+  - bnb 4-bit on 2 GPUs uses pipeline parallelism (one GPU active at a time);
+    on 2x RTX A6000 we measured ~0.3 tok/s for Llama-3.1-70B.
+  - vLLM with TP=2 + AWQ-INT4 + paged attention runs ~10-15x faster
+    (~5-10 tok/s on the same hardware) because both GPUs work on every layer.
 
-Output schema:
+Output schema is unchanged:
   qid, question, group, instruction_type, run, instruction_used, step, text,
   n_tokens
 """
@@ -26,7 +28,6 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
-import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "llama70b"))
@@ -34,10 +35,15 @@ from _common.llama_constants import (  # noqa: E402
     ALL_INSTRUCTIONS,
     CHAIN_KEYS,
     DEFAULT_SYSTEM_PROMPT,
-    LLAMA_MODEL_ID,
+    LLAMA_AWQ_MODEL_ID,
     REWRITE_TEMPLATE,
 )
-from _common.llama_model import hf_login_if_token, load_llama  # noqa: E402
+from _common.llama_vllm import (  # noqa: E402
+    generate_batch_vllm,
+    hf_login_if_token,
+    load_vllm,
+    render_chat,
+)
 
 DEFAULT_DATASET_PATH = Path(os.environ.get(
     "MUSIQUE_DATASET",
@@ -86,51 +92,27 @@ def balance_by_hop(items: list, n_per_hop: int, seed: int) -> list:
 
 
 # ---------------------------------------------------------------------------
-# Batched generation
+# Chain runner — vLLM batched generation
 # ---------------------------------------------------------------------------
 
-def _format_prompt(tokenizer, user_prompt: str, system_prompt: str | None):
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": user_prompt})
-    if getattr(tokenizer, "chat_template", None):
-        return tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True,
-        )
-    return (system_prompt + "\n\n" if system_prompt else "") + user_prompt
-
-
-@torch.inference_mode()
-def generate_batch(tokenizer, model, user_prompts, *, temperature, max_new_tokens, system_prompt):
-    if not user_prompts:
-        return []
-    texts = [_format_prompt(tokenizer, up, system_prompt) for up in user_prompts]
-    enc = tokenizer(texts, return_tensors="pt", padding=True, truncation=False).to(model.device)
-    gen_kwargs = dict(max_new_tokens=max_new_tokens, pad_token_id=tokenizer.pad_token_id)
-    if temperature > 0:
-        gen_kwargs.update(do_sample=True, temperature=temperature, top_p=0.95)
-    else:
-        gen_kwargs.update(do_sample=False)
-    out = model.generate(**enc, **gen_kwargs)
-    gen = out[:, enc["input_ids"].shape[1]:]
-    return [d.strip() for d in tokenizer.batch_decode(gen, skip_special_tokens=True)]
-
-
-def run_question_batched(tokenizer, model, E0, specs, *, n_iterations, temperature,
-                         max_new_tokens, system_prompt, batch_size):
+def run_question(llm, tokenizer, E0, specs, *, n_iterations, temperature,
+                 max_new_tokens, system_prompt):
+    """Advance all chains of one question step-by-step, batched together via vLLM."""
     for s in specs:
         s["chain"] = [E0]
         s["current"] = E0
     for _ in range(n_iterations):
-        prompts = [REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]) for s in specs]
-        outs = []
-        for i in range(0, len(prompts), batch_size):
-            outs.extend(generate_batch(
-                tokenizer, model, prompts[i:i + batch_size],
-                temperature=temperature, max_new_tokens=max_new_tokens,
-                system_prompt=system_prompt,
-            ))
+        prompts = [
+            render_chat(
+                tokenizer, system_prompt,
+                REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]),
+            )
+            for s in specs
+        ]
+        outs = generate_batch_vllm(
+            llm, prompts,
+            temperature=temperature, max_new_tokens=max_new_tokens,
+        )
         for s, new_text in zip(specs, outs):
             s["chain"].append(new_text)
             s["current"] = new_text
@@ -154,25 +136,26 @@ def append_rows(csv_path: Path, rows: list):
 
 
 def main():
-    p = argparse.ArgumentParser(description="MuSiQue rewriting chains with Llama-3.1-70B (4-bit).")
-    p.add_argument("--model", default=LLAMA_MODEL_ID)
+    p = argparse.ArgumentParser(description="MuSiQue rewriting chains with Llama-3.1-70B-AWQ via vLLM.")
+    p.add_argument("--model", default=LLAMA_AWQ_MODEL_ID)
     p.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_PATH)
     p.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_CSV)
     p.add_argument("--n-per-hop", type=int, default=200)
     p.add_argument("--n-iterations", type=int, default=3)
     p.add_argument("--temperature", type=float, default=0.7)
     p.add_argument("--max-new-tokens", type=int, default=2048)
+    p.add_argument("--max-model-len", type=int, default=8192,
+                   help="vLLM context window (prompt+output). 8192 is enough for MuSiQue.")
+    p.add_argument("--gpu-mem-util", type=float, default=0.90,
+                   help="Fraction of each GPU vLLM may use. Lower if OOM during load.")
+    p.add_argument("--tensor-parallel-size", type=int, default=None,
+                   help="Default: number of visible CUDA devices.")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--smoke-test", action="store_true")
     p.add_argument("--qids-file", type=Path, default=None)
     p.add_argument("--only-supporting", action="store_true")
-    p.add_argument("--use-4bit", action="store_true", default=True,
-                   help="Default ON for the 70B model. Pass --no-4bit to disable.")
-    p.add_argument("--no-4bit", dest="use_4bit", action="store_false")
     p.add_argument("--system-prompt", default=DEFAULT_SYSTEM_PROMPT,
                    help="Pass '' to disable the system prompt.")
-    p.add_argument("--batch-size", type=int, default=4,
-                   help="Chains advanced in parallel per generate() (default 4 — 70B is heavy; raise if VRAM allows).")
     args = p.parse_args()
 
     system_prompt = args.system_prompt if args.system_prompt else None
@@ -184,7 +167,6 @@ def main():
 
     hf_login_if_token()
     random.seed(args.seed)
-    torch.manual_seed(args.seed)
 
     print(f"\nLoading MuSiQue from {args.dataset}", flush=True)
     raw = load_musique(args.dataset)
@@ -216,9 +198,13 @@ def main():
     total_chains = len(questions) * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
     print(f"\nSystem prompt: {'ON' if system_prompt else 'OFF'}", flush=True)
     print(f"Plan: {len(questions)} questions x 4 instructions x 3 wordings = {total_chains} chains")
-    print(f"Batch size: {args.batch_size}")
 
-    tokenizer, model = load_llama(args.model, use_4bit=args.use_4bit)
+    llm, tokenizer = load_vllm(
+        args.model,
+        tensor_parallel_size=args.tensor_parallel_size,
+        max_model_len=args.max_model_len,
+        gpu_memory_utilization=args.gpu_mem_util,
+    )
 
     n_done = 0
     n_to_do = total_chains - len(done)
@@ -244,13 +230,12 @@ def main():
             continue
 
         t0 = time.time()
-        specs_done = run_question_batched(
-            tokenizer, model, E0, specs_to_run,
+        specs_done = run_question(
+            llm, tokenizer, E0, specs_to_run,
             n_iterations=args.n_iterations,
             temperature=args.temperature,
             max_new_tokens=args.max_new_tokens,
             system_prompt=system_prompt,
-            batch_size=args.batch_size,
         )
         elapsed = time.time() - t0
 

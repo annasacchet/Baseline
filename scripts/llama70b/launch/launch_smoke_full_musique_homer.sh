@@ -3,14 +3,25 @@
 # Runs: rewriting -> Answer F1 -> BERTScore -> BLEURT (text + answer) ->
 #       Perplexity -> OpenFActScore.
 #
+# Llama-3.1-70B is served via vLLM (AWQ-INT4, TP=2) for rewriting + F1.
+# Perplexity uses HF transformers + bnb (vLLM doesn't expose log-likelihoods);
+# OFS keeps OLMo-2-7B AFG + Gemma-3-4B AFV on HF transformers.
+#
 # Output goes to results/llama70b/musique/smoke/, separate from the full-run
 # files so the smoke can be re-run without polluting real results.
 #
 # Usage (on Homer, inside tmux):
 #   bash ~/Baseline/scripts/llama70b/launch/launch_smoke_full_musique_homer.sh \
 #     2>&1 | tee ~/Baseline/logs/llama_smoke_full_musique.log
+#
+# Skip slow steps:
+#   SKIP_PPL=1 bash launch_smoke_full_musique_homer.sh   # skip Perplexity (HF 70B is slow)
+#   SKIP_OFS=1 bash launch_smoke_full_musique_homer.sh   # skip OpenFActScore
 set -euo pipefail
 source "$(dirname "$0")/env_homer.sh"
+
+# Tell python to flush stdout/stderr immediately so the | tee log updates live.
+export PYTHONUNBUFFERED=1
 
 OUT_DIR="results/llama70b/musique/smoke"
 mkdir -p "$OUT_DIR"
@@ -21,27 +32,29 @@ BERT="$OUT_DIR/rewriting_chains_musique_smoke_bertscore.csv"
 BLEURT="$OUT_DIR/rewriting_chains_musique_smoke_bleurt.csv"
 PPL="$OUT_DIR/rewriting_chains_musique_smoke_perplexity.csv"
 
-# Small batches to keep memory bounded; everything still finishes in <1 h on
-# Homer's 2x A6000 48GB.
-BATCH="${BATCH:-2}"
+# vLLM tuning knobs (override via env if needed).
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.90}"
 
 echo ""
 echo "############################################################"
-echo "#  1/6 — Rewriting chains (Llama-3.1-70B-Instruct, 4-bit)  #"
+echo "#  1/6 — Rewriting chains (Llama-3.1-70B-AWQ via vLLM)     #"
 echo "############################################################"
 python scripts/llama70b/musique/rewriting_pipeline_musique.py \
   --smoke-test \
-  --batch-size "$BATCH" \
+  --max-model-len "$MAX_MODEL_LEN" \
+  --gpu-mem-util "$GPU_MEM_UTIL" \
   --output "$CHAINS"
 
 echo ""
 echo "############################################################"
-echo "#  2/6 — Answer F1 (Llama-3.1-70B QA)                      #"
+echo "#  2/6 — Answer F1 (Llama-3.1-70B-AWQ via vLLM)            #"
 echo "############################################################"
 python scripts/llama70b/musique/answer_f1_eval_musique.py \
   --input "$CHAINS" \
   --output "$F1" \
-  --batch-size "$BATCH"
+  --max-model-len "$MAX_MODEL_LEN" \
+  --gpu-mem-util "$GPU_MEM_UTIL"
 
 echo ""
 echo "############################################################"
@@ -63,26 +76,36 @@ python scripts/llama70b/_common/bleurt_eval.py \
   --batch-size 32 \
   --smoke-test
 
-echo ""
-echo "############################################################"
-echo "#  5/6 — Perplexity (Llama-3.1-70B 4-bit)                  #"
-echo "############################################################"
-python scripts/llama70b/_common/perplexity_eval.py \
-  --input "$CHAINS" \
-  --output "$PPL" \
-  --smoke-test
+if [ -z "${SKIP_PPL:-}" ]; then
+  echo ""
+  echo "############################################################"
+  echo "#  5/6 — Perplexity (Llama-3.1-70B 4-bit via HF/bnb)       #"
+  echo "############################################################"
+  echo "  (skip with SKIP_PPL=1 — this step is slow on consumer GPUs)"
+  python scripts/llama70b/_common/perplexity_eval.py \
+    --input "$CHAINS" \
+    --output "$PPL" \
+    --smoke-test
+else
+  echo ""
+  echo "[SKIP] 5/6 Perplexity (SKIP_PPL=1)"
+fi
 
-echo ""
-echo "############################################################"
-echo "#  6/6 — OpenFActScore (AFG=OLMo-2-7B-SFT, AFV=Gemma-3-4B) #"
-echo "############################################################"
-# --limit 12 → score every step>0 row of the single chain (3 steps × 4
-# instruction_types × 3 wordings = 36 rows; --limit 12 stays under that to
-# keep the smoke quick — bump or remove to score the whole chain set).
-python scripts/llama70b/_common/openfactscore_eval.py \
-  --input "$CHAINS" \
-  --topic-mode qid \
-  --limit 12
+if [ -z "${SKIP_OFS:-}" ]; then
+  echo ""
+  echo "############################################################"
+  echo "#  6/6 — OpenFActScore (AFG=OLMo-2-7B-SFT, AFV=Gemma-3-4B) #"
+  echo "############################################################"
+  # --limit 12 → score the first 12 step>0 rows of the chain set (3 steps ×
+  # 4 instruction_types × 3 wordings = 36 rows). Bump/remove to score all.
+  python scripts/llama70b/_common/openfactscore_eval.py \
+    --input "$CHAINS" \
+    --topic-mode qid \
+    --limit 12
+else
+  echo ""
+  echo "[SKIP] 6/6 OpenFActScore (SKIP_OFS=1)"
+fi
 
 echo ""
 echo "############################################################"

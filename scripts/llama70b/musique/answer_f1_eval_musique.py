@@ -1,7 +1,7 @@
-"""Answer F1 on MuSiQue rewriting chains — QA model = Llama-3.1-70B (4-bit).
+"""Answer F1 on MuSiQue rewriting chains — QA model = Llama-3.1-70B-AWQ via vLLM.
 
-Replaces OLMo-3.1-32B with Llama-3.1-70B. Same prompt and aliases lookup as
-scripts/600q/answer_f1_eval_600q.py.
+Same prompt / aliases lookup / SQuAD-style F1 as scripts/600q/answer_f1_eval_600q.py.
+Generation is done with vLLM (TP=2, AWQ-INT4) for speed.
 """
 
 from __future__ import annotations
@@ -13,13 +13,17 @@ import time
 from pathlib import Path
 
 import pandas as pd
-import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "llama70b"))
 from _common.f1_utils import best_f1  # noqa: E402
-from _common.llama_constants import CHAIN_KEYS, LLAMA_MODEL_ID  # noqa: E402
-from _common.llama_model import hf_login_if_token, load_llama  # noqa: E402
+from _common.llama_constants import CHAIN_KEYS, LLAMA_AWQ_MODEL_ID  # noqa: E402
+from _common.llama_vllm import (  # noqa: E402
+    generate_batch_vllm,
+    hf_login_if_token,
+    load_vllm,
+    render_chat,
+)
 
 DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "llama70b" / "musique" / "rewriting_chains_musique.csv"
 DEFAULT_MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
@@ -57,32 +61,20 @@ def build_prompts(tokenizer, rows, musique):
             context=str(row["text"]).strip(),
             question=ref["question"].strip(),
         )
-        prompts.append(tokenizer.apply_chat_template(
-            [{"role": "user", "content": user}],
-            tokenize=False, add_generation_prompt=True,
-        ))
+        prompts.append(render_chat(tokenizer, None, user))
     return prompts
 
 
-@torch.no_grad()
-def generate_batch(tokenizer, model, prompts, max_new_tokens=64):
-    enc = tokenizer(prompts, return_tensors="pt", padding=True, truncation=False).to(model.device)
-    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
-                         pad_token_id=tokenizer.pad_token_id)
-    gen = out[:, enc["input_ids"].shape[1]:]
-    return [t.strip() for t in tokenizer.batch_decode(gen, skip_special_tokens=True)]
-
-
 def main():
-    ap = argparse.ArgumentParser(description="Answer F1 on MuSiQue chains, Llama-3.1-70B QA.")
+    ap = argparse.ArgumentParser(description="Answer F1 on MuSiQue chains, Llama-3.1-70B-AWQ QA via vLLM.")
     ap.add_argument("--input", type=Path, default=DEFAULT_CHAINS_CSV)
     ap.add_argument("--output", type=Path, default=None)
     ap.add_argument("--dataset", type=Path, default=DEFAULT_MUSIQUE_PATH)
-    ap.add_argument("--model", default=LLAMA_MODEL_ID)
-    ap.add_argument("--batch-size", type=int, default=2,
-                    help="Generation batch size (default 2 for 70B; raise on bigger GPUs).")
-    ap.add_argument("--use-4bit", action="store_true", default=True)
-    ap.add_argument("--no-4bit", dest="use_4bit", action="store_false")
+    ap.add_argument("--model", default=LLAMA_AWQ_MODEL_ID)
+    ap.add_argument("--max-new-tokens", type=int, default=64)
+    ap.add_argument("--max-model-len", type=int, default=8192)
+    ap.add_argument("--gpu-mem-util", type=float, default=0.90)
+    ap.add_argument("--tensor-parallel-size", type=int, default=None)
     ap.add_argument("--qid", action="append", default=None)
     ap.add_argument("--runs", type=int, nargs="+", default=None)
     ap.add_argument("--steps", type=int, nargs="+", default=None)
@@ -136,32 +128,36 @@ def main():
         print("Nothing left to evaluate.")
         return
 
-    print(f"Answer F1 on {total} rows — model={args.model}, batch={args.batch_size}")
-    tokenizer, model = load_llama(args.model, use_4bit=args.use_4bit)
+    print(f"Answer F1 on {total} rows — model={args.model}")
+    llm, tokenizer = load_vllm(
+        args.model,
+        tensor_parallel_size=args.tensor_parallel_size,
+        max_model_len=args.max_model_len,
+        gpu_memory_utilization=args.gpu_mem_util,
+    )
 
+    # vLLM is happy with one giant batch — it does its own continuous batching.
     rows = to_eval.to_dict(orient="records")
-    results = []; t_start = time.time()
+    print(f"Building {total} prompts ...")
+    prompts = build_prompts(tokenizer, rows, musique)
 
-    for i in range(0, len(rows), args.batch_size):
-        batch = rows[i:i + args.batch_size]
-        prompts = build_prompts(tokenizer, batch, musique)
-        preds = generate_batch(tokenizer, model, prompts, max_new_tokens=64)
-        for row, pred in zip(batch, preds):
-            ref = musique[row["qid"]]
-            golds = [ref["answer"]] + [a for a in ref["aliases"] if a]
-            f1, matched_ref = best_f1(pred, golds)
-            results.append({
-                **{k: row[k] for k in CHAIN_KEYS},
-                "step": int(row["step"]),
-                "question": ref["question"], "gold_answer": ref["answer"],
-                "predicted_answer": pred, "matched_reference": matched_ref,
-                "answer_f1": f1,
-            })
-            n_done = len(results)
-            avg = (time.time() - t_start) / max(n_done, 1)
-            eta = (total - n_done) * avg
-            label = f"{row['qid']}/{row['group']}/{row['instruction_type']}/run{row['run']}/step{row['step']}"
-            print(f"[{n_done}/{total}] {label}  F1={f1:.3f}  ETA {eta/60:.1f} min")
+    print("Generating ...")
+    t0 = time.time()
+    preds = generate_batch_vllm(llm, prompts, temperature=0.0, max_new_tokens=args.max_new_tokens)
+    print(f"  vLLM generated {total} answers in {time.time() - t0:.1f}s")
+
+    results = []
+    for row, pred in zip(rows, preds):
+        ref = musique[row["qid"]]
+        golds = [ref["answer"]] + [a for a in ref["aliases"] if a]
+        f1, matched_ref = best_f1(pred, golds)
+        results.append({
+            **{k: row[k] for k in CHAIN_KEYS},
+            "step": int(row["step"]),
+            "question": ref["question"], "gold_answer": ref["answer"],
+            "predicted_answer": pred, "matched_reference": matched_ref,
+            "answer_f1": f1,
+        })
 
     results_df = pd.DataFrame(results)
 

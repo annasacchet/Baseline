@@ -9,7 +9,14 @@ gemma-3-4b-it for consistency with the 600q pipeline (see memory:
 feedback_afv_model_consistency).
 """
 
+# Two model IDs:
+#  - LLAMA_MODEL_ID         → HF-transformers (bnb 4-bit) — kept for perplexity
+#                             scoring (vLLM doesn't expose per-token log-likelihoods).
+#  - LLAMA_AWQ_MODEL_ID     → vLLM (tensor-parallel, AWQ INT4) — used for
+#                             rewriting and Answer F1, where generation speed
+#                             matters and we don't need log-likelihoods.
 LLAMA_MODEL_ID = "meta-llama/Llama-3.1-70B-Instruct"
+LLAMA_AWQ_MODEL_ID = "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4"
 AFV_MODEL_ID = "google/gemma-3-4b-it"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]
