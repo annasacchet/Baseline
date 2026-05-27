@@ -17,40 +17,8 @@ fi
 export MUSIQUE_DATASET="${MUSIQUE_DATASET:-/home/sacchet/Baseline/musique_ans_v1.0_dev.jsonl}"
 export NEWSQA_DATASET="${NEWSQA_DATASET:-/mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv}"
 
-# Conda env (created with bitsandbytes + transformers >= 4.45 for Llama-3.1).
-# Source conda.sh directly so `activate` works under `set -e` and even when
-# `conda init` was never wired into ~/.bashrc.
-_find_conda_sh() {
-  for cand in \
-      "$HOME/miniconda3/etc/profile.d/conda.sh" \
-      "$HOME/anaconda3/etc/profile.d/conda.sh" \
-      "/opt/conda/etc/profile.d/conda.sh" \
-      "/opt/miniconda3/etc/profile.d/conda.sh" \
-      "/usr/local/miniconda3/etc/profile.d/conda.sh" \
-      "/usr/local/anaconda3/etc/profile.d/conda.sh"; do
-    if [ -f "$cand" ]; then echo "$cand"; return 0; fi
-  done
-  if command -v conda >/dev/null 2>&1; then
-    local base
-    base="$(conda info --base 2>/dev/null || true)"
-    if [ -n "$base" ] && [ -f "$base/etc/profile.d/conda.sh" ]; then
-      echo "$base/etc/profile.d/conda.sh"; return 0
-    fi
-  fi
-  return 1
-}
-
-CONDA_SH="$(_find_conda_sh || true)"
-if [ -n "$CONDA_SH" ]; then
-  echo "Loading conda from $CONDA_SH"
-  # shellcheck disable=SC1090
-  source "$CONDA_SH"
-  conda activate baseline 2>/dev/null \
-    || conda activate base 2>/dev/null \
-    || echo "[WARN] could not activate 'baseline' or 'base' — using current PATH" >&2
-else
-  echo "[WARN] conda.sh not found in any known location — using current PATH" >&2
-fi
+# No conda activation here — use whichever python is already on $PATH.
+# (If you're inside `(base)`, that's miniconda's base env; that's fine.)
 echo "Python: $(command -v python) ($(python --version 2>&1))"
 
 cd ~/Baseline
