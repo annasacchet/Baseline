@@ -131,6 +131,9 @@ def main():
     p.add_argument("--tensor-parallel-size", type=int, default=None)
     p.add_argument("--quantization", default=None,
                    help="vLLM quantization. Pass 'bitsandbytes' for on-the-fly NF4 4-bit.")
+    p.add_argument("--enforce-eager", action="store_true",
+                   help="Disable CUDA graphs (saves ~1 GB VRAM, ~10%% slower). "
+                        "Recommended on 24 GB GPUs with bnb 4-bit.")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--smoke-test", action="store_true")
     p.add_argument("--system-prompt", default=DEFAULT_SYSTEM_PROMPT)
@@ -159,6 +162,7 @@ def main():
         max_model_len=args.max_model_len,
         gpu_memory_utilization=args.gpu_mem_util,
         quantization=args.quantization,
+        enforce_eager=args.enforce_eager,
     )
 
     n_done = 0; n_to_do = total_chains - len(done); t_start = time.time()

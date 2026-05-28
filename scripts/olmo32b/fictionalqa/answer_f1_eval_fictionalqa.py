@@ -67,6 +67,8 @@ def main():
     ap.add_argument("--tensor-parallel-size", type=int, default=None)
     ap.add_argument("--quantization", default=None,
                     help="vLLM quantization. Pass 'bitsandbytes' for on-the-fly NF4 4-bit.")
+    ap.add_argument("--enforce-eager", action="store_true",
+                    help="Disable CUDA graphs (saves ~1 GB VRAM). Recommended on 24 GB GPUs.")
     ap.add_argument("--smoke-test", action="store_true")
     args = ap.parse_args()
 
@@ -100,6 +102,7 @@ def main():
         max_model_len=args.max_model_len,
         gpu_memory_utilization=args.gpu_mem_util,
         quantization=args.quantization,
+        enforce_eager=args.enforce_eager,
     )
 
     rows = to_eval.to_dict(orient="records")
