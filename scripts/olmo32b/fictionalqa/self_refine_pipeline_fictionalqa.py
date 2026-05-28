@@ -144,10 +144,14 @@ def main():
     p.add_argument("--rewriter-temperature", type=float, default=0.7)
     p.add_argument("--critic-temperature", type=float, default=0.0)
     p.add_argument("--refiner-temperature", type=float, default=0.3)
-    p.add_argument("--rewriter-max-new-tokens", type=int, default=4096)
+    # Defaults sized for FictionalQA (E0 p99 = 953 tokens, max = 1084 tokens).
+    # Rewriter/Refiner produce a full rewritten text (~1–2× E0), Critic only
+    # outputs a Verdict + Issues block (well under 1024).
+    p.add_argument("--rewriter-max-new-tokens", type=int, default=2048)
     p.add_argument("--critic-max-new-tokens", type=int, default=1024)
-    p.add_argument("--refiner-max-new-tokens", type=int, default=4096)
-    p.add_argument("--max-model-len", type=int, default=12288)
+    p.add_argument("--refiner-max-new-tokens", type=int, default=2048)
+    # max-model-len needs to fit: prompt (E0 ≤1084 + template ≤250) + output (≤2048) ≈ 3400 → 4096.
+    p.add_argument("--max-model-len", type=int, default=4096)
     p.add_argument("--gpu-mem-util", type=float, default=0.90)
     p.add_argument("--tensor-parallel-size", type=int, default=None)
     p.add_argument("--quantization", default=None,

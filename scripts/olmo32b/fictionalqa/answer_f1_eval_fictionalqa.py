@@ -62,7 +62,9 @@ def main():
     ap.add_argument("--output", type=Path, default=None)
     ap.add_argument("--model", default=OLMO_MODEL_ID)
     ap.add_argument("--max-new-tokens", type=int, default=64)
-    ap.add_argument("--max-model-len", type=int, default=12288)
+    # context = QA template (~50) + rewritten text (≤2048 tokens, see rewriting pipeline)
+    # + question (~50) + answer (≤64) ≈ 2200 → use 4096 for safety.
+    ap.add_argument("--max-model-len", type=int, default=4096)
     ap.add_argument("--gpu-mem-util", type=float, default=0.90)
     ap.add_argument("--tensor-parallel-size", type=int, default=None)
     ap.add_argument("--quantization", default=None,

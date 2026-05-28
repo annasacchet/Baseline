@@ -85,23 +85,29 @@ def sample_items(items, n, seed):
 
 
 def run_doc(llm, tokenizer, E0, specs, *, n_iterations, temperature,
-            max_new_tokens, system_prompt):
+            max_new_tokens, system_prompt, chain_batch_size):
     for s in specs:
         s["chain"] = [E0]; s["current"] = E0
     for _ in range(n_iterations):
-        prompts = [
-            render_chat(
-                tokenizer, system_prompt,
-                REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]),
+        # Process specs in sub-batches to bound peak KV-cache usage. The full
+        # batch (12 chains) can exceed 24 GB on bnb 4-bit; splitting in chunks
+        # keeps the peak proportional to chain_batch_size at the cost of more
+        # serial forwards. Default = len(specs) preserves the old behaviour.
+        for start in range(0, len(specs), chain_batch_size):
+            chunk = specs[start:start + chain_batch_size]
+            prompts = [
+                render_chat(
+                    tokenizer, system_prompt,
+                    REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]),
+                )
+                for s in chunk
+            ]
+            outs = generate_batch_vllm(
+                llm, prompts,
+                temperature=temperature, max_new_tokens=max_new_tokens,
             )
-            for s in specs
-        ]
-        outs = generate_batch_vllm(
-            llm, prompts,
-            temperature=temperature, max_new_tokens=max_new_tokens,
-        )
-        for s, new_text in zip(specs, outs):
-            s["chain"].append(new_text); s["current"] = new_text
+            for s, new_text in zip(chunk, outs):
+                s["chain"].append(new_text); s["current"] = new_text
     return specs
 
 
@@ -125,8 +131,15 @@ def main():
                    choices=["news", "blog", "social", "corporate", "encyclopedia"])
     p.add_argument("--n-iterations", type=int, default=3)
     p.add_argument("--temperature", type=float, default=0.7)
-    p.add_argument("--max-new-tokens", type=int, default=4096)
-    p.add_argument("--max-model-len", type=int, default=12288)
+    # Defaults sized for FictionalQA (E0 p99 = 953 tokens, max = 1084 tokens)
+    # so that even the "elaborate" instruction (~2x E0) is never truncated.
+    # max-model-len = E0 (≤1084) + system+template (~200) + max-new-tokens (2048) ≈ 3400 → 4096.
+    p.add_argument("--max-new-tokens", type=int, default=2048)
+    p.add_argument("--max-model-len", type=int, default=4096)
+    p.add_argument("--chain-batch-size", type=int, default=12,
+                   help="Process at most N chains in parallel per generation call. "
+                        "Default 12 = all 4 instruction-types × 3 wordings together. "
+                        "Use 4–6 on a 24 GB GPU with bnb 4-bit to stay within VRAM.")
     p.add_argument("--gpu-mem-util", type=float, default=0.90)
     p.add_argument("--tensor-parallel-size", type=int, default=None)
     p.add_argument("--quantization", default=None,
@@ -185,6 +198,7 @@ def main():
             llm, tokenizer, E0, specs_to_run,
             n_iterations=args.n_iterations, temperature=args.temperature,
             max_new_tokens=args.max_new_tokens, system_prompt=system_prompt,
+            chain_batch_size=args.chain_batch_size,
         )
         elapsed = time.time() - t0
 
