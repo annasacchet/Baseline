@@ -1,22 +1,20 @@
-"""Shared constants for the Llama-3.1-70B rewriting + eval pipelines.
+"""Shared constants for the OLMo-3.1-32B rewriting + eval pipelines.
 
-The 70B model is loaded in 4-bit NF4 on Homer (2x RTX A6000 48GB).
-Memory footprint at load: ~40 GB (model) + activations.
+The 32B model is loaded in bf16 (no quantization) and served via vLLM with
+tensor parallelism across two GPUs (e.g. 2x RTX A6000 48GB on Homer). At
+bf16 the weights occupy ~64 GB total — well within the combined 96 GB
+when split with `tensor_parallel_size=2`.
 
-We pin the rewriter and the QA / perplexity / AFG judges to the same checkpoint
-so PPL/F1 are computed under the rewriter's own distribution. AFV stays on
-gemma-3-4b-it for consistency with the 600q pipeline (see memory:
-feedback_afv_model_consistency).
+We pin the rewriter and the QA / perplexity / AFG judges to the same
+checkpoint so PPL/F1 are computed under the rewriter's own distribution.
+AFV stays on gemma-3-4b-it for consistency with the 600q pipeline (see
+memory: feedback_afv_model_consistency).
 """
 
-# Two model IDs:
-#  - LLAMA_MODEL_ID         → HF-transformers (bnb 4-bit) — kept for perplexity
-#                             scoring (vLLM doesn't expose per-token log-likelihoods).
-#  - LLAMA_AWQ_MODEL_ID     → vLLM (tensor-parallel, AWQ INT4) — used for
-#                             rewriting and Answer F1, where generation speed
-#                             matters and we don't need log-likelihoods.
-LLAMA_MODEL_ID = "meta-llama/Llama-3.1-70B-Instruct"
-LLAMA_AWQ_MODEL_ID = "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4"
+# Single model id used everywhere — OLMo-3.1-32B-Instruct in bf16.
+# vLLM handles rewriting + Answer F1 (TP=2). Perplexity uses HF transformers
+# directly (vLLM doesn't expose per-token log-likelihoods).
+OLMO_MODEL_ID = "allenai/OLMo-3.1-32B-Instruct"
 AFV_MODEL_ID = "google/gemma-3-4b-it"
 
 CHAIN_KEYS = ["qid", "group", "instruction_type", "run"]

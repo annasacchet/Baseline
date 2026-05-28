@@ -1,0 +1,4 @@
+qid,group,instruction_type,run,step,instruction_used,n_facts,n_supported,n_not_supported,n_contradicted,init_score,factscore
+2hop__635544_110949,content,elaborate,0,1,"Elaborate on the content, adding relevant details while staying faithful to the source text.",201,173,28,0,0.8606965174129353,0.8606965174129353
+2hop__635544_110949,content,elaborate,0,2,"Elaborate on the content, adding relevant details while staying faithful to the source text.",211,171,40,0,0.8104265402843602,0.8104265402843602
+2hop__635544_110949,content,elaborate,0,3,"Elaborate on the content, adding relevant details while staying faithful to the source text.",174,126,48,0,0.7241379310344828,0.7241379310344828

@@ -25,19 +25,25 @@ scripts/llama70b/
 │   └── openfactscore_eval.py # --input <CSV> --topic-mode {qid,first-line,question}
 ├── musique/
 │   ├── rewriting_pipeline_musique.py
+│   ├── self_refine_pipeline_musique.py   # RQ3: Rewriter/Critic/Refiner via vLLM
 │   └── answer_f1_eval_musique.py
 ├── newsqa/
 │   ├── rewriting_pipeline_newsqa.py
+│   ├── self_refine_pipeline_newsqa.py    # RQ3 (vLLM AWQ-INT4)
 │   └── answer_f1_eval_newsqa.py
 ├── fictionalqa/
 │   ├── rewriting_pipeline_fictionalqa.py
+│   ├── self_refine_pipeline_fictionalqa.py # RQ3 (vLLM AWQ-INT4)
 │   └── answer_f1_eval_fictionalqa.py
 └── launch/
-    ├── env_homer.sh               # source'd by the others
-    ├── launch_smoke_homer.sh      # 1 q × 3 datasets, end-to-end
+    ├── env_homer.sh                              # source'd by the others
+    ├── launch_smoke_homer.sh                     # 1 q × 3 datasets, end-to-end
     ├── launch_musique_homer.sh
     ├── launch_newsqa_homer.sh
-    └── launch_fictionalqa_homer.sh
+    ├── launch_fictionalqa_homer.sh
+    ├── launch_self_refine_musique_homer.sh       # RQ3: full self-refine pipeline
+    ├── launch_self_refine_newsqa_homer.sh
+    └── launch_self_refine_fictionalqa_homer.sh
 ```
 
 Outputs go to `results/llama70b/{musique,newsqa,fictionalqa}/`.
@@ -76,3 +82,22 @@ Knobs (env vars before launching):
 
 All scripts are **resumable**: re-running the same command picks up where the
 previous one left off (per-chain or per-row deduplication on the output CSV).
+
+## Self-Refine (RQ3)
+
+Same Rewriter / Critic / Refiner loop as `scripts/15q/self_refine_pipeline.py`,
+ported to Llama-3.1-70B-AWQ via vLLM. All three roles use the same model;
+generations are batched across the 12 chains of each question (`12 prompts ×
+3 phases × N iterations` per question), which is the only way to keep both
+GPUs busy under the 3× compute multiplier of self-refine.
+
+E0 is sourced from the corresponding baseline `rewriting_chains_*.csv` when
+present (byte-identical to RQ1); otherwise it is rebuilt from the dataset.
+Output CSV adds `draft_text`, `critic_feedback`, `draft_n_tokens` next to the
+standard chain columns — the existing eval scripts ignore the extras.
+
+```bash
+bash ~/Baseline/scripts/llama70b/launch/launch_self_refine_musique_homer.sh
+bash ~/Baseline/scripts/llama70b/launch/launch_self_refine_newsqa_homer.sh
+bash ~/Baseline/scripts/llama70b/launch/launch_self_refine_fictionalqa_homer.sh
+```

@@ -1,0 +1,17 @@
+qid,group,instruction_type,run,step,n_tokens,perplexity
+2hop__635544_110949,content,elaborate,0,0,2292,4.0548
+2hop__635544_110949,content,elaborate,0,1,2048,4.3298
+2hop__635544_110949,content,elaborate,0,2,2048,4.1546
+2hop__635544_110949,content,elaborate,0,3,2048,3.4978
+2hop__635544_110949,content,shorten,0,0,2292,4.0548
+2hop__635544_110949,content,shorten,0,1,1056,4.452
+2hop__635544_110949,content,shorten,0,2,895,5.0235
+2hop__635544_110949,content,shorten,0,3,818,5.6607
+2hop__635544_110949,style,formality,0,0,2292,4.0548
+2hop__635544_110949,style,formality,0,1,2048,4.4382
+2hop__635544_110949,style,formality,0,2,1993,4.5205
+2hop__635544_110949,style,formality,0,3,1991,4.5057
+2hop__635544_110949,style,paraphrase,0,0,2292,4.0548
+2hop__635544_110949,style,paraphrase,0,1,1656,4.5273
+2hop__635544_110949,style,paraphrase,0,2,1641,4.5803
+2hop__635544_110949,style,paraphrase,0,3,1616,4.6537

@@ -1,0 +1,49 @@
+qid,group,instruction_type,run,step,question,gold_answer,predicted_answer,matched_reference,answer_f1
+2hop__635544_110949,content,elaborate,0,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,elaborate,0,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,0,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,0,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,1,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,elaborate,1,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,1,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,1,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,2,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,elaborate,2,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,2,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,elaborate,2,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,content,shorten,0,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,shorten,0,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,0,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,0,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,1,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,shorten,1,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,1,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,1,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,2,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,content,shorten,2,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,2,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,content,shorten,2,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,formality,0,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,formality,0,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the provided context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,0,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,0,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,1,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,formality,1,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,1,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,1,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,There is no information about a person who was part of Ratata in the given context.,11 September 1962,0.0
+2hop__635544_110949,style,formality,2,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,formality,2,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,No specific date of birth is given for Mauro Scocco.,11 September 1962,0.0
+2hop__635544_110949,style,formality,2,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,No specific date of birth is mentioned for Mauro Scocco.,11 September 1962,0.0
+2hop__635544_110949,style,formality,2,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,No specific date of birth is mentioned for Mauro Scocco.,11 September 1962,0.0
+2hop__635544_110949,style,paraphrase,0,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,0,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,0,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,0,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,1,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,1,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,Mauro Scocco,11 September 1962,0.0
+2hop__635544_110949,style,paraphrase,1,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,No specific date is given for Mauro Scocco.,11 September 1962,0.0
+2hop__635544_110949,style,paraphrase,1,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,No specific date is given for Mauro Scocco.,11 September 1962,0.0
+2hop__635544_110949,style,paraphrase,2,0,What is the date of birth of the person who was part of Ratata?,11 September 1962,11 September 1962,11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,2,1,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,2,2,What is the date of birth of the person who was part of Ratata?,11 September 1962,"September 11, 1962",11 September 1962,1.0
+2hop__635544_110949,style,paraphrase,2,3,What is the date of birth of the person who was part of Ratata?,11 September 1962,September,11 September 1962,0.5
