@@ -76,6 +76,9 @@ def load_vllm(
 
     model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
     model.eval()
+    # Match the validated 15q pipeline: ensure KV-cache is on for fast decode.
+    if hasattr(model, "generation_config"):
+        model.generation_config.use_cache = True
     _TOKENIZER = tokenizer
     print(f"  loaded in {time.time() - t0:.1f}s · "
           f"device map: {getattr(model, 'hf_device_map', 'n/a')}", flush=True)
@@ -132,8 +135,13 @@ def generate_batch_vllm(
         batch_idx = i // _HF_BATCH_SIZE + 1
         t0 = time.time()
         batch = prompts[i:i + _HF_BATCH_SIZE]
+        # Match the validated 15q pipeline: let the tokenizer add special tokens
+        # (default add_special_tokens=True). Re-tokenizing the rendered chat
+        # template with add_special_tokens=False dropped OLMo's BOS/role markers
+        # and the model never emitted EOS — generation ran to max_new_tokens
+        # every time and looked "stuck".
         enc = tokenizer(batch, return_tensors="pt", padding=True,
-                        add_special_tokens=False).to(model.device)
+                        truncation=False).to(model.device)
         print(f"  [hf] batch {batch_idx}/{n_batches}: tokenized "
               f"(input_ids {tuple(enc['input_ids'].shape)}), calling generate ...",
               flush=True)
