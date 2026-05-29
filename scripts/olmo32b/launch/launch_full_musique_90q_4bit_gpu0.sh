@@ -62,6 +62,14 @@ BACKEND="${BACKEND:-vllm}"  # 'vllm' = ~10x faster. FlashInfer JIT (needs nvcc>=
 # Force the precompiled FlashAttention backend so vLLM never JIT-builds a kernel
 # with the old system nvcc (11.5). Validated on Homer: load + generate work.
 export VLLM_ATTENTION_BACKEND="${VLLM_ATTENTION_BACKEND:-FLASH_ATTN}"
+# Force the V1 engine (accepts FLASH_ATTN; V0 rejects it on this CUDA build).
+export VLLM_USE_V1="${VLLM_USE_V1:-1}"
+# enforce-eager disables CUDA graph capture (slower). Set ENFORCE_EAGER=0 to let
+# vLLM capture CUDA graphs (much faster; no nvcc needed — graphs are runtime
+# capture, not C++ JIT). Default 1 = safe/eager.
+ENFORCE_EAGER="${ENFORCE_EAGER:-1}"
+if [ "$ENFORCE_EAGER" = "1" ]; then EAGER_FLAG="--enforce-eager"; else EAGER_FLAG=""; fi
+echo "[vLLM] V1=$VLLM_USE_V1  attn=$VLLM_ATTENTION_BACKEND  enforce_eager=$ENFORCE_EAGER"
 OUT_DIR="${OUT_DIR:-results/olmo32b/musique/${TOTAL_Q}q}"
 
 mkdir -p "$OUT_DIR" logs
@@ -102,7 +110,7 @@ python scripts/olmo32b/musique/rewriting_pipeline_musique.py \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
   --backend "$BACKEND" \
-  --enforce-eager \
+  $EAGER_FLAG \
   --seed "$SEED" \
   --output "$CHAINS"
 
@@ -118,7 +126,7 @@ python scripts/olmo32b/musique/answer_f1_eval_musique.py \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
   --backend "$BACKEND" \
-  --enforce-eager \
+  $EAGER_FLAG \
   --resume
 
 echo ""
