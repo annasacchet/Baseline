@@ -125,6 +125,8 @@ def generate_batch_vllm(
         gen_kwargs.update(temperature=float(temperature), top_p=float(top_p))
 
     n_batches = (len(prompts) + _HF_BATCH_SIZE - 1) // _HF_BATCH_SIZE
+    print(f"  [hf] generate_batch_vllm: {len(prompts)} prompts, "
+          f"batch_size={_HF_BATCH_SIZE}, {n_batches} batches", flush=True)
     outputs: list[str] = []
     for i in range(0, len(prompts), _HF_BATCH_SIZE):
         batch_idx = i // _HF_BATCH_SIZE + 1
@@ -132,6 +134,9 @@ def generate_batch_vllm(
         batch = prompts[i:i + _HF_BATCH_SIZE]
         enc = tokenizer(batch, return_tensors="pt", padding=True,
                         add_special_tokens=False).to(model.device)
+        print(f"  [hf] batch {batch_idx}/{n_batches}: tokenized "
+              f"(input_ids {tuple(enc['input_ids'].shape)}), calling generate ...",
+              flush=True)
         out = model.generate(**enc, **gen_kwargs)
         # strip the prompt: with left padding, new tokens start at input width.
         gen = out[:, enc["input_ids"].shape[1]:]
