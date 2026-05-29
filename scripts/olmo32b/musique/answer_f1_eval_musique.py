@@ -18,12 +18,17 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "olmo32b"))
 from _common.f1_utils import best_f1  # noqa: E402
 from _common.olmo_constants import CHAIN_KEYS, OLMO_MODEL_ID  # noqa: E402
-from _common.olmo_vllm import (  # noqa: E402
-    generate_batch_vllm,
-    hf_login_if_token,
-    load_vllm,
-    render_chat,
-)
+def _load_backend(name):
+    """Return backend funcs from the vLLM or HF module (same names in both)."""
+    if name == "hf":
+        from _common.olmo_hf import (
+            generate_batch_vllm, hf_login_if_token, load_vllm, render_chat,
+        )
+    else:
+        from _common.olmo_vllm import (
+            generate_batch_vllm, hf_login_if_token, load_vllm, render_chat,
+        )
+    return load_vllm, render_chat, generate_batch_vllm, hf_login_if_token
 
 DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "olmo32b" / "musique" / "rewriting_chains_musique.csv"
 DEFAULT_MUSIQUE_PATH = REPO_ROOT / "musique_ans_v1.0_dev.jsonl"
@@ -79,11 +84,18 @@ def main():
                     help="vLLM quantization. Pass 'bitsandbytes' for on-the-fly NF4 4-bit.")
     ap.add_argument("--enforce-eager", action="store_true",
                     help="Disable CUDA graph capture / torch.compile (avoids JIT C++ build failures).")
+    ap.add_argument("--backend", choices=["vllm", "hf"], default="vllm",
+                    help="Inference backend. 'hf' = transformers 4-bit (robust on old CUDA drivers).")
     ap.add_argument("--qid", action="append", default=None)
     ap.add_argument("--runs", type=int, nargs="+", default=None)
     ap.add_argument("--steps", type=int, nargs="+", default=None)
     ap.add_argument("--resume", action="store_true")
     args = ap.parse_args()
+
+    # Bind backend functions as module globals (build_prompts uses render_chat).
+    global load_vllm, render_chat, generate_batch_vllm, hf_login_if_token
+    load_vllm, render_chat, generate_batch_vllm, hf_login_if_token = _load_backend(args.backend)
+    print(f"Backend: {args.backend}", flush=True)
 
     chains_csv = args.input
     output_csv = args.output or chains_csv.with_name(chains_csv.stem + "_answer_f1.csv")

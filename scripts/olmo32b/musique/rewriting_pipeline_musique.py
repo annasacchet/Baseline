@@ -38,12 +38,18 @@ from _common.olmo_constants import (  # noqa: E402
     OLMO_MODEL_ID,
     REWRITE_TEMPLATE,
 )
-from _common.olmo_vllm import (  # noqa: E402
-    generate_batch_vllm,
-    hf_login_if_token,
-    load_vllm,
-    render_chat,
-)
+def _load_backend(name):
+    """Return (load_vllm, render_chat, generate_batch_vllm, hf_login_if_token)
+    from the vLLM or the HF backend. Both expose the same names."""
+    if name == "hf":
+        from _common.olmo_hf import (
+            generate_batch_vllm, hf_login_if_token, load_vllm, render_chat,
+        )
+    else:
+        from _common.olmo_vllm import (
+            generate_batch_vllm, hf_login_if_token, load_vllm, render_chat,
+        )
+    return load_vllm, render_chat, generate_batch_vllm, hf_login_if_token
 
 DEFAULT_DATASET_PATH = Path(os.environ.get(
     "MUSIQUE_DATASET",
@@ -154,6 +160,8 @@ def main():
                    help="vLLM quantization. Pass 'bitsandbytes' for on-the-fly NF4 4-bit.")
     p.add_argument("--enforce-eager", action="store_true",
                    help="Disable CUDA graph capture / torch.compile (avoids JIT C++ build failures).")
+    p.add_argument("--backend", choices=["vllm", "hf"], default="vllm",
+                   help="Inference backend. 'hf' = transformers 4-bit (robust on old CUDA drivers).")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--smoke-test", action="store_true")
     p.add_argument("--qids-file", type=Path, default=None)
@@ -161,6 +169,11 @@ def main():
     p.add_argument("--system-prompt", default=DEFAULT_SYSTEM_PROMPT,
                    help="Pass '' to disable the system prompt.")
     args = p.parse_args()
+
+    # Bind backend functions as module globals so run_question() can use them.
+    global load_vllm, render_chat, generate_batch_vllm, hf_login_if_token
+    load_vllm, render_chat, generate_batch_vllm, hf_login_if_token = _load_backend(args.backend)
+    print(f"Backend: {args.backend}", flush=True)
 
     system_prompt = args.system_prompt if args.system_prompt else None
 

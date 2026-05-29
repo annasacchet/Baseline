@@ -54,7 +54,9 @@ MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.90}"
 TEMPERATURE="${TEMPERATURE:-0.7}"
 SEED="${SEED:-42}"
-QUANT="bitsandbytes"        # vLLM on-the-fly NF4 4-bit
+QUANT="bitsandbytes"        # NF4 4-bit (vLLM on-the-fly, or HF bnb)
+BACKEND="${BACKEND:-hf}"    # 'hf' = transformers 4-bit (robust on CUDA 12.7);
+                            # 'vllm' fails here due to FlashInfer JIT build.
 OUT_DIR="${OUT_DIR:-results/olmo32b/musique/${TOTAL_Q}q}"
 
 mkdir -p "$OUT_DIR" logs
@@ -70,6 +72,7 @@ echo "============================================================"
 echo "  OLMo-3.1-32B-Instruct (4-bit) MuSiQue ${TOTAL_Q}q — single GPU"
 echo "============================================================"
 echo "  N_PER_HOP        = $N_PER_HOP   (total: $TOTAL_Q questions, balanced 2/3/4-hop)"
+echo "  BACKEND          = $BACKEND"
 echo "  QUANTIZATION     = $QUANT (NF4 4-bit)"
 echo "  GPU              = $GPU  (TP=1)"
 echo "  MAX_NEW_TOKENS   = $MAX_NEW_TOKENS"
@@ -82,7 +85,7 @@ echo "============================================================"
 
 echo ""
 echo "############################################################"
-echo "#  1/5 — Rewriting chains (OLMo-3.1-32B 4-bit via vLLM)    #"
+echo "#  1/5 — Rewriting chains (OLMo-3.1-32B 4-bit, $BACKEND)        #"
 echo "############################################################"
 python scripts/olmo32b/musique/rewriting_pipeline_musique.py \
   --n-per-hop "$N_PER_HOP" \
@@ -93,13 +96,14 @@ python scripts/olmo32b/musique/rewriting_pipeline_musique.py \
   --gpu-mem-util "$GPU_MEM_UTIL" \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
+  --backend "$BACKEND" \
   --enforce-eager \
   --seed "$SEED" \
   --output "$CHAINS"
 
 echo ""
 echo "############################################################"
-echo "#  2/5 — Answer F1 (OLMo-3.1-32B 4-bit via vLLM)          #"
+echo "#  2/5 — Answer F1 (OLMo-3.1-32B 4-bit, $BACKEND)              #"
 echo "############################################################"
 python scripts/olmo32b/musique/answer_f1_eval_musique.py \
   --input "$CHAINS" \
@@ -108,6 +112,7 @@ python scripts/olmo32b/musique/answer_f1_eval_musique.py \
   --gpu-mem-util "$GPU_MEM_UTIL" \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
+  --backend "$BACKEND" \
   --enforce-eager \
   --resume
 
