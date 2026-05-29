@@ -248,6 +248,8 @@ def main():
         if not specs_to_run:
             continue
 
+        q_idx = questions.index(q) + 1
+        print(f"\n[Q {q_idx}/{len(questions)}] {qid} — {len(specs_to_run)} chains to run ...", flush=True)
         t0 = time.time()
         specs_done = run_question(
             llm, tokenizer, E0, specs_to_run,

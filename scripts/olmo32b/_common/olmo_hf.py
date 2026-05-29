@@ -124,8 +124,11 @@ def generate_batch_vllm(
     if do_sample:
         gen_kwargs.update(temperature=float(temperature), top_p=float(top_p))
 
+    n_batches = (len(prompts) + _HF_BATCH_SIZE - 1) // _HF_BATCH_SIZE
     outputs: list[str] = []
     for i in range(0, len(prompts), _HF_BATCH_SIZE):
+        batch_idx = i // _HF_BATCH_SIZE + 1
+        t0 = time.time()
         batch = prompts[i:i + _HF_BATCH_SIZE]
         enc = tokenizer(batch, return_tensors="pt", padding=True,
                         add_special_tokens=False).to(model.device)
@@ -134,4 +137,5 @@ def generate_batch_vllm(
         gen = out[:, enc["input_ids"].shape[1]:]
         decoded = tokenizer.batch_decode(gen, skip_special_tokens=True)
         outputs.extend(t.strip() for t in decoded)
+        print(f"    [hf] batch {batch_idx}/{n_batches} done in {time.time()-t0:.1f}s", flush=True)
     return outputs
