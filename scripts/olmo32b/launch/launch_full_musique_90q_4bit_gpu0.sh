@@ -23,7 +23,22 @@
 #   OUT_DIR (results/olmo32b/musique/90q), SKIP_PPL=1
 # ----------------------------------------------------------------------------
 set -euo pipefail
-source "$(dirname "$0")/env_homer.sh"
+
+# Optional shared env (HF cache on NAS + dataset paths). If env_homer.sh is
+# present we source it; otherwise we fall back to sane defaults so the script
+# runs standalone. Any variable you already exported in your shell wins.
+_ENV_HOMER="$(dirname "$0")/env_homer.sh"
+if [ -f "$_ENV_HOMER" ]; then
+  source "$_ENV_HOMER"
+else
+  echo "[env] env_homer.sh not found — using defaults (override via shell exports)"
+  export HF_HOME="${HF_HOME:-/mnt/dmif-nas/mitel/sacchet/hf_cache}"
+  export HF_HUB_CACHE="${HF_HUB_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
+  export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache}"
+  export MUSIQUE_DATASET="${MUSIQUE_DATASET:-/home/sacchet/Baseline/musique_ans_v1.0_dev.jsonl}"
+  echo "[env] HF_HOME=$HF_HOME"
+  echo "[env] MUSIQUE_DATASET=$MUSIQUE_DATASET"
+fi
 export PYTHONUNBUFFERED=1
 
 # --- force a single GPU --------------------------------------------------- #
