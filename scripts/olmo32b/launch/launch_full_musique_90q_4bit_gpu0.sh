@@ -93,6 +93,7 @@ python scripts/olmo32b/musique/rewriting_pipeline_musique.py \
   --gpu-mem-util "$GPU_MEM_UTIL" \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
+  --enforce-eager \
   --seed "$SEED" \
   --output "$CHAINS"
 
@@ -107,6 +108,7 @@ python scripts/olmo32b/musique/answer_f1_eval_musique.py \
   --gpu-mem-util "$GPU_MEM_UTIL" \
   --tensor-parallel-size 1 \
   --quantization "$QUANT" \
+  --enforce-eager \
   --resume
 
 echo ""

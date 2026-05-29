@@ -152,6 +152,8 @@ def main():
                    help="Default: number of visible CUDA devices.")
     p.add_argument("--quantization", default=None,
                    help="vLLM quantization. Pass 'bitsandbytes' for on-the-fly NF4 4-bit.")
+    p.add_argument("--enforce-eager", action="store_true",
+                   help="Disable CUDA graph capture / torch.compile (avoids JIT C++ build failures).")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--smoke-test", action="store_true")
     p.add_argument("--qids-file", type=Path, default=None)
@@ -207,6 +209,7 @@ def main():
         max_model_len=args.max_model_len,
         gpu_memory_utilization=args.gpu_mem_util,
         quantization=args.quantization,
+        enforce_eager=args.enforce_eager,
     )
 
     n_done = 0
