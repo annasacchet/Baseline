@@ -107,7 +107,8 @@ def run_question(llm, tokenizer, E0, specs, *, n_iterations, temperature,
     for s in specs:
         s["chain"] = [E0]
         s["current"] = E0
-    for _ in range(n_iterations):
+    for it in range(n_iterations):
+        print(f"  [step {it + 1}/{n_iterations}] rewriting {len(specs)} chains ...", flush=True)
         prompts = [
             render_chat(
                 tokenizer, system_prompt,
