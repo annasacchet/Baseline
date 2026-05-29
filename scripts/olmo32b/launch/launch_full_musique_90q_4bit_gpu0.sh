@@ -55,8 +55,13 @@ GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.90}"
 TEMPERATURE="${TEMPERATURE:-0.7}"
 SEED="${SEED:-42}"
 QUANT="bitsandbytes"        # NF4 4-bit (vLLM on-the-fly, or HF bnb)
-BACKEND="${BACKEND:-hf}"    # 'hf' = transformers 4-bit (robust on CUDA 12.7);
-                            # 'vllm' fails here due to FlashInfer JIT build.
+BACKEND="${BACKEND:-vllm}"  # 'vllm' = ~10x faster. FlashInfer JIT (needs nvcc>=12)
+                            # is avoided via VLLM_ATTENTION_BACKEND=FLASH_ATTN +
+                            # --enforce-eager (set below). 'hf' = transformers
+                            # 4-bit fallback (slow but no compilation).
+# Force the precompiled FlashAttention backend so vLLM never JIT-builds a kernel
+# with the old system nvcc (11.5). Validated on Homer: load + generate work.
+export VLLM_ATTENTION_BACKEND="${VLLM_ATTENTION_BACKEND:-FLASH_ATTN}"
 OUT_DIR="${OUT_DIR:-results/olmo32b/musique/${TOTAL_Q}q}"
 
 mkdir -p "$OUT_DIR" logs
