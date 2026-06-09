@@ -37,7 +37,14 @@ if [ -z "${HF_TOKEN:-}" ]; then
 fi
 
 export MUSIQUE_DATASET="${MUSIQUE_DATASET:-/home/sacchet/Baseline/musique_ans_v1.0_dev.jsonl}"
-export NEWSQA_DATASET="${NEWSQA_DATASET:-/mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv}"
+# NewsQA: prova prima ~/datasets (path su Lisa), poi il NAS. Override con NEWSQA_DATASET=...
+if [ -z "${NEWSQA_DATASET:-}" ]; then
+  if [ -f /home/sacchet/datasets/combined-newsqa-data-v1.csv ]; then
+    export NEWSQA_DATASET=/home/sacchet/datasets/combined-newsqa-data-v1.csv
+  else
+    export NEWSQA_DATASET=/mnt/dmif-nas/mitel/sacchet/combined-newsqa-data-v1.csv
+  fi
+fi
 
 cd ~/Baseline
 
