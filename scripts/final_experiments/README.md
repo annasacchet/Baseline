@@ -97,8 +97,10 @@ validated `scripts/olmo32b/` tree; only the model ID in
   run on vLLM's Transformers fallback.
 - **Qwen3-30B-A3B (Lisa)**: native vLLM (Qwen3 has a kernel), bf16. Set
   `QUANT=bitsandbytes` if VRAM is tight.
-- **Llama-3.1-70B (Homer)**: MuSiQue uses the AWQ-INT4 checkpoint via vLLM
-  (TP=2). NewsQA / FictionalQA rewriting + Answer-F1 use HF transformers 4-bit.
+- **Llama-3.1-70B (Homer)**: all datasets use the AWQ-INT4 checkpoint via vLLM
+  (TP=2). MuSiQue, NewsQA and FictionalQA rewriting + Answer-F1 are vLLM-only
+  (no `--backend`/`--quantization` flag). Only perplexity stays on HF transformers
+  4-bit (vLLM doesn't expose token log-likelihoods).
 - **gpt-oss-120b (Homer)**: native vLLM, TP=2.
 
 The launchers don't hardcode which flags each pipeline accepts: `lib_forward.sh`

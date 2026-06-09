@@ -57,7 +57,11 @@ def load_vllm(
           f"(4bit={use_4bit}, dtype={dtype}) ...", flush=True)
     t0 = time.time()
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    # clean_up_tokenization_spaces=False: for BPE tokenizers (Qwen/Llama) the
+    # cleanup strips spaces before punctuation, which would silently corrupt the
+    # generated rewrites and skew faithfulness/F1/FactScore. Keep it off.
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_id, trust_remote_code=True, clean_up_tokenization_spaces=False)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     # left padding so generated tokens are contiguous at the right edge.
@@ -143,7 +147,8 @@ def generate_batch_vllm(
         out = model.generate(**enc, **gen_kwargs)
         # strip the prompt: with left padding, new tokens start at input width.
         gen = out[:, enc["input_ids"].shape[1]:]
-        decoded = tokenizer.batch_decode(gen, skip_special_tokens=True)
+        decoded = tokenizer.batch_decode(
+            gen, skip_special_tokens=True, clean_up_tokenization_spaces=False)
         outputs.extend(t.strip() for t in decoded)
         print(f"    [hf] batch {batch_idx}/{n_batches} (in {tuple(enc['input_ids'].shape)}) "
               f"done in {time.time()-t0:.1f}s", flush=True)

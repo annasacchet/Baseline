@@ -1,4 +1,4 @@
-"""Answer F1 on NewsQA chains — QA model = Llama-3.1-70B (4-bit).
+"""Answer F1 on NewsQA chains — QA model = Llama-3.1-70B via vLLM (AWQ INT4).
 
 Extractive prompt (NewsQA answers are verbatim spans), aliases pulled from
 the chain CSV (||-joined). Max over (gold + aliases) like the official metric.
@@ -12,13 +12,17 @@ import time
 from pathlib import Path
 
 import pandas as pd
-import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "llama70b"))
 from _common.f1_utils import best_f1  # noqa: E402
-from _common.llama_constants import ALIAS_SEP, CHAIN_KEYS, LLAMA_MODEL_ID  # noqa: E402
-from _common.llama_model import hf_login_if_token, load_llama  # noqa: E402
+from _common.llama_constants import ALIAS_SEP, CHAIN_KEYS, LLAMA_AWQ_MODEL_ID  # noqa: E402
+from _common.llama_vllm import (  # noqa: E402
+    generate_batch_vllm,
+    hf_login_if_token,
+    load_vllm,
+    render_chat,
+)
 
 DEFAULT_CHAINS_CSV = REPO_ROOT / "results" / "llama70b" / "newsqa" / "rewriting_chains_newsqa.csv"
 
@@ -49,31 +53,19 @@ def build_prompts(tokenizer, rows):
             context=str(row["text"]).strip(),
             question=str(row["question"]).strip(),
         )
-        prompts.append(tokenizer.apply_chat_template(
-            [{"role": "user", "content": user}],
-            tokenize=False, add_generation_prompt=True,
-        ))
+        prompts.append(render_chat(tokenizer, None, user))
     return prompts
 
 
-@torch.no_grad()
-def generate_batch(tokenizer, model, prompts, max_new_tokens=96):
-    enc = tokenizer(prompts, return_tensors="pt", padding=True, truncation=False).to(model.device)
-    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
-                         pad_token_id=tokenizer.pad_token_id)
-    gen = out[:, enc["input_ids"].shape[1]:]
-    return [t.strip() for t in tokenizer.batch_decode(gen, skip_special_tokens=True)]
-
-
 def main():
-    ap = argparse.ArgumentParser(description="Answer F1 on NewsQA chains, Llama-3.1-70B QA.")
+    ap = argparse.ArgumentParser(description="Answer F1 on NewsQA chains, Llama-3.1-70B QA via vLLM (AWQ INT4).")
     ap.add_argument("--input", type=Path, default=DEFAULT_CHAINS_CSV)
     ap.add_argument("--output", type=Path, default=None)
-    ap.add_argument("--model", default=LLAMA_MODEL_ID)
-    ap.add_argument("--batch-size", type=int, default=2)
+    ap.add_argument("--model", default=LLAMA_AWQ_MODEL_ID)
     ap.add_argument("--max-new-tokens", type=int, default=96)
-    ap.add_argument("--use-4bit", action="store_true", default=True)
-    ap.add_argument("--no-4bit", dest="use_4bit", action="store_false")
+    ap.add_argument("--max-model-len", type=int, default=12288)
+    ap.add_argument("--gpu-mem-util", type=float, default=0.90)
+    ap.add_argument("--tensor-parallel-size", type=int, default=None)
     ap.add_argument("--smoke-test", action="store_true")
     args = ap.parse_args()
 
@@ -102,32 +94,36 @@ def main():
         raise RuntimeError("No rows to evaluate.")
 
     total = len(to_eval)
-    print(f"Answer F1 on {total} rows — QA = {args.model}, batch={args.batch_size}")
-    tokenizer, model = load_llama(args.model, use_4bit=args.use_4bit)
+    print(f"Answer F1 on {total} rows — QA = {args.model}")
+    llm, tokenizer = load_vllm(
+        args.model,
+        tensor_parallel_size=args.tensor_parallel_size,
+        max_model_len=args.max_model_len,
+        gpu_memory_utilization=args.gpu_mem_util,
+    )
 
     rows = to_eval.to_dict(orient="records")
-    results = []; t_start = time.time()
-    for i in range(0, len(rows), args.batch_size):
-        batch = rows[i:i + args.batch_size]
-        prompts = build_prompts(tokenizer, batch)
-        preds = generate_batch(tokenizer, model, prompts, max_new_tokens=args.max_new_tokens)
-        for row, pred in zip(batch, preds):
-            gold = str(row["gold_answer"])
-            aliases = parse_aliases(row.get("gold_answer_aliases"), gold)
-            f1, matched_ref = best_f1(pred, aliases)
-            results.append({
-                **{k: row[k] for k in CHAIN_KEYS},
-                "step": int(row["step"]),
-                "question": row["question"], "gold_answer": gold,
-                "gold_answer_aliases": ALIAS_SEP.join(aliases),
-                "predicted_answer": pred, "matched_reference": matched_ref,
-                "answer_f1": f1,
-            })
-            n_done = len(results)
-            avg = (time.time() - t_start) / max(n_done, 1)
-            eta = (total - n_done) * avg
-            label = f"{row['group']}/{row['instruction_type']}/run{row['run']}/step{row['step']}"
-            print(f"[{n_done}/{total}] {label}  F1={f1:.3f}  ETA {eta/60:.1f} min")
+    print(f"Building {total} prompts ...")
+    prompts = build_prompts(tokenizer, rows)
+
+    print("Generating ...")
+    t0 = time.time()
+    preds = generate_batch_vllm(llm, prompts, temperature=0.0, max_new_tokens=args.max_new_tokens)
+    print(f"  vLLM generated {total} answers in {time.time() - t0:.1f}s")
+
+    results = []
+    for row, pred in zip(rows, preds):
+        gold = str(row["gold_answer"])
+        aliases = parse_aliases(row.get("gold_answer_aliases"), gold)
+        f1, matched_ref = best_f1(pred, aliases)
+        results.append({
+            **{k: row[k] for k in CHAIN_KEYS},
+            "step": int(row["step"]),
+            "question": row["question"], "gold_answer": gold,
+            "gold_answer_aliases": ALIAS_SEP.join(aliases),
+            "predicted_answer": pred, "matched_reference": matched_ref,
+            "answer_f1": f1,
+        })
 
     results_df = pd.DataFrame(results)
 

@@ -18,7 +18,6 @@ import time
 from pathlib import Path
 
 import pandas as pd
-import torch
 from huggingface_hub import hf_hub_download
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -28,10 +27,15 @@ from _common.llama_constants import (  # noqa: E402
     ALL_INSTRUCTIONS,
     CHAIN_KEYS,
     DEFAULT_SYSTEM_PROMPT,
-    LLAMA_MODEL_ID,
+    LLAMA_AWQ_MODEL_ID,
     REWRITE_TEMPLATE,
 )
-from _common.llama_model import hf_login_if_token, load_llama  # noqa: E402
+from _common.llama_vllm import (  # noqa: E402
+    generate_batch_vllm,
+    hf_login_if_token,
+    load_vllm,
+    render_chat,
+)
 
 DEFAULT_OUTPUT_CSV = REPO_ROOT / "results" / "llama70b" / "fictionalqa" / "rewriting_chains_fictionalqa.csv"
 HF_REPO = "jwkirchenbauer/fictionalqa"
@@ -81,45 +85,22 @@ def sample_items(items, n, seed):
     rng = random.Random(seed); pool = list(items); rng.shuffle(pool); return pool[:n]
 
 
-def _format_prompt(tokenizer, user_prompt, system_prompt):
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": user_prompt})
-    if getattr(tokenizer, "chat_template", None):
-        return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    return (system_prompt + "\n\n" if system_prompt else "") + user_prompt
-
-
-@torch.inference_mode()
-def generate_batch(tokenizer, model, user_prompts, *, temperature, max_new_tokens, system_prompt):
-    if not user_prompts:
-        return []
-    texts = [_format_prompt(tokenizer, up, system_prompt) for up in user_prompts]
-    enc = tokenizer(texts, return_tensors="pt", padding=True, truncation=False).to(model.device)
-    gen_kwargs = dict(max_new_tokens=max_new_tokens, pad_token_id=tokenizer.pad_token_id)
-    if temperature > 0:
-        gen_kwargs.update(do_sample=True, temperature=temperature, top_p=0.95)
-    else:
-        gen_kwargs.update(do_sample=False)
-    out = model.generate(**enc, **gen_kwargs)
-    gen = out[:, enc["input_ids"].shape[1]:]
-    return [d.strip() for d in tokenizer.batch_decode(gen, skip_special_tokens=True)]
-
-
-def run_doc_batched(tokenizer, model, E0, specs, *, n_iterations, temperature,
-                    max_new_tokens, system_prompt, batch_size):
+def run_doc(llm, tokenizer, E0, specs, *, n_iterations, temperature,
+            max_new_tokens, system_prompt):
     for s in specs:
         s["chain"] = [E0]; s["current"] = E0
     for _ in range(n_iterations):
-        prompts = [REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]) for s in specs]
-        outs = []
-        for i in range(0, len(prompts), batch_size):
-            outs.extend(generate_batch(
-                tokenizer, model, prompts[i:i + batch_size],
-                temperature=temperature, max_new_tokens=max_new_tokens,
-                system_prompt=system_prompt,
-            ))
+        prompts = [
+            render_chat(
+                tokenizer, system_prompt,
+                REWRITE_TEMPLATE.format(instruction=s["instruction"], text=s["current"]),
+            )
+            for s in specs
+        ]
+        outs = generate_batch_vllm(
+            llm, prompts,
+            temperature=temperature, max_new_tokens=max_new_tokens,
+        )
         for s, new_text in zip(specs, outs):
             s["chain"].append(new_text); s["current"] = new_text
     return specs
@@ -137,8 +118,8 @@ def append_rows(csv_path, rows):
 
 
 def main():
-    p = argparse.ArgumentParser(description="FictionalQA rewriting chains with Llama-3.1-70B (4-bit).")
-    p.add_argument("--model", default=LLAMA_MODEL_ID)
+    p = argparse.ArgumentParser(description="FictionalQA rewriting chains with Llama-3.1-70B via vLLM (AWQ INT4).")
+    p.add_argument("--model", default=LLAMA_AWQ_MODEL_ID)
     p.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_CSV)
     p.add_argument("--n-fictions", type=int, default=100)
     p.add_argument("--styles", nargs="+", default=None,
@@ -146,18 +127,19 @@ def main():
     p.add_argument("--n-iterations", type=int, default=3)
     p.add_argument("--temperature", type=float, default=0.7)
     p.add_argument("--max-new-tokens", type=int, default=4096)
+    # E0 (≤~1084) + system+template (~200) + max-new-tokens (4096) ≈ 5400 → 8192.
+    p.add_argument("--max-model-len", type=int, default=8192)
+    p.add_argument("--gpu-mem-util", type=float, default=0.90)
+    p.add_argument("--tensor-parallel-size", type=int, default=None)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--smoke-test", action="store_true")
-    p.add_argument("--use-4bit", action="store_true", default=True)
-    p.add_argument("--no-4bit", dest="use_4bit", action="store_false")
     p.add_argument("--system-prompt", default=DEFAULT_SYSTEM_PROMPT)
-    p.add_argument("--batch-size", type=int, default=4)
     args = p.parse_args()
     system_prompt = args.system_prompt if args.system_prompt else None
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     hf_login_if_token()
-    random.seed(args.seed); torch.manual_seed(args.seed)
+    random.seed(args.seed)
 
     print("\nLoading FictionalQA from HF Hub", flush=True)
     all_items = load_fictionalqa(allowed_styles=args.styles)
@@ -171,7 +153,12 @@ def main():
     total_chains = len(questions) * sum(len(pool) for pool in ALL_INSTRUCTIONS.values())
     print(f"\nPlan: {len(questions)} fictions × 4 × 3 = {total_chains} chains")
 
-    tokenizer, model = load_llama(args.model, use_4bit=args.use_4bit)
+    llm, tokenizer = load_vllm(
+        args.model,
+        tensor_parallel_size=args.tensor_parallel_size,
+        max_model_len=args.max_model_len,
+        gpu_memory_utilization=args.gpu_mem_util,
+    )
 
     n_done = 0; n_to_do = total_chains - len(done); t_start = time.time()
 
@@ -189,11 +176,10 @@ def main():
             continue
 
         t0 = time.time()
-        specs_done = run_doc_batched(
-            tokenizer, model, E0, specs_to_run,
+        specs_done = run_doc(
+            llm, tokenizer, E0, specs_to_run,
             n_iterations=args.n_iterations, temperature=args.temperature,
             max_new_tokens=args.max_new_tokens, system_prompt=system_prompt,
-            batch_size=args.batch_size,
         )
         elapsed = time.time() - t0
 

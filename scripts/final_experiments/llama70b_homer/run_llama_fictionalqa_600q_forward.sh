@@ -2,7 +2,9 @@
 # FINAL experiment — Llama-3.1-70B-Instruct · FictionalQA · 600q · FORWARD only.
 # Server: HOMER. Everything EXCEPT factscore + recall.
 #
-# NOTE: the Llama FictionalQA Answer-F1 evaluator is HF/bnb 4-bit (handled automatically by CLI introspection).
+# Llama-70B is served as the AWQ-INT4 checkpoint via vLLM (the rewriting and
+# FictionalQA Answer-F1 pipelines are vLLM-only — no --backend/--quantization
+# flags; they take --max-model-len/--gpu-mem-util/--tensor-parallel-size).
 #
 # OFS + recall run separately on Lisa:
 #   scripts/final_experiments/llama70b_homer/run_llama_fictionalqa_600q_ofs_recall.sh

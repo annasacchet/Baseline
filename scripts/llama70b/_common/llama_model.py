@@ -29,7 +29,11 @@ def load_llama(model_id: str, *, use_4bit: bool = True, padding_side: str = "lef
     """Load Llama-3.1-70B (or any HF causal LM) with 4-bit NF4 by default."""
     print(f"Loading {model_id} (4-bit={use_4bit}) ...", flush=True)
     t0 = time.time()
-    tok = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    # clean_up_tokenization_spaces=False: the cleanup is destructive for BPE
+    # tokenizers (strips spaces before punctuation) and would corrupt the
+    # rewrites; keep it off so decoded text matches the model output exactly.
+    tok = AutoTokenizer.from_pretrained(
+        model_id, trust_remote_code=True, clean_up_tokenization_spaces=False)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     tok.padding_side = padding_side
