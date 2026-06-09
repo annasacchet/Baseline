@@ -13,19 +13,66 @@ identico comando* e riparte da dove era rimasto.
 
 ```bash
 # Connettiti (VPN attiva) e vai nel repo
-ssh sacchet@homer        # oppure: ssh sacchet@lisa
+ssh sacchet@homer        # oppure: ssh sacchet@lisa.dimi.uniud.it
 cd ~/Baseline
 
 # Token HF (Llama-70B e il giudice Gemma-3-4B sono gated)
 export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-> Gli script sorgiano da soli env + cache HF su NAS + dataset path + attivazione
-> conda. Non devi attivare manualmente l'ambiente: lo fa l'`env_*.sh`.
-> - **Lisa**: attiva `baseline` (override con `LISA_CONDA_ENV=...`).
-> - **Homer**: i launcher `*_forward.sh` attivano `vllm311`.
+> Gli script sorgiano da soli env + cache HF su NAS + dataset path. **NON usano
+> conda**: devi attivare TU il tuo virtualenv prima del comando (è quello che ha
+> vLLM / transformers / le dipendenze):
+>
+> ```bash
+> source ~/Baseline/.venv/bin/activate   # adatta il path del tuo venv
+> ```
+>
+> Se nel PATH c'è solo `python3` (non `python`), gli `env_*.sh` creano da soli
+> uno shim `python`→`python3`, quindi i pipeline girano comunque. Ma le
+> dipendenze devono stare nel python attivo: **attiva il venv prima**.
 
-Lancia **sempre dentro `tmux`** (i job durano ore) e salva il log con `tee`.
+### Come funziona tmux (job lunghi, ore)
+
+Ogni lancio va dentro una sessione `tmux` dedicata, così il job continua anche
+se cade la connessione SSH. Il pattern è sempre lo stesso:
+
+```bash
+tmux new -s NOME_SESSIONE                  # 1) crea/entra nella sessione
+#   --- ora sei DENTRO tmux ---
+cd ~/Baseline                              # 2) la sessione parte dalla home
+source .venv/bin/activate                  # 3) attiva il venv (dipendenze)
+export HF_TOKEN=hf_xxxx                     # 4) re-esporta il token DENTRO tmux
+bash scripts/.../run_xxx.sh 2>&1 | tee logs/xxx.log   # 5) lancia
+#   stacca senza fermare il job:   premi  Ctrl-b  poi  d
+```
+
+> ⚠️ Le variabili (`HF_TOKEN`, `CUDA_VISIBLE_DEVICES`, ecc.) vanno esportate
+> **dentro** la sessione tmux: una nuova sessione tmux NON eredita gli export
+> fatti prima nella shell SSH.
+
+Gestione sessioni:
+
+```bash
+tmux ls                     # elenca le sessioni attive
+tmux attach -t NOME         # rientra in una sessione
+tmux kill-session -t NOME   # termina una sessione
+```
+
+### Scelta della GPU (Lisa)
+
+Controlla quale GPU è libera e selezionala **dentro** tmux, prima del comando:
+
+```bash
+nvidia-smi                       # guarda Memory-Usage / GPU-Util
+export CUDA_VISIBLE_DEVICES=1    # usa la GPU 1 (i launcher Lisa hanno già TP=1)
+```
+
+> Con una sola GPU lascia il default `TP=1` (già impostato). Dopo
+> `CUDA_VISIBLE_DEVICES=1` quella GPU appare come `cuda:0` nei log: è normale.
+
+Nei blocchi qui sotto il pattern è già scritto per esteso: copia l'intero blocco
+di un esperimento, poi (dentro tmux) lancia la riga `bash ...`.
 
 ---
 
@@ -34,21 +81,31 @@ Lancia **sempre dentro `tmux`** (i job durano ore) e salva il log con `tee`.
 Su Lisa ogni launcher fa **tutto**: forward (rewriting → F1 → BERTScore → BLEURT
 → perplexity) **e** OFS + recall in coda. Un solo comando per esperimento.
 
+> Ogni blocco è autonomo: crea la sessione tmux, poi DENTRO esporta token/GPU e
+> lancia. Stacca con `Ctrl-b` `d`.
+
 ### OLMo-3.1-32B-Instruct
 
 ```bash
-# MuSiQue — 600 domande (200 per hop: 2/3/4-hop)
+# === OLMo · MuSiQue — 600 domande (200 per hop: 2/3/4-hop) ===
 tmux new -s olmo_musique
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/olmo32b_lisa/run_olmo_musique_600q.sh \
     2>&1 | tee logs/final_olmo_musique_600q.log
+```
 
-# NewsQA — 600 domande
+```bash
+# === OLMo · NewsQA — 600 domande ===
 tmux new -s olmo_newsqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/olmo32b_lisa/run_olmo_newsqa_600q.sh \
     2>&1 | tee logs/final_olmo_newsqa_600q.log
+```
 
-# FictionalQA — 600 domande
+```bash
+# === OLMo · FictionalQA — 600 domande ===
 tmux new -s olmo_fictionalqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/olmo32b_lisa/run_olmo_fictionalqa_600q.sh \
     2>&1 | tee logs/final_olmo_fictionalqa_600q.log
 ```
@@ -56,18 +113,25 @@ bash scripts/final_experiments/olmo32b_lisa/run_olmo_fictionalqa_600q.sh \
 ### Qwen3-30B-A3B-Instruct-2507
 
 ```bash
-# MuSiQue — 600 domande (200 per hop)
+# === Qwen · MuSiQue — 600 domande (200 per hop) ===
 tmux new -s qwen_musique
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/qwen30b_lisa/run_qwen_musique_600q.sh \
     2>&1 | tee logs/final_qwen_musique_600q.log
+```
 
-# NewsQA — 600 domande
+```bash
+# === Qwen · NewsQA — 600 domande ===
 tmux new -s qwen_newsqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/qwen30b_lisa/run_qwen_newsqa_600q.sh \
     2>&1 | tee logs/final_qwen_newsqa_600q.log
+```
 
-# FictionalQA — 600 domande
+```bash
+# === Qwen · FictionalQA — 600 domande ===
 tmux new -s qwen_fictionalqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/qwen30b_lisa/run_qwen_fictionalqa_600q.sh \
     2>&1 | tee logs/final_qwen_fictionalqa_600q.log
 ```
@@ -82,21 +146,32 @@ Gemma-3-4B è piccolo e sta su Lisa).
 
 ### Fase A — FORWARD su HOMER
 
+> Su Homer i modelli grandi usano **2 GPU** (TP=2): NON impostare
+> `CUDA_VISIBLE_DEVICES` a una sola GPU. Se devi vincolare le GPU, usane due,
+> es. `export CUDA_VISIBLE_DEVICES=0,1`.
+
 #### Llama-3.1-70B-Instruct
 
 ```bash
-# MuSiQue — 600 domande (200 per hop)
+# === Llama · MuSiQue — forward — 600 domande (200 per hop) ===
 tmux new -s llama_musique
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/llama70b_homer/run_llama_musique_600q_forward.sh \
     2>&1 | tee logs/final_llama_musique_600q_forward.log
+```
 
-# NewsQA — 600 domande
+```bash
+# === Llama · NewsQA — forward — 600 domande ===
 tmux new -s llama_newsqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/llama70b_homer/run_llama_newsqa_600q_forward.sh \
     2>&1 | tee logs/final_llama_newsqa_600q_forward.log
+```
 
-# FictionalQA — 600 domande
+```bash
+# === Llama · FictionalQA — forward — 600 domande ===
 tmux new -s llama_fictionalqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/llama70b_homer/run_llama_fictionalqa_600q_forward.sh \
     2>&1 | tee logs/final_llama_fictionalqa_600q_forward.log
 ```
@@ -104,18 +179,25 @@ bash scripts/final_experiments/llama70b_homer/run_llama_fictionalqa_600q_forward
 #### gpt-oss-120b
 
 ```bash
-# MuSiQue — 600 domande (200 per hop)
+# === gpt-oss · MuSiQue — forward — 600 domande (200 per hop) ===
 tmux new -s gptoss_musique
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_musique_600q_forward.sh \
     2>&1 | tee logs/final_gptoss_musique_600q_forward.log
+```
 
-# NewsQA — 600 domande
+```bash
+# === gpt-oss · NewsQA — forward — 600 domande ===
 tmux new -s gptoss_newsqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_newsqa_600q_forward.sh \
     2>&1 | tee logs/final_gptoss_newsqa_600q_forward.log
+```
 
-# FictionalQA — 600 domande
+```bash
+# === gpt-oss · FictionalQA — forward — 600 domande ===
 tmux new -s gptoss_fictionalqa
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_fictionalqa_600q_forward.sh \
     2>&1 | tee logs/final_gptoss_fictionalqa_600q_forward.log
 ```
@@ -141,17 +223,30 @@ rsync -av sacchet@homer:~/Baseline/results/final/gptoss120b/ \
 
 ### Fase C — OFS + RECALL su LISA
 
+Gira su Lisa (giudice Gemma-3-4B, una GPU basta). Un blocco tmux per dataset.
+
 #### Llama-3.1-70B
 
 ```bash
-tmux new -s llama_ofs
-# MuSiQue
+# === Llama · MuSiQue — OFS + recall ===
+tmux new -s llama_musique_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/llama70b_homer/run_llama_musique_600q_ofs_recall.sh \
     2>&1 | tee logs/final_llama_musique_600q_ofs_recall.log
-# NewsQA
+```
+
+```bash
+# === Llama · NewsQA — OFS + recall ===
+tmux new -s llama_newsqa_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/llama70b_homer/run_llama_newsqa_600q_ofs_recall.sh \
     2>&1 | tee logs/final_llama_newsqa_600q_ofs_recall.log
-# FictionalQA
+```
+
+```bash
+# === Llama · FictionalQA — OFS + recall ===
+tmux new -s llama_fictionalqa_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/llama70b_homer/run_llama_fictionalqa_600q_ofs_recall.sh \
     2>&1 | tee logs/final_llama_fictionalqa_600q_ofs_recall.log
 ```
@@ -159,14 +254,25 @@ bash scripts/final_experiments/llama70b_homer/run_llama_fictionalqa_600q_ofs_rec
 #### gpt-oss-120b
 
 ```bash
-tmux new -s gptoss_ofs
-# MuSiQue
+# === gpt-oss · MuSiQue — OFS + recall ===
+tmux new -s gptoss_musique_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_musique_600q_ofs_recall.sh \
     2>&1 | tee logs/final_gptoss_musique_600q_ofs_recall.log
-# NewsQA
+```
+
+```bash
+# === gpt-oss · NewsQA — OFS + recall ===
+tmux new -s gptoss_newsqa_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_newsqa_600q_ofs_recall.sh \
     2>&1 | tee logs/final_gptoss_newsqa_600q_ofs_recall.log
-# FictionalQA
+```
+
+```bash
+# === gpt-oss · FictionalQA — OFS + recall ===
+tmux new -s gptoss_fictionalqa_ofs
+cd ~/Baseline; source .venv/bin/activate; export HF_TOKEN=hf_xxxx; export CUDA_VISIBLE_DEVICES=1
 bash scripts/final_experiments/gptoss120b_homer/run_gptoss_fictionalqa_600q_ofs_recall.sh \
     2>&1 | tee logs/final_gptoss_fictionalqa_600q_ofs_recall.log
 ```
@@ -212,18 +318,7 @@ N_PER_HOP=5 SKIP_PPL=1 \
 
 ---
 
-## 5. Gestione tmux (job lunghi)
-
-```bash
-# stacca dalla sessione senza fermare il job:  Ctrl-b  poi  d
-tmux ls                       # elenca le sessioni
-tmux attach -t olmo_musique   # rientra in una sessione
-# il job continua anche se la connessione SSH cade
-```
-
----
-
-## 6. Output prodotti
+## 5. Output prodotti
 
 Tutto finisce in `results/final/<model>/<dataset>_600q/`:
 
@@ -247,7 +342,7 @@ wc -l results/final/olmo32b/musique_600q/*.csv
 
 ---
 
-## 7. Variabili d'ambiente utili (override opzionali)
+## 6. Variabili d'ambiente utili (override opzionali)
 
 Valgono su tutti i launcher (hanno default sensati già impostati):
 

@@ -19,14 +19,15 @@ export HF_HUB_CACHE="${HF_HUB_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export PYTHONUNBUFFERED=1
 
-# Activate the Lisa conda env used for rewriting + OFS/recall (override with
-# LISA_CONDA_ENV=...). Falls back to `base`, then to whatever python is on PATH.
-if command -v conda >/dev/null 2>&1; then
-  CONDA_SH="${CONDA_SH:-$HOME/miniconda3/etc/profile.d/conda.sh}"
-  [ -f "$CONDA_SH" ] && source "$CONDA_SH"
-  conda activate "${LISA_CONDA_ENV:-baseline}" 2>/dev/null \
-    || conda activate base 2>/dev/null \
-    || echo "[WARN] couldn't activate ${LISA_CONDA_ENV:-baseline}/base — using current python" >&2
+# NIENTE conda: usiamo il python dell'ambiente che hai già attivo (venv o
+# sistema). Attiva il tuo venv PRIMA di lanciare, es.:
+#     source ~/Baseline/.venv/bin/activate
+# I pipeline chiamano `python`. Se nel PATH c'è solo `python3`, creiamo uno shim
+# `python` → `python3` così gli script girano comunque.
+if ! command -v python >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+  python() { python3 "$@"; }
+  export -f python 2>/dev/null || true
+  echo "[env] 'python' non trovato → uso 'python3' ($(command -v python3))"
 fi
 
 # Gemma-3-4B-it (AFV judge for OFS + recall) is gated → HF_TOKEN required.

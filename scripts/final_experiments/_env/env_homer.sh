@@ -19,6 +19,14 @@ export HF_HUB_CACHE="${HF_HUB_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export PYTHONUNBUFFERED=1
 
+# NIENTE conda: attiva il tuo venv PRIMA di lanciare (es. quello che serve vLLM
+# per Llama-AWQ / gpt-oss). Se nel PATH c'è solo `python3`, shim `python`→`python3`.
+if ! command -v python >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+  python() { python3 "$@"; }
+  export -f python 2>/dev/null || true
+  echo "[env] 'python' non trovato → uso 'python3' ($(command -v python3))"
+fi
+
 # meta-llama/Llama-3.1-70B-Instruct is gated → HF_TOKEN required.
 # openai/gpt-oss-120b is open-weights; a token only avoids HF rate limits.
 if [ -z "${HF_TOKEN:-}" ]; then

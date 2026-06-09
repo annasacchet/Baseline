@@ -19,13 +19,6 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 source "$HERE/../_env/env_homer.sh"
 source "$HERE/../_env/lib_forward.sh"
 
-# Activate the vLLM env that serves the Llama AWQ checkpoint, if present.
-if command -v conda >/dev/null 2>&1; then
-  CONDA_SH="${CONDA_SH:-$HOME/miniconda3/etc/profile.d/conda.sh}"
-  [ -f "$CONDA_SH" ] && source "$CONDA_SH"
-  conda activate vllm311 2>/dev/null || echo "[WARN] couldn't activate vllm311" >&2
-fi
-
 export MODEL_DIR="llama70b"
 export DATASET="musique"
 export TAG="musique_600q"
