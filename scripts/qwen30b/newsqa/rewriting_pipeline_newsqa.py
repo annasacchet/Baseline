@@ -30,7 +30,10 @@ from _common.olmo_constants import (  # noqa: E402
     OLMO_MODEL_ID,
     REWRITE_TEMPLATE,
 )
-from _common.olmo_vllm import (  # noqa: E402
+# Qwen3-30B è MoE: vLLM+bitsandbytes non supporta FusedMoE e bf16 non entra in
+# 24GB. Usiamo il backend HF transformers (NF4 4-bit) che gestisce il MoE. Il
+# modulo olmo_hf espone gli stessi nomi di olmo_vllm.
+from _common.olmo_hf import (  # noqa: E402
     generate_batch_vllm,
     hf_login_if_token,
     load_vllm,
@@ -230,6 +233,7 @@ def main():
         tensor_parallel_size=args.tensor_parallel_size,
         max_model_len=args.max_model_len,
         gpu_memory_utilization=args.gpu_mem_util,
+        quantization="bitsandbytes",   # NF4 4-bit (HF backend) per stare in 24GB
     )
 
     n_done = 0; n_to_do = total_chains - len(done); t_start = time.time()

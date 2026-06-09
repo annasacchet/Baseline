@@ -26,11 +26,12 @@ export OUT_DIR="${OUT_DIR:-results/final/qwen30b/musique_600q}"
 
 export N_PER_HOP="${N_PER_HOP:-200}"      # 200/hop -> 600 questions
 export N_ITERATIONS="${N_ITERATIONS:-3}"
-export BACKEND="${BACKEND:-vllm}"         # Qwen3 has a native vLLM kernel
+export BACKEND="${BACKEND:-hf}"          # Qwen3-30B MoE: vLLM+bnb non supporta FusedMoE -> backend HF 4-bit
 export QUANT="${QUANT:-bitsandbytes}"   # NF4 4-bit: Qwen3-30B entra in 24GB (bf16 -> OOM)
 export TP="${TP:-1}"
 export MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-2048}"
 export MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+export USE_4BIT_PPL=1                       # perplexity in 4-bit (sta in 24GB)
 
 run_forward
 

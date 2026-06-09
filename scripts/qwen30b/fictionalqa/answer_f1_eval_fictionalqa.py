@@ -18,7 +18,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "qwen30b"))
 from _common.f1_utils import best_f1  # noqa: E402
 from _common.olmo_constants import ALIAS_SEP, CHAIN_KEYS, OLMO_MODEL_ID  # noqa: E402
-from _common.olmo_vllm import (  # noqa: E402
+# Qwen3-30B MoE: backend HF transformers (NF4 4-bit). Stessi nomi di olmo_vllm.
+from _common.olmo_hf import (  # noqa: E402
     generate_batch_vllm,
     hf_login_if_token,
     load_vllm,

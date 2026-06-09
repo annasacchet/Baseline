@@ -29,7 +29,8 @@ from _common.olmo_constants import (  # noqa: E402
     OLMO_MODEL_ID,
     REWRITE_TEMPLATE,
 )
-from _common.olmo_vllm import (  # noqa: E402
+# Qwen3-30B MoE: backend HF transformers (NF4 4-bit). Stessi nomi di olmo_vllm.
+from _common.olmo_hf import (  # noqa: E402
     generate_batch_vllm,
     hf_login_if_token,
     load_vllm,

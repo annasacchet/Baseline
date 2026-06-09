@@ -17,7 +17,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "qwen30b"))
 from _common.f1_utils import best_f1  # noqa: E402
 from _common.olmo_constants import ALIAS_SEP, CHAIN_KEYS, OLMO_MODEL_ID  # noqa: E402
-from _common.olmo_vllm import (  # noqa: E402
+# Qwen3-30B MoE: HF backend (NF4 4-bit), come la rewriting. Stessi nomi.
+from _common.olmo_hf import (  # noqa: E402
     generate_batch_vllm,
     hf_login_if_token,
     load_vllm,
@@ -100,6 +101,7 @@ def main():
         tensor_parallel_size=args.tensor_parallel_size,
         max_model_len=args.max_model_len,
         gpu_memory_utilization=args.gpu_mem_util,
+        quantization="bitsandbytes",   # NF4 4-bit (HF backend) per stare in 24GB
     )
 
     rows = to_eval.to_dict(orient="records")

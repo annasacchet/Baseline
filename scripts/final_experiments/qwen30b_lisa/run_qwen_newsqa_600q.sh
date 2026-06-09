@@ -20,11 +20,12 @@ export OUT_DIR="${OUT_DIR:-results/final/qwen30b/newsqa_600q}"
 
 export N_ITEMS="${N_ITEMS:-600}"
 export N_ITERATIONS="${N_ITERATIONS:-3}"
-export BACKEND="${BACKEND:-vllm}"
+export BACKEND="${BACKEND:-hf}"          # Qwen3-30B MoE: vLLM+bnb non supporta FusedMoE -> backend HF 4-bit
 export QUANT="${QUANT:-bitsandbytes}"   # NF4 4-bit: Qwen3-30B entra in 24GB (bf16 -> OOM)
 export TP="${TP:-1}"
 export MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-4096}"
 export MAX_MODEL_LEN="${MAX_MODEL_LEN:-12288}"
+export USE_4BIT_PPL=1                       # perplexity in 4-bit (sta in 24GB)
 
 run_forward
 
