@@ -18,6 +18,8 @@ export HF_HOME="${HF_HOME:-/mnt/dmif-nas/mitel/sacchet/hf_cache}"
 export HF_HUB_CACHE="${HF_HUB_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export TRANSFORMERS_CACHE="${TRANSFORMERS_CACHE:-/mnt/dmif-nas/mitel/sacchet/hf_cache/hub}"
 export PYTHONUNBUFFERED=1
+# Riduce la frammentazione della VRAM (suggerito da PyTorch sugli OOM).
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 
 # NIENTE conda: attiva il tuo venv PRIMA di lanciare (es. quello che serve vLLM
 # per Llama-AWQ / gpt-oss). Se nel PATH c'è solo `python3`, shim `python`→`python3`.
